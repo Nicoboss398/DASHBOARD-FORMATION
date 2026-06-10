@@ -1,0 +1,2825 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Formation POEI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0F172A;
+            --secondary: #1E293B;
+            --accent: #3B82F6;
+            --accent-light: #60A5FA;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --gray-100: #F1F5F9;
+            --gray-200: #E2E8F0;
+            --gray-300: #CBD5E1;
+            --gray-700: #334155;
+            --gray-800: #1E293B;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: var(--primary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-meta {
+            display: flex;
+            gap: 2rem;
+            color: var(--gray-700);
+            font-size: 0.95rem;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            background: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .kpi-card.blue::before { background: var(--accent); }
+        .kpi-card.green::before { background: var(--success); }
+        .kpi-card.orange::before { background: var(--warning); }
+        .kpi-card.red::before { background: var(--danger); }
+
+        .kpi-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            font-family: 'Space Mono', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .progress-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .progress-label {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .progress-percentage {
+            font-size: 2rem;
+            font-weight: 800;
+            font-family: 'Space Mono', monospace;
+            color: var(--success);
+        }
+
+        .progress-bar-container {
+            height: 40px;
+            background: var(--gray-100);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10B981, #059669);
+            border-radius: 20px;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 1rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .alerts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .alert-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            border-left: 5px solid;
+        }
+
+        .alert-card.danger { border-color: var(--danger); }
+        .alert-card.warning { border-color: var(--warning); }
+        .alert-card.info { border-color: var(--accent); }
+
+        .alert-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .alert-count {
+            font-size: 2rem;
+            font-weight: 800;
+            font-family: 'Space Mono', monospace;
+            color: var(--danger);
+        }
+
+        .alert-description {
+            color: var(--gray-700);
+            font-size: 0.9rem;
+        }
+
+        .phase-table {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            overflow-x: auto;
+        }
+
+        .phase-table h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            background: var(--gray-100);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--gray-200);
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: var(--gray-100);
+        }
+
+        tbody td {
+            padding: 1rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-badge.completed {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-badge.in-progress {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .status-badge.pending {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        .task-manager {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        .task-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-300);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .filter-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-label {
+            font-weight: 700;
+            color: var(--gray-700);
+            margin-bottom: 0.8rem;
+            display: block;
+            font-size: 0.95rem;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.2rem;
+            border: 2px solid var(--gray-300);
+            background: white;
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .filter-btn-phase {
+            padding: 0.6rem 1.2rem;
+            border: 2px solid var(--gray-300);
+            background: white;
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .filter-btn-phase:hover {
+            border-color: #764ba2;
+        }
+
+        .filter-btn-phase.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .tasks-grid {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .task-card {
+            background: white;
+            border: 2px solid var(--gray-200);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .task-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .task-phase {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .task-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--gray-700);
+            flex-wrap: wrap;
+        }
+
+        .task-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .task-actions button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-edit {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .btn-edit:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-delete {
+            background: #FEE2E2;
+            color: var(--danger);
+        }
+
+        .btn-delete:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--gray-700);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid var(--gray-300);
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        .chart-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+        }
+
+        .gantt-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        .gantt-row {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 1rem;
+            align-items: center;
+            padding: 0.8rem;
+            border-radius: 8px;
+            transition: background 0.2s ease;
+            margin-bottom: 0.5rem;
+        }
+
+        .gantt-row:hover {
+            background: var(--gray-100);
+        }
+
+        .gantt-task-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .gantt-bar-container {
+            position: relative;
+            height: 40px;
+            background: var(--gray-100);
+            border-radius: 8px;
+            overflow: visible;
+        }
+
+        .gantt-bar {
+            position: absolute;
+            height: 100%;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            padding: 0 0.8rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .gantt-bar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .gantt-bar.status-todo {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+        }
+
+        .gantt-bar.status-progress {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+        }
+
+        .gantt-bar.status-done {
+            background: linear-gradient(135deg, #10B981, #059669);
+        }
+
+        .gantt-bar.status-blocked {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+        }
+
+        .gantt-header {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--gray-100);
+            border-radius: 12px;
+            font-weight: 700;
+        }
+
+        .gantt-dates {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 0.5rem;
+        }
+
+        .gantt-date {
+            font-size: 0.85rem;
+            color: var(--gray-700);
+            font-family: 'Space Mono', monospace;
+        }
+
+        .gantt-legend {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: var(--gray-100);
+            border-radius: 12px;
+            flex-wrap: wrap;
+        }
+
+        .gantt-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .gantt-legend-color {
+            width: 30px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .kpi-value {
+                font-size: 2.5rem;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gantt-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Dashboard Formation POEI</h1>
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+            <div class="header-meta">
+                <span>📅 <span id="currentDate"></span></span>
+                <span>🕐 Mise à jour en temps réel</span>
+            </div>
+            <div id="syncStatus" class="sync-status" style="display:none;"></div>
+            </div>
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                <label style="font-weight: 700; color: var(--gray-700);">📁 Projet actuel :</label>
+                <select id="projectSelector" style="padding: 0.8rem 1.5rem; border: 2px solid var(--gray-300); border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; min-width: 250px;">
+                </select>
+                <button class="btn btn-primary" onclick="createNewProject()" style="padding: 0.8rem 1.5rem;">➕ Nouveau projet</button>
+                <button class="btn btn-secondary" onclick="renameCurrentProject()" style="padding: 0.8rem 1.5rem;">✏️ Renommer</button>
+                <button class="btn btn-secondary" onclick="deleteCurrentProject()" style="padding: 0.8rem 1.5rem; background: #FEE2E2; color: var(--danger);">🗑️ Supprimer</button>
+                <button class="btn-reload" onclick="loadFromSheets()" title="Recharger depuis Google Sheets">🔄 Actualiser</button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="dashboard">📊 Dashboard</button>
+            <button class="tab" data-tab="tasks">📝 Gestion des tâches</button>
+            <button class="tab" data-tab="gantt">📅 Vue Gantt</button>
+            <button class="tab" data-tab="analytics">📈 Analytiques</button>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="content-section active">
+            <div class="kpi-grid">
+                <div class="kpi-card blue">
+                    <div class="kpi-label">Tâches totales</div>
+                    <div class="kpi-value" id="totalTasks">0</div>
+                </div>
+                <div class="kpi-card blue">
+                    <div class="kpi-label">À faire</div>
+                    <div class="kpi-value" id="todoTasks">0</div>
+                </div>
+                <div class="kpi-card green">
+                    <div class="kpi-label">Terminées</div>
+                    <div class="kpi-value" id="completedTasks">0</div>
+                </div>
+                <div class="kpi-card orange">
+                    <div class="kpi-label">En cours</div>
+                    <div class="kpi-value" id="inProgressTasks">0</div>
+                </div>
+                <div class="kpi-card red">
+                    <div class="kpi-label">Bloquées</div>
+                    <div class="kpi-value" id="blockedTasks">0</div>
+                </div>
+            </div>
+
+            <div class="progress-card">
+                <div class="progress-header">
+                    <div class="progress-label">Avancement global</div>
+                    <div class="progress-percentage" id="progressPercentage">0%</div>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="alerts-grid">
+                <div class="alert-card danger">
+                    <div class="alert-header">🔴 Tâches bloquées</div>
+                    <div class="alert-count" id="alertBlocked">0</div>
+                    <div class="alert-description">Nécessitent une action immédiate</div>
+                </div>
+                <div class="alert-card warning">
+                    <div class="alert-header">⏰ Haute priorité</div>
+                    <div class="alert-count" id="alertHighPriority">0</div>
+                    <div class="alert-description">À traiter en urgence</div>
+                </div>
+                <div class="alert-card info">
+                    <div class="alert-header">📅 Échéances 7 jours</div>
+                    <div class="alert-count" id="alertUpcoming">0</div>
+                    <div class="alert-description">Tâches à venir cette semaine</div>
+                </div>
+            </div>
+
+            <div class="phase-table">
+                <h2>📊 Avancement par phase</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phase</th>
+                            <th>Total</th>
+                            <th>Terminées</th>
+                            <th>% Avancement</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="phaseTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tasks Section -->
+        <div id="tasks" class="content-section">
+            <div class="task-manager">
+                <div class="task-controls">
+                    <button class="btn btn-primary" id="btnNewTask">➕ Nouvelle tâche</button>
+                    
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <select id="templateSelector" style="padding: 0.8rem 1.5rem; border: 2px solid var(--gray-300); border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.95rem; cursor: pointer; min-width: 250px;">
+                            <option value="">📋 Sélectionner un template...</option>
+                        </select>
+                        <button class="btn btn-secondary" id="btnLoadSelectedTemplate" disabled>🔄 Charger</button>
+                    </div>
+                    
+                    <button class="btn btn-secondary" id="btnManageTemplate">⚙️ Gérer les templates</button>
+                    <button class="btn btn-secondary" id="btnExport">💾 Exporter données</button>
+                    <button class="btn btn-success" id="btnReadOnly">👁️ Partager en lecture seule</button>
+                </div>
+
+                <div class="filter-section">
+                    <span class="filter-label">Filtrer par statut :</span>
+                    <div class="filter-group" id="statusFilters">
+                        <button class="filter-btn active" data-status="all">Toutes</button>
+                        <button class="filter-btn" data-status="À faire">À faire</button>
+                        <button class="filter-btn" data-status="En cours">En cours</button>
+                        <button class="filter-btn" data-status="Terminé">Terminées</button>
+                        <button class="filter-btn" data-status="Bloqué">Bloquées</button>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <span class="filter-label">Filtrer par phase :</span>
+                    <div class="filter-group" id="phaseFilters">
+                        <button class="filter-btn-phase active" data-phase="all">Toutes</button>
+                        <button class="filter-btn-phase" data-phase="1. Cadrage & validation dispositif">Phase 1</button>
+                        <button class="filter-btn-phase" data-phase="2. Ingénierie pédagogique">Phase 2</button>
+                        <button class="filter-btn-phase" data-phase="3. Communication & recrutement">Phase 3</button>
+                        <button class="filter-btn-phase" data-phase="4. Préparation opérationnelle">Phase 4</button>
+                        <button class="filter-btn-phase" data-phase="5. Démarrage de la formation">Phase 5</button>
+                        <button class="filter-btn-phase" data-phase="6. Suivi en cours de formation">Phase 6</button>
+                        <button class="filter-btn-phase" data-phase="7. Clôture & obligations de sortie">Phase 7</button>
+                        <button class="filter-btn-phase" data-phase="8. Actions périphériques">Phase 8</button>
+                    </div>
+                </div>
+
+                <div class="tasks-grid" id="tasksGrid"></div>
+            </div>
+        </div>
+
+        <!-- Gantt Section -->
+        <div id="gantt" class="content-section">
+            <div class="gantt-container">
+                <h2 style="margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: 800;">📅 Diagramme de Gantt</h2>
+                
+                <div style="margin-bottom: 1.5rem; padding: 1rem; background: #FFF9E6; border-left: 4px solid #F59E0B; border-radius: 12px;">
+                    <strong>💡 Conseil :</strong> Ajoutez des dates de début et fin à vos tâches pour voir le planning visuel
+                </div>
+
+                <div id="ganttChart"></div>
+            </div>
+        </div>
+
+        <!-- Analytics Section -->
+        <div id="analytics" class="content-section">
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>Répartition des statuts</h3>
+                    <canvas id="statusChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>Avancement par phase</h3>
+                    <canvas id="phaseChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card" style="margin-bottom: 2rem;">
+                <h3>Charge par responsable</h3>
+                <canvas id="responsibleChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">Nouvelle tâche</div>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label>Phase *</label>
+                    <select id="taskPhase" required>
+                        <option value="">Sélectionner une phase</option>
+                        <option value="1. Cadrage & validation dispositif">1. Cadrage & validation dispositif</option>
+                        <option value="2. Ingénierie pédagogique">2. Ingénierie pédagogique</option>
+                        <option value="3. Communication & recrutement">3. Communication & recrutement</option>
+                        <option value="4. Préparation opérationnelle">4. Préparation opérationnelle</option>
+                        <option value="5. Démarrage de la formation">5. Démarrage de la formation</option>
+                        <option value="6. Suivi en cours de formation">6. Suivi en cours de formation</option>
+                        <option value="7. Clôture & obligations de sortie">7. Clôture & obligations de sortie</option>
+                        <option value="8. Actions périphériques">8. Actions périphériques</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Titre de la tâche *</label>
+                    <input type="text" id="taskTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Responsable</label>
+                    <input type="text" id="taskResponsible">
+                </div>
+                <div class="form-group">
+                    <label>Date de début</label>
+                    <input type="date" id="taskStartDate">
+                </div>
+                <div class="form-group">
+                    <label>Date de fin</label>
+                    <input type="date" id="taskEndDate">
+                </div>
+                <div class="form-group">
+                    <label>Statut *</label>
+                    <select id="taskStatus" required>
+                        <option value="À faire">À faire</option>
+                        <option value="En cours">En cours</option>
+                        <option value="Terminé">Terminé</option>
+                        <option value="Bloqué">Bloqué</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Priorité</label>
+                    <select id="taskPriority">
+                        <option value="">Aucune</option>
+                        <option value="Haute">Haute</option>
+                        <option value="Moyenne">Moyenne</option>
+                        <option value="Basse">Basse</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Commentaires</label>
+                    <textarea id="taskComments"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="btnCancel">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Template Manager Modal -->
+    <div class="modal" id="templateModal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">⚙️ Gestion des templates de tâches</div>
+            
+            <div style="margin-bottom: 2rem; padding: 1rem; background: #F1F5F9; border-radius: 12px;">
+                <p style="margin-bottom: 0.5rem;"><strong>💡 À quoi ça sert ?</strong></p>
+                <p style="font-size: 0.9rem; color: var(--gray-700);">Les templates sont des listes de tâches réutilisables. Créez plusieurs templates pour différents types de projets et chargez-les rapidement !</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <button class="btn btn-primary" onclick="saveCurrentAsNewTemplate()" style="width: 100%; justify-content: center; display: flex; align-items: center;">
+                    💾 Sauvegarder comme nouveau template
+                </button>
+                
+                <button class="btn btn-secondary" onclick="exportTemplates()" style="width: 100%; justify-content: center; display: flex; align-items: center;">
+                    📤 Exporter tous les templates
+                </button>
+                
+                <div style="grid-column: 1 / -1;">
+                    <label class="btn btn-secondary" for="templateImportInput" style="width: 100%; justify-content: center; display: flex; align-items: center; cursor: pointer; margin: 0;">
+                        📥 Importer des templates (fichier JSON)
+                    </label>
+                    <input type="file" id="templateImportInput" accept=".json" style="display: none;" onchange="importTemplates(event)">
+                </div>
+            </div>
+
+            <div style="background: white; border: 2px solid var(--gray-200); border-radius: 16px; padding: 1.5rem;">
+                <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">📚 Mes templates enregistrés</h3>
+                <div id="templatesList"></div>
+            </div>
+
+            <div class="modal-actions" style="margin-top: 2rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeTemplateManager()">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =============================================
+        // CONFIGURATION GOOGLE SHEETS
+        // =============================================
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOUDR-aWQxZpVSNUQetzK1ZSt7ALqSMGS8j7ll1FxF9eAHWbOXr1mC3nRE4ykwR6U5Vg/exec';
+
+        // Variables globales
+        let tasks = [];
+        let editingTaskId = null;
+        let currentStatusFilter = 'all';
+        let currentPhaseFilter = 'all';
+        let statusChart, phaseChart, responsibleChart;
+        let currentProject = 'Projet par défaut';
+        let allProjects = {};
+        let isSyncing = false;
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', init);
+
+        function init() {
+            updateCurrentDate();
+            setupEventListeners();
+            showSyncStatus('⏳ Chargement des données...', 'loading');
+            loadFromSheets();
+        }
+
+        // =============================================
+        // SYNCHRONISATION GOOGLE SHEETS
+        // =============================================
+
+        function showSyncStatus(message, type) {
+            const el = document.getElementById('syncStatus');
+            if (!el) return;
+            el.textContent = message;
+            el.className = 'sync-status ' + type;
+            el.style.display = 'block';
+            if (type === 'success') {
+                setTimeout(() => { el.style.display = 'none'; }, 3000);
+            }
+        }
+
+        async function loadFromSheets() {
+            showSyncStatus('⏳ Chargement des données...', 'loading');
+            try {
+                const resp = await fetch(APPS_SCRIPT_URL + '?action=get&t=' + Date.now());
+                const allTasks = await resp.json();
+
+                allProjects = {};
+                allTasks.forEach(task => {
+                    const proj = task.project || 'Projet par défaut';
+                    if (!allProjects[proj]) allProjects[proj] = [];
+                    task.id = Number(task.id) || task.id;
+                    allProjects[proj].push(task);
+                });
+
+                if (Object.keys(allProjects).length === 0) {
+                    allProjects['Projet par défaut'] = [];
+                }
+
+                const lastProject = localStorage.getItem('poei_current_project');
+                if (lastProject && allProjects[lastProject]) {
+                    currentProject = lastProject;
+                } else {
+                    currentProject = Object.keys(allProjects)[0];
+                }
+
+                tasks = allProjects[currentProject] || [];
+
+                updateProjectSelector();
+                updateTemplateSelector();
+                updateDashboard();
+                renderTasks();
+                showSyncStatus('✅ Données synchronisées', 'success');
+            } catch (err) {
+                loadProjectsFromLocal();
+                showSyncStatus('⚠️ Mode hors-ligne (données locales)', 'warning');
+            }
+        }
+
+        async function saveToSheets() {
+            if (isSyncing) return;
+            isSyncing = true;
+            showSyncStatus('💾 Sauvegarde en cours...', 'loading');
+
+            // Toujours sauvegarder en local d'abord
+            localStorage.setItem('poei_all_projects', JSON.stringify(allProjects));
+            localStorage.setItem('poei_current_project', currentProject);
+
+            const allTasks = [];
+            Object.keys(allProjects).forEach(proj => {
+                (allProjects[proj] || []).forEach(task => {
+                    allTasks.push({ ...task, project: proj });
+                });
+            });
+
+            // Utiliser une iframe cachée pour contourner le CORS (fichier local → Apps Script)
+            try {
+                await postViaForm(allTasks);
+                showSyncStatus('✅ Sauvegardé dans Google Sheets', 'success');
+            } catch (err) {
+                showSyncStatus('⚠️ Sauvegardé en local uniquement', 'warning');
+            } finally {
+                isSyncing = false;
+            }
+        }
+
+        function postViaForm(allTasks) {
+            return new Promise((resolve, reject) => {
+                // Créer une iframe et un formulaire cachés
+                const iframe = document.createElement('iframe');
+                iframe.name = 'hidden_iframe_' + Date.now();
+                iframe.style.display = 'none';
+                document.body.appendChild(iframe);
+
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = APPS_SCRIPT_URL;
+                form.target = iframe.name;
+                form.style.display = 'none';
+
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'data';
+                input.value = JSON.stringify({ action: 'save_all', tasks: allTasks });
+                form.appendChild(input);
+
+                document.body.appendChild(form);
+
+                iframe.onload = () => {
+                    // Nettoyer après envoi
+                    setTimeout(() => {
+                        document.body.removeChild(form);
+                        document.body.removeChild(iframe);
+                    }, 1000);
+                    resolve();
+                };
+
+                iframe.onerror = () => {
+                    document.body.removeChild(form);
+                    document.body.removeChild(iframe);
+                    reject(new Error('Erreur iframe'));
+                };
+
+                form.submit();
+
+                // Timeout de sécurité
+                setTimeout(resolve, 5000);
+            });
+        }
+
+        function setupEventListeners() {
+            // Tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const targetTab = this.getAttribute('data-tab');
+                    switchTab(targetTab);
+                });
+            });
+
+            // Project selector
+            document.getElementById('projectSelector').addEventListener('change', function() {
+                switchProject(this.value);
+            });
+
+            // Task controls
+            document.getElementById('btnNewTask').addEventListener('click', () => openModal());
+            document.getElementById('templateSelector').addEventListener('change', function() {
+                const loadBtn = document.getElementById('btnLoadSelectedTemplate');
+                loadBtn.disabled = !this.value;
+            });
+            document.getElementById('btnLoadSelectedTemplate').addEventListener('click', loadSelectedTemplate);
+            document.getElementById('btnManageTemplate').addEventListener('click', openTemplateManager);
+            document.getElementById('btnExport').addEventListener('click', exportData);
+            document.getElementById('btnReadOnly').addEventListener('click', generateReadOnlyLink);
+            document.getElementById('btnCancel').addEventListener('click', closeModal);
+            
+            // Form
+            document.getElementById('taskForm').addEventListener('submit', saveTask);
+            
+            // Modal close on background click
+            document.getElementById('taskModal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+
+            // Status filters
+            document.querySelectorAll('#statusFilters .filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const status = this.getAttribute('data-status');
+                    filterByStatus(status);
+                });
+            });
+
+            // Phase filters
+            document.querySelectorAll('#phaseFilters .filter-btn-phase').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const phase = this.getAttribute('data-phase');
+                    filterByPhase(phase);
+                });
+            });
+        }
+
+        function updateCurrentDate() {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('fr-FR', options);
+        }
+
+        // Fallback localStorage si hors-ligne
+        function loadProjectsFromLocal() {
+            const stored = localStorage.getItem('poei_all_projects');
+            if (stored) {
+                allProjects = JSON.parse(stored);
+            } else {
+                allProjects = { 'Projet par défaut': [] };
+            }
+            const lastProject = localStorage.getItem('poei_current_project');
+            if (lastProject && allProjects[lastProject]) {
+                currentProject = lastProject;
+            } else {
+                currentProject = Object.keys(allProjects)[0];
+            }
+            tasks = allProjects[currentProject] || [];
+            updateProjectSelector();
+            updateTemplateSelector();
+            updateDashboard();
+            renderTasks();
+        }
+
+        function loadCurrentProject() {
+            tasks = allProjects[currentProject] || [];
+            updateTemplateSelector();
+        }
+
+        function saveProjects() {
+            allProjects[currentProject] = tasks;
+            // Sauvegarde locale immédiate + sync Sheets en arrière-plan
+            localStorage.setItem('poei_all_projects', JSON.stringify(allProjects));
+            localStorage.setItem('poei_current_project', currentProject);
+            saveToSheets();
+        }
+
+        function saveTasks() {
+            saveProjects();
+            updateDashboard();
+            renderTasks();
+        }
+
+        function updateProjectSelector() {
+            const selector = document.getElementById('projectSelector');
+            selector.innerHTML = '';
+            
+            Object.keys(allProjects).forEach(projectName => {
+                const option = document.createElement('option');
+                option.value = projectName;
+                option.textContent = `${projectName} (${allProjects[projectName].length} tâches)`;
+                if (projectName === currentProject) {
+                    option.selected = true;
+                }
+                selector.appendChild(option);
+            });
+        }
+
+        function switchProject(projectName) {
+            // Sauvegarder le projet actuel avant de changer
+            saveProjects();
+            
+            // Charger le nouveau projet
+            currentProject = projectName;
+            loadCurrentProject();
+            
+            // Réinitialiser les filtres
+            currentStatusFilter = 'all';
+            currentPhaseFilter = 'all';
+            
+            // Mettre à jour l'interface
+            updateDashboard();
+            renderTasks();
+            updateProjectSelector();
+            
+            // Réinitialiser les boutons de filtre
+            document.querySelectorAll('#statusFilters .filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('#statusFilters .filter-btn[data-status="all"]').classList.add('active');
+            document.querySelectorAll('#phaseFilters .filter-btn-phase').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('#phaseFilters .filter-btn-phase[data-phase="all"]').classList.add('active');
+        }
+
+        function createNewProject() {
+            const projectName = prompt('Nom du nouveau projet :');
+            if (!projectName) return;
+            
+            if (allProjects[projectName]) {
+                alert('❌ Un projet avec ce nom existe déjà !');
+                return;
+            }
+            
+            // Sauvegarder le projet actuel
+            saveProjects();
+            
+            // Créer le nouveau projet
+            allProjects[projectName] = [];
+            currentProject = projectName;
+            tasks = [];
+            
+            // Sauvegarder et mettre à jour
+            saveProjects();
+            updateProjectSelector();
+            updateDashboard();
+            renderTasks();
+            
+            alert('✅ Nouveau projet créé : ' + projectName);
+        }
+
+        function renameCurrentProject() {
+            const newName = prompt('Nouveau nom du projet :', currentProject);
+            if (!newName || newName === currentProject) return;
+            
+            if (allProjects[newName]) {
+                alert('❌ Un projet avec ce nom existe déjà !');
+                return;
+            }
+            
+            // Renommer le projet
+            allProjects[newName] = allProjects[currentProject];
+            delete allProjects[currentProject];
+            currentProject = newName;
+            
+            // Sauvegarder et mettre à jour
+            saveProjects();
+            updateProjectSelector();
+            
+            alert('✅ Projet renommé : ' + newName);
+        }
+
+        function deleteCurrentProject() {
+            if (Object.keys(allProjects).length === 1) {
+                alert('❌ Vous ne pouvez pas supprimer le dernier projet !');
+                return;
+            }
+            
+            if (!confirm(`Êtes-vous sûr de vouloir supprimer le projet "${currentProject}" ?\n\nCette action est irréversible.`)) {
+                return;
+            }
+            
+            // Supprimer le projet
+            delete allProjects[currentProject];
+            
+            // Basculer sur le premier projet disponible
+            currentProject = Object.keys(allProjects)[0];
+            loadCurrentProject();
+            
+            // Sauvegarder et mettre à jour
+            saveProjects();
+            updateProjectSelector();
+            updateDashboard();
+            renderTasks();
+            
+            alert('✅ Projet supprimé');
+        }
+
+        function updateTemplateSelector() {
+            const selector = document.getElementById('templateSelector');
+            const savedTemplates = getSavedTemplates();
+            
+            selector.innerHTML = '<option value="">📋 Sélectionner un template...</option>';
+            
+            // Template par défaut
+            const defaultOption = document.createElement('option');
+            defaultOption.value = 'default';
+            defaultOption.textContent = '🏠 Template POEI par défaut (43 tâches)';
+            selector.appendChild(defaultOption);
+            
+            // Templates personnalisés
+            Object.keys(savedTemplates).forEach(templateName => {
+                const option = document.createElement('option');
+                option.value = templateName;
+                const count = savedTemplates[templateName].length;
+                option.textContent = `📋 ${templateName} (${count} tâches)`;
+                selector.appendChild(option);
+            });
+        }
+
+        function getSavedTemplates() {
+            const stored = localStorage.getItem('poei_saved_templates');
+            return stored ? JSON.parse(stored) : {};
+        }
+
+        function saveTemplate(name, templateData) {
+            const templates = getSavedTemplates();
+            templates[name] = templateData;
+            localStorage.setItem('poei_saved_templates', JSON.stringify(templates));
+        }
+
+        function deleteTemplate(name) {
+            const templates = getSavedTemplates();
+            delete templates[name];
+            localStorage.setItem('poei_saved_templates', JSON.stringify(templates));
+        }
+
+        function loadSelectedTemplate() {
+            const selector = document.getElementById('templateSelector');
+            const selectedValue = selector.value;
+            
+            if (!selectedValue) {
+                alert('⚠️ Veuillez sélectionner un template');
+                return;
+            }
+            
+            let templateTasks;
+            
+            if (selectedValue === 'default') {
+                templateTasks = getOriginalTemplate();
+            } else {
+                const savedTemplates = getSavedTemplates();
+                templateTasks = savedTemplates[selectedValue];
+                
+                if (!templateTasks) {
+                    alert('❌ Template introuvable');
+                    return;
+                }
+            }
+            
+            const templateName = selector.options[selector.selectedIndex].text;
+            
+            if (!confirm(`Voulez-vous charger le template "${templateName}" dans le projet "${currentProject}" ?\n\nCela écrasera les ${tasks.length} tâches existantes de ce projet.`)) {
+                return;
+            }
+            
+            // Créer une copie avec de nouveaux IDs
+            tasks = templateTasks.map(task => ({
+                ...task,
+                id: Date.now() + Math.random()
+            }));
+            
+            saveTasks();
+            selector.value = '';
+            document.getElementById('btnLoadSelectedTemplate').disabled = true;
+            alert('✅ Template chargé avec succès !');
+        }
+
+        function initializeDefaultTasks() {
+            if (confirm('Voulez-vous charger les tâches par défaut dans le projet "' + currentProject + '" ?\n\nCela écrasera les tâches existantes de ce projet.')) {
+                const template = getOriginalTemplate();
+                tasks = JSON.parse(JSON.stringify(template));
+                saveTasks();
+                alert('✅ Tâches par défaut chargées avec succès !');
+            }
+        }
+
+        function getDefaultTemplate() {
+            return getOriginalTemplate();
+        }
+
+        function getOriginalTemplate() {
+            return [
+                {id: Date.now() + 1, phase: '1. Cadrage & validation dispositif', title: 'Rdv commercial – Découverte', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: 'Haute', comments: ''},
+                {id: Date.now() + 2, phase: '1. Cadrage & validation dispositif', title: 'Validation dispositif de financement (France Travail / POEI)', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: 'Haute', comments: ''},
+                {id: Date.now() + 3, phase: '1. Cadrage & validation dispositif', title: 'Préparation du dossier global POEI', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: 'Haute', comments: ''},
+                {id: Date.now() + 4, phase: '1. Cadrage & validation dispositif', title: 'Validation CC – objectifs pédagogiques', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 5, phase: '1. Cadrage & validation dispositif', title: 'Identification des compétences à évaluer', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 6, phase: '1. Cadrage & validation dispositif', title: 'Identification des référents chez les partenaires (France Travail)', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 7, phase: '1. Cadrage & validation dispositif', title: 'Récupération identifiants FT + mail conseiller', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 10, phase: '2. Ingénierie pédagogique', title: 'Création de la session sur DENDREO', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 11, phase: '2. Ingénierie pédagogique', title: 'Validation des intervenants', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: 'Haute', comments: ''},
+                {id: Date.now() + 12, phase: '2. Ingénierie pédagogique', title: 'Préparation du contrat formateur', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 13, phase: '2. Ingénierie pédagogique', title: 'Date de présentation des livrables (contenus)', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 14, phase: '2. Ingénierie pédagogique', title: 'Création des évaluations', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 15, phase: '2. Ingénierie pédagogique', title: 'Préparation KIT FORMATEUR', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 16, phase: '2. Ingénierie pédagogique', title: 'Validation des plannings de formation', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: 'Haute', comments: ''},
+                {id: Date.now() + 17, phase: '2. Ingénierie pédagogique', title: 'Validation des lieux de formation', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 18, phase: '2. Ingénierie pédagogique', title: 'Listing besoin matériel du formateur', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 20, phase: '3. Communication & recrutement', title: 'Communication recrutement stagiaires (institutionnels / partenaires)', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: 'Haute', comments: ''},
+                {id: Date.now() + 21, phase: '3. Communication & recrutement', title: 'Création d\'une offre d\'emploi formation', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 22, phase: '3. Communication & recrutement', title: 'Envoyer mail d\'informations aux candidats présélectionnés', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 23, phase: '3. Communication & recrutement', title: 'Appeler les candidats intéressés', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 24, phase: '3. Communication & recrutement', title: 'Confirmation de participation des stagiaires', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: 'Haute', comments: ''},
+                {id: Date.now() + 25, phase: '3. Communication & recrutement', title: 'Validation des participants dans DENDREO', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 26, phase: '3. Communication & recrutement', title: 'Intégration des participants sous KAIROS', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 30, phase: '4. Préparation opérationnelle', title: 'Envoi des convocations aux candidats (via DENDREO)', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: 'Haute', comments: ''},
+                {id: Date.now() + 31, phase: '4. Préparation opérationnelle', title: 'Communication aux participants avec conseiller FT', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 32, phase: '4. Préparation opérationnelle', title: 'Préparation KIT STAGIAIRES', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 33, phase: '4. Préparation opérationnelle', title: 'Livret d\'accueil stagiaires à éditer', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 34, phase: '4. Préparation opérationnelle', title: 'Préparation goodies et matériels divers', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 35, phase: '4. Préparation opérationnelle', title: 'Réservation petit déjeuner d\'accueil', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 40, phase: '5. Démarrage de la formation', title: 'Réunion d\'information jour J', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: 'Haute', comments: ''},
+                {id: Date.now() + 41, phase: '5. Démarrage de la formation', title: 'Faire signer les attestations d\'entrée en formation', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: 'Haute', comments: ''},
+                {id: Date.now() + 42, phase: '5. Démarrage de la formation', title: 'Saisir dans KAIROS la présence du premier jour', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: 'Haute', comments: ''},
+                {id: Date.now() + 50, phase: '6. Suivi en cours de formation', title: 'Réalisation du suivi des candidats pour l\'OPCO / FT', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: 'Moyenne', comments: ''},
+                {id: Date.now() + 60, phase: '7. Clôture & obligations de sortie', title: 'Préparation des attestations de capacité', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 61, phase: '7. Clôture & obligations de sortie', title: 'Envoi des attestations de fin de formation', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: 'Haute', comments: ''},
+                {id: Date.now() + 62, phase: '7. Clôture & obligations de sortie', title: 'Envoyer les attestations signées au référent FT', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: 'Haute', comments: ''},
+                {id: Date.now() + 63, phase: '7. Clôture & obligations de sortie', title: 'Envoi des questionnaires de satisfaction', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 70, phase: '8. Actions périphériques', title: 'Communication aux écoles', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 71, phase: '8. Actions périphériques', title: 'Sourcing des entreprises pour stage', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 72, phase: '8. Actions périphériques', title: 'Organisation / dates des visites entreprises', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''},
+                {id: Date.now() + 73, phase: '8. Actions périphériques', title: 'Préparation du mailing PPA des profils formés', responsible: '', startDate: '', endDate: '', status: 'À faire', priority: '', comments: ''}
+            ];
+        }
+
+        // Fonctions de gestion du template
+        function openTemplateManager() {
+            renderTemplatesList();
+            document.getElementById('templateModal').classList.add('active');
+        }
+
+        function closeTemplateManager() {
+            document.getElementById('templateModal').classList.remove('active');
+            updateTemplateSelector();
+        }
+
+        function renderTemplatesList() {
+            const templates = getSavedTemplates();
+            const container = document.getElementById('templatesList');
+            
+            if (Object.keys(templates).length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--gray-700); padding: 2rem;">Aucun template enregistré. Créez-en un en cliquant sur "💾 Sauvegarder comme nouveau template"</p>';
+                return;
+            }
+            
+            container.innerHTML = Object.keys(templates).map(templateName => {
+                const template = templates[templateName];
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border: 2px solid var(--gray-200); border-radius: 12px; margin-bottom: 0.8rem;">
+                        <div>
+                            <div style="font-weight: 700; font-size: 1.05rem; margin-bottom: 0.3rem;">📋 ${templateName}</div>
+                            <div style="font-size: 0.9rem; color: var(--gray-700);">${template.length} tâches</div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" onclick="exportSingleTemplate('${templateName}')" style="padding: 0.6rem 1rem;">📤 Exporter</button>
+                            <button class="btn btn-secondary" onclick="renameTemplate('${templateName}')" style="padding: 0.6rem 1rem;">✏️ Renommer</button>
+                            <button class="btn btn-secondary" onclick="deleteTemplateConfirm('${templateName}')" style="padding: 0.6rem 1rem; background: #FEE2E2; color: var(--danger);">🗑️ Supprimer</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function saveCurrentAsNewTemplate() {
+            if (tasks.length === 0) {
+                alert('❌ Aucune tâche à sauvegarder ! Ajoutez d\'abord des tâches à votre projet.');
+                return;
+            }
+            
+            const templateName = prompt('Nom du nouveau template :');
+            if (!templateName) return;
+            
+            const templates = getSavedTemplates();
+            if (templates[templateName]) {
+                if (!confirm(`Un template "${templateName}" existe déjà. Voulez-vous le remplacer ?`)) {
+                    return;
+                }
+            }
+            
+            // Créer une copie propre des tâches (sans dates, responsables, statuts personnalisés)
+            const cleanTemplate = tasks.map(task => ({
+                id: Date.now() + Math.random(),
+                phase: task.phase,
+                title: task.title,
+                responsible: '',
+                startDate: '',
+                endDate: '',
+                status: 'À faire',
+                priority: task.priority,
+                comments: task.comments
+            }));
+            
+            saveTemplate(templateName, cleanTemplate);
+            renderTemplatesList();
+            updateTemplateSelector();
+            alert('✅ Template "' + templateName + '" sauvegardé avec succès !\n\n' + cleanTemplate.length + ' tâches enregistrées.');
+        }
+
+        function exportSingleTemplate(templateName) {
+            const templates = getSavedTemplates();
+            const template = templates[templateName];
+            
+            const dataStr = JSON.stringify(template, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'template_' + templateName.replace(/[^a-z0-9]/gi, '_') + '_' + new Date().toISOString().split('T')[0] + '.json';
+            link.click();
+            URL.revokeObjectURL(url);
+            alert('✅ Template exporté avec succès !');
+        }
+
+        function exportTemplates() {
+            const templates = getSavedTemplates();
+            
+            if (Object.keys(templates).length === 0) {
+                alert('❌ Aucun template à exporter');
+                return;
+            }
+            
+            const dataStr = JSON.stringify(templates, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'tous_templates_poei_' + new Date().toISOString().split('T')[0] + '.json';
+            link.click();
+            URL.revokeObjectURL(url);
+            alert('✅ Tous les templates exportés avec succès !');
+        }
+
+        function importTemplates(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    // Vérifier si c'est un template unique ou multiple
+                    let templatesToImport = {};
+                    
+                    if (Array.isArray(importedData)) {
+                        // Template unique
+                        const templateName = prompt('Nom pour ce template :');
+                        if (!templateName) return;
+                        templatesToImport[templateName] = importedData;
+                    } else if (typeof importedData === 'object') {
+                        // Plusieurs templates
+                        templatesToImport = importedData;
+                    } else {
+                        throw new Error('Format de fichier invalide');
+                    }
+                    
+                    const count = Object.keys(templatesToImport).length;
+                    
+                    if (!confirm(`Voulez-vous importer ${count} template(s) ?\n\nLes templates existants avec le même nom seront remplacés.`)) {
+                        return;
+                    }
+                    
+                    // Fusionner avec les templates existants
+                    const currentTemplates = getSavedTemplates();
+                    const mergedTemplates = {...currentTemplates, ...templatesToImport};
+                    localStorage.setItem('poei_saved_templates', JSON.stringify(mergedTemplates));
+                    
+                    renderTemplatesList();
+                    updateTemplateSelector();
+                    alert('✅ ' + count + ' template(s) importé(s) avec succès !');
+                } catch (error) {
+                    alert('❌ Erreur lors de l\'import :\n\n' + error.message);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function renameTemplate(oldName) {
+            const newName = prompt('Nouveau nom du template :', oldName);
+            if (!newName || newName === oldName) return;
+            
+            const templates = getSavedTemplates();
+            
+            if (templates[newName]) {
+                alert('❌ Un template avec ce nom existe déjà !');
+                return;
+            }
+            
+            templates[newName] = templates[oldName];
+            delete templates[oldName];
+            
+            localStorage.setItem('poei_saved_templates', JSON.stringify(templates));
+            renderTemplatesList();
+            updateTemplateSelector();
+            alert('✅ Template renommé : ' + newName);
+        }
+
+        function deleteTemplateConfirm(templateName) {
+            if (!confirm(`Voulez-vous supprimer le template "${templateName}" ?\n\nCette action est irréversible.`)) {
+                return;
+            }
+            
+            deleteTemplate(templateName);
+            renderTemplatesList();
+            updateTemplateSelector();
+            alert('✅ Template supprimé');
+        }
+
+        function updateDashboard() {
+            const total = tasks.length;
+            const completed = tasks.filter(t => t.status === 'Terminé').length;
+            const todo = tasks.filter(t => t.status === 'À faire').length;
+            const inProgress = tasks.filter(t => t.status === 'En cours').length;
+            const blocked = tasks.filter(t => t.status === 'Bloqué').length;
+            const highPriority = tasks.filter(t => t.priority === 'Haute').length;
+            
+            const today = new Date();
+            const weekLater = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+            const upcoming = tasks.filter(t => {
+                if (!t.endDate || t.status === 'Terminé') return false;
+                const endDate = new Date(t.endDate);
+                return endDate >= today && endDate <= weekLater;
+            }).length;
+            
+            document.getElementById('totalTasks').textContent = total;
+            document.getElementById('completedTasks').textContent = completed;
+            document.getElementById('todoTasks').textContent = todo;
+            document.getElementById('inProgressTasks').textContent = inProgress;
+            document.getElementById('blockedTasks').textContent = blocked;
+            
+            const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+            document.getElementById('progressPercentage').textContent = progress + '%';
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            document.getElementById('alertBlocked').textContent = blocked;
+            document.getElementById('alertHighPriority').textContent = highPriority;
+            document.getElementById('alertUpcoming').textContent = upcoming;
+            
+            updatePhaseTable();
+            updateCharts();
+        }
+
+        function updatePhaseTable() {
+            const phases = [
+                '1. Cadrage & validation dispositif',
+                '2. Ingénierie pédagogique',
+                '3. Communication & recrutement',
+                '4. Préparation opérationnelle',
+                '5. Démarrage de la formation',
+                '6. Suivi en cours de formation',
+                '7. Clôture & obligations de sortie',
+                '8. Actions périphériques'
+            ];
+            
+            const tbody = document.getElementById('phaseTableBody');
+            tbody.innerHTML = '';
+            
+            phases.forEach(phase => {
+                const phaseTasks = tasks.filter(t => t.phase === phase);
+                const total = phaseTasks.length;
+                const completed = phaseTasks.filter(t => t.status === 'Terminé').length;
+                const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+                
+                let statusBadge = '';
+                if (percentage === 100) {
+                    statusBadge = '<span class="status-badge completed">✅ Terminée</span>';
+                } else if (percentage > 0) {
+                    statusBadge = '<span class="status-badge in-progress">🔄 En cours</span>';
+                } else {
+                    statusBadge = '<span class="status-badge pending">⏳ À démarrer</span>';
+                }
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${phase}</strong></td>
+                        <td>${total}</td>
+                        <td>${completed}</td>
+                        <td>${percentage}%</td>
+                        <td>${statusBadge}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderTasks() {
+            const grid = document.getElementById('tasksGrid');
+            
+            // Si l'élément n'existe pas encore, on sort
+            if (!grid) return;
+            
+            let filteredTasks = tasks;
+            
+            if (currentStatusFilter !== 'all') {
+                filteredTasks = filteredTasks.filter(t => t.status === currentStatusFilter);
+            }
+            
+            if (currentPhaseFilter !== 'all') {
+                filteredTasks = filteredTasks.filter(t => t.phase === currentPhaseFilter);
+            }
+            
+            if (filteredTasks.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; color: var(--gray-700); padding: 2rem;">Aucune tâche à afficher</p>';
+                return;
+            }
+            
+            const priorityEmoji = {
+                'Haute': '🔴',
+                'Moyenne': '🟡',
+                'Basse': '🟢'
+            };
+            
+            grid.innerHTML = filteredTasks.map(task => `
+                <div class="task-card">
+                    <div class="task-header">
+                        <div>
+                            <div class="task-phase">${task.phase}</div>
+                            <div class="task-title">${task.title}</div>
+                            <div class="task-meta">
+                                ${task.responsible ? `<span>👤 ${task.responsible}</span>` : ''}
+                                ${task.startDate ? `<span>📅 ${formatDate(task.startDate)}</span>` : ''}
+                                ${task.endDate ? `<span>⏰ ${formatDate(task.endDate)}</span>` : ''}
+                                ${task.priority ? `<span>${priorityEmoji[task.priority]} ${task.priority}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="task-actions">
+                            <button class="btn-edit" onclick="editTask(${task.id})">✏️</button>
+                            <button class="btn-delete" onclick="deleteTask(${task.id})">🗑️</button>
+                        </div>
+                    </div>
+                    ${task.comments ? `<p style="margin-top: 0.5rem; color: var(--gray-700); font-size: 0.9rem;">${task.comments}</p>` : ''}
+                    <div style="margin-top: 1rem;">
+                        <select onchange="updateTaskStatus(${task.id}, this.value)" style="padding: 0.5rem; border-radius: 8px; border: 2px solid var(--gray-300); font-weight: 600;">
+                            <option value="À faire" ${task.status === 'À faire' ? 'selected' : ''}>À faire</option>
+                            <option value="En cours" ${task.status === 'En cours' ? 'selected' : ''}>En cours</option>
+                            <option value="Terminé" ${task.status === 'Terminé' ? 'selected' : ''}>Terminé</option>
+                            <option value="Bloqué" ${task.status === 'Bloqué' ? 'selected' : ''}>Bloqué</option>
+                        </select>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
+            
+            document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            
+            if (tabName === 'tasks') {
+                renderTasks();
+            } else if (tabName === 'analytics') {
+                setTimeout(updateCharts, 100);
+            } else if (tabName === 'gantt') {
+                renderGantt();
+            }
+        }
+
+        function filterByStatus(status) {
+            currentStatusFilter = status;
+            document.querySelectorAll('#statusFilters .filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`#statusFilters .filter-btn[data-status="${status}"]`).classList.add('active');
+            renderTasks();
+        }
+
+        function filterByPhase(phase) {
+            currentPhaseFilter = phase;
+            document.querySelectorAll('#phaseFilters .filter-btn-phase').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`#phaseFilters .filter-btn-phase[data-phase="${phase}"]`).classList.add('active');
+            renderTasks();
+        }
+
+        function openModal(taskId = null) {
+            editingTaskId = taskId;
+            const modal = document.getElementById('taskModal');
+            
+            if (taskId) {
+                const task = tasks.find(t => t.id === taskId);
+                if (task) {
+                    document.getElementById('taskPhase').value = task.phase;
+                    document.getElementById('taskTitle').value = task.title;
+                    document.getElementById('taskResponsible').value = task.responsible;
+                    document.getElementById('taskStartDate').value = task.startDate;
+                    document.getElementById('taskEndDate').value = task.endDate;
+                    document.getElementById('taskStatus').value = task.status;
+                    document.getElementById('taskPriority').value = task.priority;
+                    document.getElementById('taskComments').value = task.comments;
+                    document.querySelector('.modal-header').textContent = 'Modifier la tâche';
+                }
+            } else {
+                document.getElementById('taskForm').reset();
+                document.querySelector('.modal-header').textContent = 'Nouvelle tâche';
+            }
+            
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('taskModal');
+            modal.classList.remove('active');
+            editingTaskId = null;
+            
+            // Réinitialiser le formulaire
+            document.getElementById('taskForm').reset();
+        }
+
+        function saveTask(event) {
+            event.preventDefault();
+            
+            const task = {
+                id: editingTaskId || Date.now(),
+                phase: document.getElementById('taskPhase').value,
+                title: document.getElementById('taskTitle').value,
+                responsible: document.getElementById('taskResponsible').value,
+                startDate: document.getElementById('taskStartDate').value,
+                endDate: document.getElementById('taskEndDate').value,
+                status: document.getElementById('taskStatus').value,
+                priority: document.getElementById('taskPriority').value,
+                comments: document.getElementById('taskComments').value
+            };
+            
+            if (editingTaskId) {
+                const index = tasks.findIndex(t => t.id === editingTaskId);
+                tasks[index] = task;
+            } else {
+                tasks.push(task);
+            }
+            
+            // Sauvegarder et fermer
+            saveTasks();
+            closeModal();
+            
+            // Forcer le rafraîchissement après un court délai
+            setTimeout(() => {
+                renderTasks();
+                updateDashboard();
+            }, 50);
+        }
+
+        function editTask(taskId) {
+            openModal(taskId);
+        }
+
+        function deleteTask(taskId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
+                tasks = tasks.filter(t => t.id !== taskId);
+                saveTasks();
+            }
+        }
+
+        function updateTaskStatus(taskId, newStatus) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.status = newStatus;
+                saveTasks();
+            }
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(tasks, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'poei_tasks_' + new Date().toISOString().split('T')[0] + '.json';
+            link.click();
+            alert('✅ Données exportées avec succès !');
+        }
+
+        function generateReadOnlyLink() {
+            const dataStr = JSON.stringify(tasks);
+            const timestamp = new Date().toISOString().split('T')[0];
+            
+            // Message d'information
+            alert('✅ Génération du fichier en lecture seule...\n\nLe fichier va se télécharger automatiquement avec tous les onglets accessibles en mode consultation.');
+            
+            // Récupérer tous les styles
+            const allStyles = document.querySelector('style').textContent;
+            
+            // Créer un fichier HTML complet en lecture seule avec tous les onglets
+            const readOnlyHTML = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard POEI - Lecture Seule</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"><\/script>
+    <style>${allStyles}</style>
+    <style>
+        .readonly-badge {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 700;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-family: 'Outfit', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="readonly-badge">👁️ MODE LECTURE SEULE</div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>📊 Dashboard Formation POEI</h1>
+            <div class="header-meta">
+                <span>📅 ${new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                <span>👁️ Mode consultation uniquement</span>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="dashboard">📊 Dashboard</button>
+            <button class="tab" data-tab="tasks">📝 Liste des tâches</button>
+            <button class="tab" data-tab="gantt">📅 Vue Gantt</button>
+            <button class="tab" data-tab="analytics">📈 Analytiques</button>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="content-section active">
+            <div class="kpi-grid">
+                <div class="kpi-card blue">
+                    <div class="kpi-label">Tâches totales</div>
+                    <div class="kpi-value" id="totalTasks">0</div>
+                </div>
+                <div class="kpi-card blue">
+                    <div class="kpi-label">À faire</div>
+                    <div class="kpi-value" id="todoTasks">0</div>
+                </div>
+                <div class="kpi-card green">
+                    <div class="kpi-label">Terminées</div>
+                    <div class="kpi-value" id="completedTasks">0</div>
+                </div>
+                <div class="kpi-card orange">
+                    <div class="kpi-label">En cours</div>
+                    <div class="kpi-value" id="inProgressTasks">0</div>
+                </div>
+                <div class="kpi-card red">
+                    <div class="kpi-label">Bloquées</div>
+                    <div class="kpi-value" id="blockedTasks">0</div>
+                </div>
+            </div>
+
+            <div class="progress-card">
+                <div class="progress-header">
+                    <div class="progress-label">Avancement global</div>
+                    <div class="progress-percentage" id="progressPercentage">0%</div>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="alerts-grid">
+                <div class="alert-card danger">
+                    <div class="alert-header">🔴 Tâches bloquées</div>
+                    <div class="alert-count" id="alertBlocked">0</div>
+                    <div class="alert-description">Nécessitent une action immédiate</div>
+                </div>
+                <div class="alert-card warning">
+                    <div class="alert-header">⏰ Haute priorité</div>
+                    <div class="alert-count" id="alertHighPriority">0</div>
+                    <div class="alert-description">À traiter en urgence</div>
+                </div>
+                <div class="alert-card info">
+                    <div class="alert-header">📅 Échéances 7 jours</div>
+                    <div class="alert-count" id="alertUpcoming">0</div>
+                    <div class="alert-description">Tâches à venir cette semaine</div>
+                </div>
+            </div>
+
+            <div class="phase-table">
+                <h2>📊 Avancement par phase</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phase</th>
+                            <th>Total</th>
+                            <th>Terminées</th>
+                            <th>% Avancement</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="phaseTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tasks Section -->
+        <div id="tasks" class="content-section">
+            <div class="task-manager">
+                <div style="margin-bottom: 1.5rem; padding: 1rem; background: #FFF9E6; border-left: 4px solid #F59E0B; border-radius: 12px;">
+                    <strong>ℹ️ Mode lecture seule :</strong> Vous pouvez consulter toutes les tâches mais pas les modifier.
+                </div>
+                <div class="tasks-grid" id="tasksGrid"></div>
+            </div>
+        </div>
+
+        <!-- Gantt Section -->
+        <div id="gantt" class="content-section">
+            <div class="gantt-container">
+                <h2 style="margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: 800;">📅 Diagramme de Gantt</h2>
+                <div id="ganttChart"></div>
+            </div>
+        </div>
+
+        <!-- Analytics Section -->
+        <div id="analytics" class="content-section">
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>Répartition des statuts</h3>
+                    <canvas id="statusChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>Avancement par phase</h3>
+                    <canvas id="phaseChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card" style="margin-bottom: 2rem;">
+                <h3>Charge par responsable</h3>
+                <canvas id="responsibleChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tasks = ${dataStr};
+        let statusChart, phaseChart, responsibleChart;
+
+        document.addEventListener('DOMContentLoaded', init);
+
+        function init() {
+            updateDashboard();
+            renderTasks();
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const targetTab = this.getAttribute('data-tab');
+                    switchTab(targetTab);
+                });
+            });
+        }
+
+        function updateDashboard() {
+            const todo = tasks.filter(t => t.status === 'À faire').length;
+            const total = tasks.length;
+            const completed = tasks.filter(t => t.status === 'Terminé').length;
+            const inProgress = tasks.filter(t => t.status === 'En cours').length;
+            const blocked = tasks.filter(t => t.status === 'Bloqué').length;
+            const highPriority = tasks.filter(t => t.priority === 'Haute').length;
+            
+            const today = new Date();
+            const weekLater = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+            const upcoming = tasks.filter(t => {
+                if (!t.endDate || t.status === 'Terminé') return false;
+                const endDate = new Date(t.endDate);
+                return endDate >= today && endDate <= weekLater;
+            }).length;
+            
+            document.getElementById('totalTasks').textContent = total;
+            document.getElementById('completedTasks').textContent = completed;
+            document.getElementById('todoTasks').textContent = todo;
+            document.getElementById('inProgressTasks').textContent = inProgress;
+            document.getElementById('blockedTasks').textContent = blocked;
+            
+            const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+            document.getElementById('progressPercentage').textContent = progress + '%';
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            document.getElementById('alertBlocked').textContent = blocked;
+            document.getElementById('alertHighPriority').textContent = highPriority;
+            document.getElementById('alertUpcoming').textContent = upcoming;
+            
+            updatePhaseTable();
+        }
+
+        function updatePhaseTable() {
+            const phases = [
+                '1. Cadrage & validation dispositif',
+                '2. Ingénierie pédagogique',
+                '3. Communication & recrutement',
+                '4. Préparation opérationnelle',
+                '5. Démarrage de la formation',
+                '6. Suivi en cours de formation',
+                '7. Clôture & obligations de sortie',
+                '8. Actions périphériques'
+            ];
+            
+            const tbody = document.getElementById('phaseTableBody');
+            tbody.innerHTML = '';
+            
+            phases.forEach(phase => {
+                const phaseTasks = tasks.filter(t => t.phase === phase);
+                const total = phaseTasks.length;
+                const completed = phaseTasks.filter(t => t.status === 'Terminé').length;
+                const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+                
+                let statusBadge = '';
+                if (percentage === 100) {
+                    statusBadge = '<span class="status-badge completed">✅ Terminée</span>';
+                } else if (percentage > 0) {
+                    statusBadge = '<span class="status-badge in-progress">🔄 En cours</span>';
+                } else {
+                    statusBadge = '<span class="status-badge pending">⏳ À démarrer</span>';
+                }
+                
+                tbody.innerHTML += \`
+                    <tr>
+                        <td><strong>\${phase}</strong></td>
+                        <td>\${total}</td>
+                        <td>\${completed}</td>
+                        <td>\${percentage}%</td>
+                        <td>\${statusBadge}</td>
+                    </tr>
+                \`;
+            });
+        }
+
+        function renderTasks() {
+            const grid = document.getElementById('tasksGrid');
+            
+            if (tasks.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; color: var(--gray-700); padding: 2rem;">Aucune tâche</p>';
+                return;
+            }
+            
+            const priorityEmoji = {
+                'Haute': '🔴',
+                'Moyenne': '🟡',
+                'Basse': '🟢'
+            };
+            
+            grid.innerHTML = tasks.map(task => \`
+                <div class="task-card">
+                    <div class="task-header">
+                        <div>
+                            <div class="task-phase">\${task.phase}</div>
+                            <div class="task-title">\${task.title}</div>
+                            <div class="task-meta">
+                                \${task.responsible ? \`<span>👤 \${task.responsible}</span>\` : ''}
+                                \${task.startDate ? \`<span>📅 \${formatDate(task.startDate)}</span>\` : ''}
+                                \${task.endDate ? \`<span>⏰ \${formatDate(task.endDate)}</span>\` : ''}
+                                \${task.priority ? \`<span>\${priorityEmoji[task.priority]} \${task.priority}</span>\` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    \${task.comments ? \`<p style="margin-top: 0.5rem; color: var(--gray-700); font-size: 0.9rem;">\${task.comments}</p>\` : ''}
+                    <div style="margin-top: 1rem;">
+                        <span style="padding: 0.5rem 1rem; border-radius: 8px; background: var(--gray-200); font-weight: 600; display: inline-block;">
+                            \${task.status}
+                        </span>
+                    </div>
+                </div>
+            \`).join('');
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelector(\`.tab[data-tab="\${tabName}"]\`).classList.add('active');
+            
+            document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            
+            if (tabName === 'analytics') {
+                setTimeout(updateCharts, 100);
+            } else if (tabName === 'gantt') {
+                renderGantt();
+            }
+        }
+
+        function renderGantt() {
+            const container = document.getElementById('ganttChart');
+            const tasksWithDates = tasks.filter(t => t.startDate && t.endDate);
+            
+            if (tasksWithDates.length === 0) {
+                container.innerHTML = \`
+                    <div style="text-align: center; padding: 3rem; color: var(--gray-700);">
+                        <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">📅 Aucune tâche avec dates</h3>
+                        <p>Aucune tâche n'a de dates définies pour afficher le Gantt.</p>
+                    </div>
+                \`;
+                return;
+            }
+            
+            const dates = tasksWithDates.flatMap(t => [new Date(t.startDate), new Date(t.endDate)]);
+            const minDate = new Date(Math.min(...dates));
+            const maxDate = new Date(Math.max(...dates));
+            
+            minDate.setDate(minDate.getDate() - 7);
+            maxDate.setDate(maxDate.getDate() + 7);
+            
+            const totalDays = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24));
+            
+            const phases = [
+                '1. Cadrage & validation dispositif',
+                '2. Ingénierie pédagogique',
+                '3. Communication & recrutement',
+                '4. Préparation opérationnelle',
+                '5. Démarrage de la formation',
+                '6. Suivi en cours de formation',
+                '7. Clôture & obligations de sortie',
+                '8. Actions périphériques'
+            ];
+            
+            let html = \`
+                <div class="gantt-header">
+                    <div>Tâche</div>
+                    <div class="gantt-dates">
+                        <span class="gantt-date">\${formatDate(minDate.toISOString().split('T')[0])}</span>
+                        <span class="gantt-date">\${formatDate(maxDate.toISOString().split('T')[0])}</span>
+                    </div>
+                </div>
+            \`;
+            
+            phases.forEach(phase => {
+                const phaseTasks = tasksWithDates.filter(t => t.phase === phase);
+                
+                if (phaseTasks.length > 0) {
+                    html += \`
+                        <div style="margin-top: 1rem; margin-bottom: 0.5rem; padding: 0.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: 700; border-radius: 8px; font-size: 0.9rem;">
+                            \${phase}
+                        </div>
+                    \`;
+                    
+                    phaseTasks.forEach(task => {
+                        const startDate = new Date(task.startDate);
+                        const endDate = new Date(task.endDate);
+                        
+                        const startOffset = Math.ceil((startDate - minDate) / (1000 * 60 * 60 * 24));
+                        const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+                        
+                        const leftPercent = (startOffset / totalDays) * 100;
+                        const widthPercent = (duration / totalDays) * 100;
+                        
+                        const statusClass = {
+                            'À faire': 'status-todo',
+                            'En cours': 'status-progress',
+                            'Terminé': 'status-done',
+                            'Bloqué': 'status-blocked'
+                        }[task.status] || 'status-todo';
+                        
+                        html += \`
+                            <div class="gantt-row">
+                                <div>
+                                    <div class="gantt-task-name">\${task.title}</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-700); margin-top: 0.2rem;">
+                                        \${task.responsible ? '👤 ' + task.responsible : ''}
+                                    </div>
+                                </div>
+                                <div class="gantt-bar-container">
+                                    <div class="gantt-bar \${statusClass}" 
+                                         style="left: \${leftPercent}%; width: \${widthPercent}%;"
+                                         title="\${task.title}\\n\${formatDate(task.startDate)} → \${formatDate(task.endDate)}\\nStatut: \${task.status}">
+                                        \${duration > 3 ? task.status : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        \`;
+                    });
+                }
+            });
+            
+            html += \`
+                <div class="gantt-legend">
+                    <div class="gantt-legend-item">
+                        <div class="gantt-legend-color" style="background: linear-gradient(135deg, #3B82F6, #2563EB);"></div>
+                        <span>À faire</span>
+                    </div>
+                    <div class="gantt-legend-item">
+                        <div class="gantt-legend-color" style="background: linear-gradient(135deg, #F59E0B, #D97706);"></div>
+                        <span>En cours</span>
+                    </div>
+                    <div class="gantt-legend-item">
+                        <div class="gantt-legend-color" style="background: linear-gradient(135deg, #10B981, #059669);"></div>
+                        <span>Terminé</span>
+                    </div>
+                    <div class="gantt-legend-item">
+                        <div class="gantt-legend-color" style="background: linear-gradient(135deg, #EF4444, #DC2626);"></div>
+                        <span>Bloqué</span>
+                    </div>
+                </div>
+            \`;
+            
+            container.innerHTML = html;
+        }
+
+        function updateCharts() {
+            const statusCounts = {
+                'À faire': tasks.filter(t => t.status === 'À faire').length,
+                'En cours': tasks.filter(t => t.status === 'En cours').length,
+                'Terminé': tasks.filter(t => t.status === 'Terminé').length,
+                'Bloqué': tasks.filter(t => t.status === 'Bloqué').length
+            };
+            
+            const statusCtx = document.getElementById('statusChart');
+            if (statusChart) statusChart.destroy();
+            statusChart = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(statusCounts),
+                    datasets: [{
+                        data: Object.values(statusCounts),
+                        backgroundColor: ['#3B82F6', '#F59E0B', '#10B981', '#EF4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            const phases = [
+                '1. Cadrage & validation dispositif',
+                '2. Ingénierie pédagogique',
+                '3. Communication & recrutement',
+                '4. Préparation opérationnelle',
+                '5. Démarrage de la formation',
+                '6. Suivi en cours de formation',
+                '7. Clôture & obligations de sortie',
+                '8. Actions périphériques'
+            ];
+            
+            const phaseData = phases.map(phase => {
+                const phaseTasks = tasks.filter(t => t.phase === phase);
+                const total = phaseTasks.length;
+                const completed = phaseTasks.filter(t => t.status === 'Terminé').length;
+                return total > 0 ? Math.round((completed / total) * 100) : 0;
+            });
+            
+            const phaseCtx = document.getElementById('phaseChart');
+            if (phaseChart) phaseChart.destroy();
+            phaseChart = new Chart(phaseCtx, {
+                type: 'bar',
+                data: {
+                    labels: phases.map(p => p.split('.')[1].trim()),
+                    datasets: [{
+                        label: '% Avancement',
+                        data: phaseData,
+                        backgroundColor: '#3B82F6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            const responsibles = {};
+            tasks.forEach(task => {
+                if (task.responsible) {
+                    responsibles[task.responsible] = (responsibles[task.responsible] || 0) + 1;
+                }
+            });
+            
+            const responsibleCtx = document.getElementById('responsibleChart');
+            const responsibleContainer = responsibleCtx.parentElement;
+            
+            if (responsibleChart) responsibleChart.destroy();
+            
+            if (Object.keys(responsibles).length > 0) {
+                responsibleContainer.innerHTML = '<h3>Charge par responsable</h3><canvas id="responsibleChart"></canvas>';
+                const newCtx = document.getElementById('responsibleChart');
+                
+                responsibleChart = new Chart(newCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(responsibles),
+                        datasets: [{
+                            label: 'Nombre de tâches',
+                            data: Object.values(responsibles),
+                            backgroundColor: '#8B5CF6'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        indexAxis: 'y',
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            } else {
+                responsibleContainer.innerHTML = '<h3>Charge par responsable</h3><p style="text-align: center; color: var(--gray-700); padding: 2rem;">Aucun responsable assigné</p>';
+            }
+        }
+    <\/script>
+</body>
+</html>`;
+            
+            // Télécharger le fichier
+            const blob = new Blob([readOnlyHTML], {type: 'text/html'});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'dashboard_poei_lecture_seule_' + timestamp + '.html';
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function renderGantt() {
+            const container = document.getElementById('ganttChart');
+            const tasksWithDates = tasks.filter(t => t.startDate && t.endDate);
+            
+            if (tasksWithDates.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: var(--gray-700);">
+                        <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">📅 Aucune tâche avec dates</h3>
+                        <p>Ajoutez des dates de début et fin à vos tâches pour voir le diagramme de Gantt.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const dates = tasksWithDates.flatMap(t => [new Date(t.startDate), new Date(t.endDate)]);
+            const minDate = new Date(Math.min(...dates));
+            const maxDate = new Date(Math.max(...dates));
+            
+            minDate.setDate(minDate.getDate() - 7);
+            maxDate.setDate(maxDate.getDate() + 7);
+            
+            const totalDays = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24));
+            
+            const phases = [
+                '1. Cadrage & validation dispositif',
+                '2. Ingénierie pédagogique',
+                '3. Communication & recrutement',
+                '4. Préparation opérationnelle',
+                '5. Démarrage de la formation',
+                '6. Suivi en cours de formation',
+                '7. Clôture & obligations de sortie',
+                '8. Actions périphériques'
+            ];
+            
+            let html = `
+                <div class="gantt-header">
+                    <div>Tâche</div>
+                    <div class="gantt-dates">
+                        <span class="gantt-date">${formatDate(minDate.toISOString().split('T')[0])}</span>
+                        <span class="gantt-date">${formatDate(maxDate.toISOString().split('T')[0])}</span>
+                    </div>
+                </div>
+            `;
+            
+            phases.forEach(phase => {
+                const phaseTasks = tasksWithDates.filter(t => t.phase === phase);
+                
+                if (phaseTasks.length > 0) {
+                    html += `
+                        <div style="margin-top: 1rem; margin-bottom: 0.5rem; padding: 0.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: 700; border-radius: 8px; font-size: 0.9rem;">
+                            ${phase}
+                        </div>
+                    `;
+                    
+                    phaseTasks.forEach(task => {
+                        const startDate = new Date(task.startDate);
+                        const endDate = new Date(task.endDate);
+                        
+                        const startOffset = Math.ceil((startDate - minDate) / (1000 * 60 * 60 * 24));
+                        const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+                        
+                        const leftPercent = (startOffset / totalDays) * 100;
+                        const widthPercent = (duration / totalDays) * 100;
+                        
+                        const statusClass = {
+                            'À faire': 'status-todo',
+                            'En cours': 'status-progress',
+                            'Terminé': 'status-done',
+                            'Bloqué': 'status-blocked'
+                        }[task.status] || 'status-todo';
+                        
+                        html += `
+                            <div class="gantt-row">
+                                <div>
+                                    <div class="gantt-task-name">${task.title}</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-700); margin-top: 0.2rem;">
+                                        ${task.responsible ? '👤 ' + task.responsible : ''}
+                                    </div>
+                                </div>
+                                <div class="gantt-bar-container">
+                                    <div class="gantt-bar ${statusClass}" 
+                                         style="left: ${leftPercent}%; width: ${widthPercent}%;"
+                                         title="${task.title}\n${formatDate(task.startDate)} → ${formatDate(task.endDate)}\nStatut: ${task.status}">
+                                        ${duration > 3 ? task.status : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            });
+            
+            html += `
+                <div class="gantt-legend">
+                    <div class="gantt-legend-item">
+                        <div class="gantt-legend-color" style="background: linear-gradient(135deg, #3B82F6, #2563EB);"></div>
+                        <span>À faire</span>
+                    </div>
+                    <div class="gantt-legend-item">
+                        <div class="gantt-legend-color" style="background: linear-gradient(135deg, #F59E0B, #D97706);"></div>
+                        <span>En cours</span>
+                    </div>
+                    <div class="gantt-legend-item">
+                        <div class="gantt-legend-color" style="background: linear-gradient(135deg, #10B981, #059669);"></div>
+                        <span>Terminé</span>
+                    </div>
+                    <div class="gantt-legend-item">
+                        <div class="gantt-legend-color" style="background: linear-gradient(135deg, #EF4444, #DC2626);"></div>
+                        <span>Bloqué</span>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        function updateCharts() {
+            const statusCounts = {
+                'À faire': tasks.filter(t => t.status === 'À faire').length,
+                'En cours': tasks.filter(t => t.status === 'En cours').length,
+                'Terminé': tasks.filter(t => t.status === 'Terminé').length,
+                'Bloqué': tasks.filter(t => t.status === 'Bloqué').length
+            };
+            
+            const statusCtx = document.getElementById('statusChart');
+            if (statusChart) statusChart.destroy();
+            statusChart = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(statusCounts),
+                    datasets: [{
+                        data: Object.values(statusCounts),
+                        backgroundColor: ['#3B82F6', '#F59E0B', '#10B981', '#EF4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            const phases = [
+                '1. Cadrage & validation dispositif',
+                '2. Ingénierie pédagogique',
+                '3. Communication & recrutement',
+                '4. Préparation opérationnelle',
+                '5. Démarrage de la formation',
+                '6. Suivi en cours de formation',
+                '7. Clôture & obligations de sortie',
+                '8. Actions périphériques'
+            ];
+            
+            const phaseData = phases.map(phase => {
+                const phaseTasks = tasks.filter(t => t.phase === phase);
+                const total = phaseTasks.length;
+                const completed = phaseTasks.filter(t => t.status === 'Terminé').length;
+                return total > 0 ? Math.round((completed / total) * 100) : 0;
+            });
+            
+            const phaseCtx = document.getElementById('phaseChart');
+            if (phaseChart) phaseChart.destroy();
+            phaseChart = new Chart(phaseCtx, {
+                type: 'bar',
+                data: {
+                    labels: phases.map(p => p.split('.')[1].trim()),
+                    datasets: [{
+                        label: '% Avancement',
+                        data: phaseData,
+                        backgroundColor: '#3B82F6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            const responsibles = {};
+            tasks.forEach(task => {
+                if (task.responsible) {
+                    responsibles[task.responsible] = (responsibles[task.responsible] || 0) + 1;
+                }
+            });
+            
+            const responsibleCtx = document.getElementById('responsibleChart');
+            const responsibleContainer = responsibleCtx.parentElement;
+            
+            if (responsibleChart) responsibleChart.destroy();
+            
+            if (Object.keys(responsibles).length > 0) {
+                responsibleContainer.innerHTML = '<h3>Charge par responsable</h3><canvas id="responsibleChart"></canvas>';
+                const newCtx = document.getElementById('responsibleChart');
+                
+                responsibleChart = new Chart(newCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(responsibles),
+                        datasets: [{
+                            label: 'Nombre de tâches',
+                            data: Object.values(responsibles),
+                            backgroundColor: '#8B5CF6'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        indexAxis: 'y',
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            } else {
+                responsibleContainer.innerHTML = '<h3>Charge par responsable</h3><p style="text-align: center; color: var(--gray-700); padding: 2rem;">Assignez des responsables pour voir la répartition</p>';
+            }
+        }
+    </script>
+</body>
+</html>
