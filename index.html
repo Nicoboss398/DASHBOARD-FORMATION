@@ -1160,10 +1160,12 @@
             });
 
             try {
-                // Envoi via GET pour éviter tout problème CORS
-                const encoded = encodeURIComponent(JSON.stringify({ tasks: allTasks }));
-                const url = APPS_SCRIPT_URL + '?action=save_all&data=' + encoded;
-                const resp = await fetch(url);
+                // POST en text/plain : pas de préflight CORS et pas de limite de taille d'URL
+                const resp = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'save_all', tasks: allTasks })
+                });
                 const result = await resp.json();
                 if (result.success) {
                     showSyncStatus('✅ Sauvegardé dans Google Sheets', 'success');
