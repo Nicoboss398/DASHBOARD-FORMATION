@@ -1159,59 +1159,24 @@
                 });
             });
 
-            // Utiliser une iframe cachée pour contourner le CORS (fichier local → Apps Script)
             try {
-                await postViaForm(allTasks);
-                showSyncStatus('✅ Sauvegardé dans Google Sheets', 'success');
+                const resp = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ action: 'save_all', tasks: allTasks })
+                });
+                const result = await resp.json();
+                if (result.success) {
+                    showSyncStatus('✅ Sauvegardé dans Google Sheets', 'success');
+                } else {
+                    throw new Error(result.error || 'Erreur inconnue');
+                }
             } catch (err) {
+                console.warn('Sheets save error:', err);
                 showSyncStatus('⚠️ Sauvegardé en local uniquement', 'warning');
             } finally {
                 isSyncing = false;
             }
-        }
-
-        function postViaForm(allTasks) {
-            return new Promise((resolve, reject) => {
-                // Créer une iframe et un formulaire cachés
-                const iframe = document.createElement('iframe');
-                iframe.name = 'hidden_iframe_' + Date.now();
-                iframe.style.display = 'none';
-                document.body.appendChild(iframe);
-
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = APPS_SCRIPT_URL;
-                form.target = iframe.name;
-                form.style.display = 'none';
-
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'data';
-                input.value = JSON.stringify({ action: 'save_all', tasks: allTasks });
-                form.appendChild(input);
-
-                document.body.appendChild(form);
-
-                iframe.onload = () => {
-                    // Nettoyer après envoi
-                    setTimeout(() => {
-                        document.body.removeChild(form);
-                        document.body.removeChild(iframe);
-                    }, 1000);
-                    resolve();
-                };
-
-                iframe.onerror = () => {
-                    document.body.removeChild(form);
-                    document.body.removeChild(iframe);
-                    reject(new Error('Erreur iframe'));
-                };
-
-                form.submit();
-
-                // Timeout de sécurité
-                setTimeout(resolve, 5000);
-            });
         }
 
         function setupEventListeners() {
