@@ -991,6 +991,7 @@
                             <option value="">Non assigné</option>
                         </select>
                         <button type="button" id="btnAddResponsible" title="Ajouter un nouveau responsable" style="padding:0 1.1rem; border:2px solid var(--gray-300); border-radius:8px; background:var(--gray-200); font-weight:700; font-size:1.3rem; cursor:pointer; line-height:1;">+</button>
+                        <button type="button" id="btnRemoveResponsible" title="Retirer le responsable sélectionné de la liste" style="padding:0 1.1rem; border:2px solid var(--gray-300); border-radius:8px; background:#FEE2E2; font-weight:700; font-size:1.3rem; cursor:pointer; line-height:1;">–</button>
                     </div>
                 </div>
                 <div class="form-group">
@@ -1148,6 +1149,28 @@
             populateResponsibleSelect(clean);
         }
 
+        function removeResponsible() {
+            const sel = document.getElementById('taskResponsible');
+            const name = sel.value;
+            if (!name) {
+                alert('Sélectionnez d\'abord dans la liste le responsable à retirer.');
+                return;
+            }
+            // Compter les tâches qui utilisent encore ce nom (tous projets confondus)
+            let used = 0;
+            Object.keys(allProjects).forEach(proj => {
+                (allProjects[proj] || []).forEach(t => { if (t.responsible === name) used++; });
+            });
+            if (used > 0) {
+                alert('❌ Impossible de retirer "' + name + '" : il est encore assigné à ' + used + ' tâche(s).\n\nRéassignez d\'abord ces tâches à un autre responsable.');
+                return;
+            }
+            if (!confirm('Retirer "' + name + '" de la liste des responsables ?')) return;
+            responsibles = responsibles.filter(r => r !== name);
+            saveResponsibles();
+            populateResponsibleSelect('');
+        }
+
         // =============================================
         // SYNCHRONISATION GOOGLE SHEETS
         // =============================================
@@ -1274,6 +1297,7 @@
             // Task controls
             document.getElementById('btnNewTask').addEventListener('click', () => openModal());
             document.getElementById('btnAddResponsible').addEventListener('click', addResponsible);
+            document.getElementById('btnRemoveResponsible').addEventListener('click', removeResponsible);
             document.getElementById('templateSelector').addEventListener('change', function() {
                 const loadBtn = document.getElementById('btnLoadSelectedTemplate');
                 loadBtn.disabled = !this.value;
