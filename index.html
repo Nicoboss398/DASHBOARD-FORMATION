@@ -1173,6 +1173,8 @@
                 allTasks.forEach(task => {
                     const proj = task.project || 'Projet par défaut';
                     if (!allProjects[proj]) allProjects[proj] = [];
+                    // Ligne marqueur : projet vide, on crée le projet sans ajouter de tâche
+                    if (task.title === PROJECT_MARKER) return;
                     task.id = Number(task.id) || task.id;
                     allProjects[proj].push(task);
                 });
@@ -1201,8 +1203,12 @@
             }
         }
 
+        // Ligne marqueur enregistrée dans le Sheet pour conserver les projets sans tâche
+        const PROJECT_MARKER = '__PROJET_VIDE__';
+        let pendingSave = false;
+
         async function saveToSheets() {
-            if (isSyncing) return;
+            if (isSyncing) { pendingSave = true; return; }
             isSyncing = true;
             showSyncStatus('💾 Sauvegarde en cours...', 'loading');
 
@@ -1212,9 +1218,17 @@
 
             const allTasks = [];
             Object.keys(allProjects).forEach(proj => {
-                (allProjects[proj] || []).forEach(task => {
+                const projTasks = allProjects[proj] || [];
+                projTasks.forEach(task => {
                     allTasks.push({ ...task, project: proj });
                 });
+                // Projet sans tâche : on enregistre une ligne marqueur pour qu'il survive au rechargement
+                if (projTasks.length === 0) {
+                    allTasks.push({
+                        id: 'projet-' + proj, project: proj, phase: '', title: PROJECT_MARKER,
+                        responsible: '', startDate: '', endDate: '', status: '', priority: '', comments: ''
+                    });
+                }
             });
 
             try {
@@ -1235,6 +1249,11 @@
                 showSyncStatus('⚠️ Sauvegardé en local uniquement', 'warning');
             } finally {
                 isSyncing = false;
+                // Une sauvegarde a été demandée pendant celle-ci : on la rejoue
+                if (pendingSave) {
+                    pendingSave = false;
+                    saveToSheets();
+                }
             }
         }
 
