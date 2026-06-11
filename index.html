@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Formation POEI</title>
+    <title>DASHBOARD OPUS</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -785,7 +785,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 Dashboard Formation POEI</h1>
+            <h1>📊 DASHBOARD OPUS</h1>
             <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
             <div class="header-meta">
                 <span>📅 <span id="currentDate"></span></span>
@@ -1937,10 +1937,10 @@
                 tasks.push(task);
             }
             
-            // Sauvegarder et fermer
-            saveTasks();
+            // Fermer d'abord la fenêtre, puis sauvegarder
             closeModal();
-            
+            saveTasks();
+
             // Forcer le rafraîchissement après un court délai
             setTimeout(() => {
                 renderTasks();
@@ -1994,7 +1994,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard POEI - Lecture Seule</title>
+    <title>DASHBOARD OPUS - Lecture Seule</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"><\/script>
     <style>${allStyles}</style>
@@ -2019,7 +2019,7 @@
     
     <div class="container">
         <div class="header">
-            <h1>📊 Dashboard Formation POEI</h1>
+            <h1>📊 DASHBOARD OPUS</h1>
             <div class="header-meta">
                 <span>📅 ${new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                 <span>👁️ Mode consultation uniquement</span>
@@ -2500,10 +2500,15 @@
             });
             
             const responsibleCtx = document.getElementById('responsibleChart');
-            const responsibleContainer = responsibleCtx.parentElement;
-            
+            const responsibleContainer = responsibleCtx
+                ? responsibleCtx.parentElement
+                : document.getElementById('responsibleChartContainer');
+
+            if (!responsibleContainer) return;
+            responsibleContainer.id = 'responsibleChartContainer';
+
             if (responsibleChart) responsibleChart.destroy();
-            
+
             if (Object.keys(responsibles).length > 0) {
                 responsibleContainer.innerHTML = '<h3>Charge par responsable</h3><canvas id="responsibleChart"></canvas>';
                 const newCtx = document.getElementById('responsibleChart');
@@ -2753,10 +2758,15 @@
             });
             
             const responsibleCtx = document.getElementById('responsibleChart');
-            const responsibleContainer = responsibleCtx.parentElement;
-            
+            const responsibleContainer = responsibleCtx
+                ? responsibleCtx.parentElement
+                : document.getElementById('responsibleChartContainer');
+
+            if (!responsibleContainer) return;
+            responsibleContainer.id = 'responsibleChartContainer';
+
             if (responsibleChart) responsibleChart.destroy();
-            
+
             if (Object.keys(responsibles).length > 0) {
                 responsibleContainer.innerHTML = '<h3>Charge par responsable</h3><canvas id="responsibleChart"></canvas>';
                 const newCtx = document.getElementById('responsibleChart');
