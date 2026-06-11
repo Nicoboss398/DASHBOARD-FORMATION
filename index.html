@@ -986,7 +986,12 @@
                 </div>
                 <div class="form-group">
                     <label>Responsable</label>
-                    <input type="text" id="taskResponsible">
+                    <div style="display:flex; gap:0.5rem; align-items:stretch;">
+                        <select id="taskResponsible" style="flex:1;">
+                            <option value="">Non assigné</option>
+                        </select>
+                        <button type="button" id="btnAddResponsible" title="Ajouter un nouveau responsable" style="padding:0 1.1rem; border:2px solid var(--gray-300); border-radius:8px; background:var(--gray-200); font-weight:700; font-size:1.3rem; cursor:pointer; line-height:1;">+</button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Date de début</label>
@@ -1085,9 +1090,62 @@
 
         function init() {
             updateCurrentDate();
+            loadResponsibles();
             setupEventListeners();
             showSyncStatus('⏳ Chargement des données...', 'loading');
             loadFromSheets();
+        }
+
+        // =============================================
+        // GESTION DES RESPONSABLES
+        // =============================================
+
+        let responsibles = [];
+
+        function loadResponsibles() {
+            try {
+                responsibles = JSON.parse(localStorage.getItem('poei_responsibles')) || [];
+            } catch (e) {
+                responsibles = [];
+            }
+            if (responsibles.length === 0) {
+                responsibles = ['Alexandra COLLEN', 'Nicolas BOSSARD'];
+                saveResponsibles();
+            }
+        }
+
+        function saveResponsibles() {
+            localStorage.setItem('poei_responsibles', JSON.stringify(responsibles));
+        }
+
+        function populateResponsibleSelect(selected = '') {
+            const sel = document.getElementById('taskResponsible');
+            if (!sel) return;
+            // Liste enregistrée + noms déjà utilisés dans les tâches
+            const names = [...new Set([
+                ...responsibles,
+                ...tasks.map(t => t.responsible).filter(Boolean)
+            ])].sort((a, b) => a.localeCompare(b, 'fr'));
+
+            sel.innerHTML = '<option value="">Non assigné</option>';
+            names.forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.textContent = name;
+                sel.appendChild(opt);
+            });
+            sel.value = selected || '';
+        }
+
+        function addResponsible() {
+            const name = prompt('Nom du nouveau responsable :');
+            if (!name || !name.trim()) return;
+            const clean = name.trim();
+            if (!responsibles.includes(clean)) {
+                responsibles.push(clean);
+                saveResponsibles();
+            }
+            populateResponsibleSelect(clean);
         }
 
         // =============================================
@@ -1196,6 +1254,7 @@
 
             // Task controls
             document.getElementById('btnNewTask').addEventListener('click', () => openModal());
+            document.getElementById('btnAddResponsible').addEventListener('click', addResponsible);
             document.getElementById('templateSelector').addEventListener('change', function() {
                 const loadBtn = document.getElementById('btnLoadSelectedTemplate');
                 loadBtn.disabled = !this.value;
@@ -1890,7 +1949,7 @@
                 if (task) {
                     document.getElementById('taskPhase').value = task.phase;
                     document.getElementById('taskTitle').value = task.title;
-                    document.getElementById('taskResponsible').value = task.responsible;
+                    populateResponsibleSelect(task.responsible || '');
                     document.getElementById('taskStartDate').value = task.startDate;
                     document.getElementById('taskEndDate').value = task.endDate;
                     document.getElementById('taskStatus').value = task.status;
@@ -1900,6 +1959,7 @@
                 }
             } else {
                 document.getElementById('taskForm').reset();
+                populateResponsibleSelect('');
                 document.querySelector('.modal-header').textContent = 'Nouvelle tâche';
             }
             
