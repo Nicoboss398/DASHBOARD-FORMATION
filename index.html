@@ -6,7 +6,473 @@
     <title>DASHBOARD OPUS</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
+  /* ===== OPUS COLOR SYSTEM (charte inspirée du design ANDRH) ===== */
+  :root {
+    --navy:          #00195C;
+    --blue:          #0044C3;
+    --blue-light:    #3B6FE0;
+    --teal:          #00B4D8;
+    --cyan:          #00C8E8;
+    --bg:            #F0F4FB;
+    --bg-card:       #FFFFFF;
+    --border:        #D0DCF5;
+    --text:          #00195C;
+    --text-muted:    #5A6B9A;
+    --success:       #1BA05E;
+    --warning:       #E8910A;
+    --danger:        #D62B2B;
+    --sidebar-w:     260px;
+    --gradient:      linear-gradient(145deg, #00C8E8 0%, #0044C3 48%, #00195C 100%);
+    --gradient-soft: linear-gradient(135deg, #E8F0FE 0%, #D6E8FF 100%);
+    --gray-100: #F0F4FB; --gray-200: #E2E9F5; --gray-300: #CBD8EF; --gray-400: #A9BAD9; --gray-700: #5A6B9A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: linear-gradient(160deg, #F5F8FF 0%, #E7EEFA 100%); background-attachment: fixed; min-height: 100%; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, 'Outfit', sans-serif; background: transparent; color: var(--text); min-height: 100vh; display: flex; font-size: 14px; }
+  a { color: var(--blue); }
+
+  /* ===== SIDEBAR ===== */
+  #sidebar { width: var(--sidebar-w); background: var(--navy); box-shadow: 2px 0 18px rgba(0,17,62,0.18); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; transition: transform .3s; }
+  .sidebar-brand { padding: 22px 18px 18px; border-bottom: 1px solid rgba(255,255,255,0.12); }
+  .sidebar-logo { display: flex; align-items: center; gap: 11px; }
+  .logo-mark { width: 44px; height: 44px; background: var(--gradient); border-radius: 11px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 17px; color: #fff; letter-spacing: -0.5px; flex-shrink: 0; box-shadow: 0 4px 14px rgba(0,200,232,0.35); }
+  .logo-text { display: flex; flex-direction: column; }
+  .logo-text strong { color: #fff; font-size: 15px; font-weight: 800; letter-spacing: 0.4px; }
+  .logo-text span { color: var(--cyan); font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+  .sidebar-scroll { flex: 1; overflow-y: auto; padding: 4px 0 10px; }
+  .nav-section-title { color: rgba(255,255,255,0.38); font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; padding: 16px 20px 8px; font-weight: 700; }
+  .project-block { margin: 10px 12px 4px; padding: 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; }
+  .project-label { color: rgba(255,255,255,0.5); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; font-weight: 700; }
+  #projectSelector, .sidebar-select { width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); border-radius: 9px; padding: 9px 11px; color: #fff; font-size: 12.5px; font-weight: 600; cursor: pointer; outline: none; font-family: inherit; }
+  #projectSelector option { background: var(--navy); color: #fff; }
+  .project-actions { display: flex; gap: 5px; margin-top: 7px; flex-wrap: wrap; }
+  .project-actions button { flex: 1; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: rgba(255,255,255,0.78); padding: 8px 0; cursor: pointer; transition: all .18s; font-family: inherit; }
+  .project-actions button:hover { background: rgba(255,255,255,0.18); color: #fff; }
+  .project-actions button svg { width: 15px; height: 15px; }
+  .nav-item { display: flex; align-items: center; gap: 13px; width: 100%; text-align: left; background: none; border: none; color: rgba(255,255,255,0.88); font-size: 13.5px; font-weight: 500; font-family: inherit; padding: 10px 14px; border-radius: 9px; cursor: pointer; transition: all .18s; }
+  .nav-item:hover { background: rgba(255,255,255,0.10); color: #fff; }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.92; }
+  .btn-sidebar svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .team-avatars { display: flex; flex-wrap: wrap; gap: 7px; padding: 2px 16px 6px; align-items: center; }
+  .team-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--gradient); color: #fff; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,0.28); text-transform: uppercase; }
+  .team-empty { font-size: 11px; color: rgba(255,255,255,0.45); padding: 0 16px; }
+  /* ===== AVATARS ÉQUIPE style ANDRH (photo + tooltip + lien LinkedIn) ===== */
+  .team-member-bubble { position: relative; }
+  .team-member-link { display: block; width: 34px; height: 34px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.18); transition: border-color .2s, transform .2s; text-decoration: none; flex-shrink: 0; cursor: pointer; }
+  .team-member-link:hover { border-color: var(--cyan, #00C8E8); transform: scale(1.12); z-index: 10; }
+  .avatar-container { position: relative; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--gradient); }
+  .avatar-initials { color: #fff; font-size: 10px; font-weight: 800; letter-spacing: -0.3px; position: relative; z-index: 1; user-select: none; text-transform: uppercase; }
+  .avatar-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; z-index: 2; }
+  .avatar-tooltip { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: #111827; border: 1px solid rgba(255,255,255,0.12); border-radius: 9px; padding: 9px 13px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .18s; z-index: 1000; display: flex; flex-direction: column; gap: 3px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); min-width: 150px; }
+  .team-member-bubble:hover .avatar-tooltip { opacity: 1; }
+  .avatar-tooltip-name { color: #fff; font-size: 11px; font-weight: 700; }
+  .avatar-tooltip-email { color: #00C8E8; font-size: 10px; text-decoration: none; display: block; }
+  .avatar-tooltip-li { color: rgba(255,255,255,0.55); font-size: 10px; margin-top: 1px; display: flex; align-items: center; gap: 4px; }
+  .avatar-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: #111827; }
+  .team-manage-btn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px dashed rgba(255,255,255,0.35); background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.75); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all .2s; }
+  .team-manage-btn:hover { background: rgba(255,255,255,0.16); color: #fff; border-color: var(--cyan, #00C8E8); }
+  /* ===== MODALE GESTION ÉQUIPE ===== */
+  .team-modal-overlay { position: fixed; inset: 0; background: rgba(10,20,45,0.55); backdrop-filter: blur(3px); z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .team-modal { background: #fff; border-radius: 16px; width: 100%; max-width: 560px; max-height: 88vh; overflow: auto; box-shadow: 0 24px 60px rgba(0,25,92,0.35); }
+  .team-modal-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--border, #E4EAF4); position: sticky; top: 0; background: #fff; z-index: 2; }
+  .team-modal-head h3 { margin: 0; font-size: 16px; color: var(--navy, #0A1E4B); }
+  .team-modal-close { border: none; background: none; font-size: 22px; line-height: 1; cursor: pointer; color: #7a8aa0; }
+  .team-modal-body { padding: 14px 22px 20px; }
+  .tm-row { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--bg, #EEF2FA); }
+  .tm-row:last-child { border-bottom: none; }
+  .tm-avatar-preview { width: 46px; height: 46px; border-radius: 50%; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--gradient); color: #fff; font-size: 13px; font-weight: 800; position: relative; }
+  .tm-avatar-preview img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .tm-fields { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .tm-fields .tm-name { font-weight: 700; font-size: 13px; color: var(--navy, #0A1E4B); }
+  .tm-fields input { width: 100%; padding: 6px 9px; border: 1.5px solid var(--border, #E4EAF4); border-radius: 7px; font-size: 12px; font-family: inherit; box-sizing: border-box; }
+  .tm-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tm-btn { font-size: 11px; padding: 5px 9px; border-radius: 7px; border: 1.5px solid var(--border, #E4EAF4); background: #f7f9fd; cursor: pointer; font-family: inherit; color: var(--navy, #0A1E4B); }
+  .tm-btn:hover { background: #eef3fb; }
+  .tm-hint { font-size: 11.5px; color: #7a8aa0; margin: 4px 0 12px; }
+  /* ===== POINT DE DÉPART PROJET ===== */
+  .ps-choices { display: flex; flex-direction: column; gap: 12px; }
+  .ps-card { display: flex; flex-direction: column; gap: 3px; text-align: left; padding: 16px 18px; border: 1.5px solid var(--border, #D0DCF5); border-radius: 13px; background: #f8faff; cursor: pointer; font-family: inherit; transition: all .18s; }
+  .ps-card:hover { border-color: var(--cyan, #00C8E8); background: #fff; box-shadow: 0 6px 18px rgba(0,25,92,0.10); transform: translateY(-1px); }
+  .ps-card .ps-ico { font-size: 22px; }
+  .ps-card .ps-title { font-size: 14px; font-weight: 800; color: var(--navy, #00195C); }
+  .ps-card .ps-desc { font-size: 12px; color: #7a8aa0; }
+  .ps-tpl-list { display: flex; flex-direction: column; gap: 8px; max-height: 46vh; overflow: auto; }
+  .ps-tpl { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1.5px solid var(--border, #D0DCF5); border-radius: 10px; background: #f8faff; cursor: pointer; font-family: inherit; transition: all .16s; }
+  .ps-tpl:hover { border-color: var(--cyan, #00C8E8); background: #fff; }
+  .ps-tpl .ps-tpl-name { font-size: 13px; font-weight: 700; color: var(--navy, #00195C); }
+  .ps-tpl .ps-tpl-count { font-size: 11.5px; color: #7a8aa0; white-space: nowrap; }
+  .sidebar-footer { padding: 14px 14px 18px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 7px; }
+  .btn-sidebar { display: flex; align-items: center; gap: 8px; justify-content: center; background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.14); border-radius: 9px; color: #fff; font-size: 12px; font-weight: 600; padding: 9px 10px; cursor: pointer; transition: all .2s; font-family: inherit; }
+  .btn-sidebar:hover { background: rgba(255,255,255,0.18); }
+
+  /* ===== MAIN / TOPBAR ===== */
+  #main { flex: 1; margin-left: var(--sidebar-w); min-height: 100vh; display: flex; flex-direction: column; }
+  #topbar { background: rgba(255,255,255,0.86); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom: 1px solid var(--border); padding: 12px 26px; display: flex; align-items: center; justify-content: space-between; gap: 16px; position: sticky; top: 0; z-index: 60; flex-wrap: wrap; }
+  .topbar-left { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .topnav { display: flex; gap: 6px; background: none; border: none; border-radius: 0; padding: 0; flex-wrap: wrap; box-shadow: none; }
+  .tab, .topnav-btn { display: inline-flex; align-items: center; gap: 8px; border: none; background: none; color: #5B6B8C; font-size: 13.5px; font-weight: 700; font-family: inherit; padding: 9px 16px; border-radius: 10px; cursor: pointer; transition: all .18s; }
+  .tab svg, .topnav-btn svg { flex-shrink: 0; }
+  .tab:hover, .topnav-btn:hover { color: var(--blue); }
+  .tab.active, .topnav-btn.active { background: linear-gradient(135deg, #2E63D8 0%, #0C2E86 100%); color: #fff; box-shadow: 0 4px 12px rgba(12,46,134,0.32); }
+  .topbar-right { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .last-update { display: flex; align-items: center; gap: 7px; color: var(--text-muted); font-size: 12px; font-weight: 600; }
+  .sync-status { font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 999px; }
+  .sync-status.loading { background: #FFF3E0; color: #B45309; }
+  .sync-status.success { background: #E6F7EE; color: #1BA05E; }
+  .sync-status.warning { background: #FEF3E2; color: #B45309; }
+  .container { padding: 26px 30px 40px; flex: 1; }
+  .content-section { display: none; animation: fadeIn .25s ease; }
+  .content-section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: none; } }
+
+  /* ===== BANNER ===== */
+  .banner { background: var(--gradient); border: none; border-radius: 18px; padding: 24px 30px; color: #fff; display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 22px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,68,195,0.28); flex-wrap: wrap; }
+  .banner::after { content: 'opus'; position: absolute; right: 24px; top: 50%; transform: translateY(-50%); font-size: 84px; font-weight: 900; color: rgba(255,255,255,0.16); letter-spacing: -4px; font-style: italic; pointer-events: none; }
+  .banner-title { font-size: 21px; font-weight: 800; margin-bottom: 4px; }
+  .banner-sub { font-size: 13px; opacity: 0.8; }
+  .banner-stats { display: flex; gap: 26px; position: relative; z-index: 1; }
+  .banner-stat { text-align: center; }
+  .banner-stat-val { font-size: 28px; font-weight: 800; display: block; }
+  .banner-stat-lbl { font-size: 11px; opacity: 0.75; }
+
+  /* ===== KPI ===== */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 22px; }
+  .kpi-card { background: var(--bg-card); border-radius: 15px; padding: 18px 20px; box-shadow: 0 4px 20px rgba(0,25,92,0.1); position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.9); }
+  .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background: var(--gradient); }
+  .kpi-card.green::before { background: var(--success); }
+  .kpi-card.orange::before { background: var(--warning); }
+  .kpi-card.red::before { background: var(--danger); }
+  .kpi-card.blue::before { background: var(--blue); }
+  .kpi-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .6px; }
+  .kpi-value { font-size: 34px; font-weight: 800; color: var(--navy); margin-top: 6px; line-height: 1; }
+  .progress-card { background: var(--bg-card); border-radius: 15px; padding: 20px 24px; box-shadow: 0 4px 20px rgba(0,25,92,0.1); margin-bottom: 22px; }
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .progress-label { font-size: 13px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: .5px; }
+  .progress-percentage { font-size: 22px; font-weight: 800; color: var(--blue); }
+  .progress-bar-container, .progress-bar-outer { height: 12px; background: var(--gray-200); border-radius: 999px; overflow: hidden; }
+  .progress-bar-fill, .progress-bar-inner { height: 100%; background: var(--gradient); border-radius: 999px; transition: width .5s ease; }
+  .alerts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 22px; }
+  .alert-card { background: var(--bg-card); border-radius: 15px; padding: 18px 20px; box-shadow: 0 4px 20px rgba(0,25,92,0.1); border-left: 5px solid var(--border); }
+  .alert-card.danger { border-left-color: var(--danger); }
+  .alert-card.warning { border-left-color: var(--warning); }
+  .alert-card.info { border-left-color: var(--blue); }
+  .alert-header { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .alert-count { font-size: 30px; font-weight: 800; color: var(--navy); }
+  .alert-card.danger .alert-count { color: var(--danger); }
+  .alert-card.warning .alert-count { color: var(--warning); }
+  .alert-card.info .alert-count { color: var(--blue); }
+  .alert-description { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+  .phase-table, .task-manager, .gantt-container, .chart-card, .section-card { background: var(--bg-card); border-radius: 16px; padding: 22px 24px; box-shadow: 0 4px 20px rgba(0,25,92,0.1); margin-bottom: 22px; }
+  .phase-table h2, .gantt-container h2 { font-size: 16px; font-weight: 800; color: var(--navy); margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); padding: 8px 10px; border-bottom: 2px solid var(--border); }
+  tbody td { padding: 10px; border-bottom: 1px solid var(--bg); color: var(--text); }
+  tbody tr:hover { background: var(--bg); }
+
+  /* ===== BUTTONS ===== */
+  .btn { border: none; border-radius: 10px; font-family: inherit; font-weight: 700; font-size: 13px; padding: 10px 18px; cursor: pointer; transition: all .18s; display: inline-flex; align-items: center; gap: 7px; }
+  .btn-primary, .btn.btn-primary { background: var(--gradient); color: #fff; box-shadow: 0 4px 14px rgba(0,68,195,0.28); }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 7px 20px rgba(0,68,195,0.38); }
+  .btn-secondary, .btn.btn-secondary { background: var(--bg); color: var(--navy); border: 1.5px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--blue); color: var(--blue); }
+  .btn-success, .btn.btn-success { background: var(--success); color: #fff; }
+  .btn-success:hover { filter: brightness(1.05); }
+  .btn-reload { background: var(--bg); border: 1.5px solid var(--border); color: var(--navy); border-radius: 10px; font-weight: 700; font-size: 13px; padding: 9px 16px; cursor: pointer; font-family: inherit; }
+  .btn-reload:hover { border-color: var(--blue); color: var(--blue); }
+  .task-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 18px; }
+  #templateSelector, .filter-select { padding: 9px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-family: inherit; font-weight: 600; font-size: 13px; cursor: pointer; color: var(--text); background: #fff; }
+  .filter-section { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+  .filter-label { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+  .filter-group { display: flex; gap: 5px; flex-wrap: wrap; }
+  .filter-btn, .filter-btn-phase { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text-muted); font-size: 12px; font-weight: 600; padding: 6px 13px; cursor: pointer; transition: all .18s; font-family: inherit; }
+  .filter-btn:hover, .filter-btn-phase:hover { border-color: var(--blue); color: var(--blue); }
+  .filter-btn.active, .filter-btn-phase.active { background: var(--gradient); color: #fff; border-color: transparent; }
+  .tasks-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .task-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; box-shadow: 0 2px 12px rgba(0,25,92,0.07); transition: transform .18s, box-shadow .18s; position: relative; }
+  .task-card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,25,92,0.14); }
+  .task-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .task-phase { font-size: 10.5px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 3px; }
+  .task-title { font-size: 14.5px; font-weight: 700; color: var(--navy); line-height: 1.3; }
+  .task-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; font-size: 11.5px; color: var(--text-muted); }
+  .task-meta span { background: var(--bg); border-radius: 6px; padding: 2px 7px; }
+  .task-actions { display: flex; gap: 4px; flex-shrink: 0; }
+  .btn-edit, .btn-delete { border: none; background: var(--bg); border-radius: 7px; padding: 5px 8px; cursor: pointer; font-size: 13px; transition: background .2s; }
+  .btn-edit:hover { background: #DCE8FF; }
+  .btn-delete:hover { background: #FEE2E2; }
+  .task-card select { padding: 7px 12px; border-radius: 8px; border: 1.5px solid var(--border); font-weight: 600; font-family: inherit; font-size: 12.5px; color: var(--navy); background: #fff; cursor: pointer; }
+  .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin-bottom: 22px; }
+  .chart-card h3 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 14px; }
+  #ganttChart { overflow-x: auto; }
+
+  /* ===== MODALS ===== */
+  .modal { display: none; position: fixed; inset: 0; z-index: 300; background: rgba(0,10,40,0.55); backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 20px; }
+  .modal.active { display: flex; }
+  .modal-content { background: #fff; border-radius: 18px; width: min(560px, 96vw); max-height: 90vh; overflow-y: auto; padding: 26px 28px; box-shadow: 0 24px 64px rgba(0,25,92,0.28); animation: fadeIn .2s ease; }
+  .modal-header { font-size: 18px; font-weight: 800; color: var(--navy); margin-bottom: 18px; }
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .4px; }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 9px; font-family: inherit; font-size: 13.5px; color: var(--text); background: #fff; outline: none; transition: border-color .2s; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--blue); }
+  .form-group textarea { min-height: 70px; resize: vertical; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+  #templateModal .modal-content { width: min(680px, 96vw); }
+  .hamburger { display: none; background: none; border: none; cursor: pointer; font-size: 20px; color: var(--navy); }
+  .container { max-width: none; margin: 0; }
+
+  /* ===== TOP-NAV onglets (peaufinage) ===== */
+  .tab, .topnav-btn { letter-spacing: .2px; }
+  .tab:hover:not(.active), .topnav-btn:hover:not(.active) { background: rgba(0,68,195,0.08); }
+
+  /* ===== WIDGET DATE + HEURE (haut droite) ===== */
+  .last-update { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; color: var(--text-muted); font-size: 12px; font-weight: 600; }
+  .last-update .lu-ico { display: inline-flex; color: var(--blue); }
+  .last-update .lu-sep { color: var(--border); font-weight: 400; }
+  .last-update #currentDate { color: var(--navy); }
+  .last-update #currentTime { color: var(--navy); font-variant-numeric: tabular-nums; }
+
+  /* ===== SIDEBAR (peaufinage) ===== */
+  .nav-item.active { background: rgba(255,255,255,0.14); color: #fff; box-shadow: inset 3px 0 0 var(--cyan); }
+  .sidebar-tools { padding: 2px 12px 8px; }
+  #sidebar::-webkit-scrollbar, .sidebar-scroll::-webkit-scrollbar { width: 8px; }
+  .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.14); border-radius: 8px; }
+  .project-actions button { transition: all .18s; }
+
+  /* ===== TABLEAU D'ACTIONS (style ANDRH) ===== */
+  .tasks-toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .task-search { flex: 1; min-width: 220px; padding: 9px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 13px; color: var(--text); background: #fff; outline: none; transition: border-color .2s; }
+  .task-search:focus { border-color: var(--blue); }
+  .btn-delete-selected { background: #FEE2E2; color: var(--danger); border: 1.5px solid #FBC5C5; border-radius: 10px; font-weight: 700; font-size: 12.5px; padding: 9px 14px; cursor: pointer; font-family: inherit; }
+  .btn-delete-selected:disabled { opacity: .45; cursor: not-allowed; }
+  .task-table { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: #fff; }
+  .task-list-head, .task-row { display: grid; grid-template-columns: 34px minmax(200px, 2.6fr) 1.5fr 1.3fr 1.1fr 1fr 1.15fr 84px; gap: 12px; align-items: center; }
+  .task-list-head { padding: 12px 16px; font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--text-muted); font-weight: 700; background: var(--bg); border-bottom: 1px solid var(--border); }
+  .task-row { padding: 13px 16px; border-bottom: 1px solid var(--bg); transition: background .15s; }
+  .task-row:last-child { border-bottom: none; }
+  .task-row:hover { background: #F7FAFF; }
+  .tl-title { font-weight: 700; color: var(--navy); font-size: 13.5px; line-height: 1.3; }
+  .tl-comment { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+  .tl-sub { font-size: 11px; color: var(--blue); font-weight: 600; margin-top: 4px; display: inline-flex; align-items: center; gap: 5px; }
+  .tl-sub-bar { width: 60px; height: 5px; background: var(--gray-200); border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; }
+  .tl-sub-bar > i { display: block; height: 100%; background: var(--success); }
+  .tl-phase-badge { display: inline-block; font-size: 10.5px; font-weight: 700; color: var(--blue); background: #EAF0FF; border: 1px solid #CFE0FF; border-radius: 7px; padding: 3px 9px; }
+  .tl-date { font-size: 12px; color: var(--text); font-weight: 600; }
+  .tl-date.overdue { color: var(--danger); }
+  .tl-empty { font-size: 12px; color: var(--gray-400); }
+  .status-badge, .prio-badge { display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; padding: 4px 11px; font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+  .status-badge.s-todo { background: #EAF0FF; color: #2952B3; }
+  .status-badge.s-progress { background: #FFF3E0; color: #B45309; }
+  .status-badge.s-done { background: #E6F7EE; color: #1BA05E; }
+  .status-badge.s-blocked { background: #FDE8E8; color: #D62B2B; }
+  .task-row select.status-select { border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 8px; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--navy); background: #fff; cursor: pointer; width: 100%; }
+  .prio-badge.p-high { background: #FDE8E8; color: #D62B2B; }
+  .prio-badge.p-med { background: #FFF3E0; color: #B45309; }
+  .prio-badge.p-low { background: #E6F7EE; color: #1BA05E; }
+  .tl-actions { display: flex; gap: 4px; }
+  .row-check { width: 16px; height: 16px; cursor: pointer; }
+
+  /* Filtres intégrés à l'en-tête */
+  .head-filter { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--navy); background: #fff; outline: none; }
+  .head-filter:focus { border-color: var(--blue); }
+  .task-list-head > div { display: flex; align-items: center; }
+
+  /* Cellules éditables inline */
+  .tl-title[contenteditable] { outline: none; border-radius: 6px; padding: 1px 4px; margin: -1px -4px; cursor: text; }
+  .tl-title[contenteditable]:hover { background: #EEF4FF; }
+  .tl-title[contenteditable]:focus { background: #fff; box-shadow: 0 0 0 2px var(--blue); }
+  .tl-comment[contenteditable] { outline: none; border-radius: 6px; padding: 1px 4px; margin: 2px -4px 0; cursor: text; min-height: 16px; }
+  .tl-comment[contenteditable]:hover { background: #EEF4FF; }
+  .tl-comment[contenteditable]:focus { background: #fff; box-shadow: 0 0 0 2px var(--blue); }
+  .tl-comment:empty:before { content: attr(data-ph); color: var(--gray-400); }
+  .cell-edit { width: 100%; border: 1px solid transparent; border-radius: 8px; padding: 6px 7px; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--navy); background: transparent; cursor: pointer; transition: all .15s; }
+  .cell-edit:hover { background: #EEF4FF; border-color: var(--border); }
+  .cell-edit:focus { background: #fff; border-color: var(--blue); outline: none; }
+  .cell-edit.overdue { color: var(--danger); }
+  .resp-cell { cursor: pointer; border-radius: 8px; padding: 4px 6px; margin: -4px -6px; transition: background .15s; min-height: 26px; display: flex; align-items: center; }
+  .resp-cell:hover { background: #EEF4FF; }
+  .status-select { border-color: transparent !important; background: transparent; transition: all .15s; }
+  .status-select:hover { background: #EEF4FF; border-color: var(--border) !important; }
+  .status-select.s-done { color: var(--success); }
+  .status-select.s-progress { color: var(--warning); }
+  .status-select.s-blocked { color: var(--danger); }
+  .status-select.s-todo { color: #2952B3; }
+
+  /* Popover responsables */
+  .resp-popover { position: absolute; z-index: 500; background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 16px 40px rgba(0,25,92,0.22); padding: 8px; width: 234px; max-height: 280px; overflow-y: auto; }
+  .rp-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 8px; font-size: 13px; color: var(--navy); cursor: pointer; }
+  .rp-item:hover { background: var(--bg); }
+  .rp-empty { font-size: 12px; color: var(--text-muted); padding: 6px 8px; }
+  .rp-add { display: flex; gap: 6px; margin-top: 6px; padding-top: 8px; border-top: 1px solid var(--border); }
+  .rp-add input { flex: 1; border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 9px; font-size: 12px; font-family: inherit; outline: none; }
+  .rp-add input:focus { border-color: var(--blue); }
+  .rp-add button { border: none; background: var(--gradient); color: #fff; border-radius: 8px; width: 32px; font-size: 16px; font-weight: 700; cursor: pointer; }
+  /* ===== FILTRE ÉCHÉANCE (popover dates) ===== */
+  .date-filter-pop { position: absolute; z-index: 600; background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 16px 40px rgba(0,25,92,0.22); padding: 12px; width: 250px; }
+  .date-filter-pop label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin: 2px 0 4px; }
+  .date-filter-pop select, .date-filter-pop input[type=date] { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 7px 9px; font-size: 12.5px; font-family: inherit; color: var(--navy); background: #fff; outline: none; box-sizing: border-box; margin-bottom: 8px; }
+  .date-filter-pop select:focus, .date-filter-pop input[type=date]:focus { border-color: var(--blue); }
+  .date-filter-actions { display: flex; gap: 8px; margin-top: 2px; }
+  .date-filter-actions button { flex: 1; border-radius: 8px; padding: 7px 9px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; border: 1.5px solid var(--border); background: var(--bg); color: var(--navy); }
+  .date-filter-actions .df-apply { border: none; background: var(--gradient); color: #fff; }
+  #dateFilterBtn.df-active { background: var(--gradient); color: #fff; border-color: transparent; }
+  /* ===== SHARE / QR MODAL (style ANDRH) ===== */
+  #shareBackdrop { display: none; position: fixed; inset: 0; z-index: 400; background: rgba(0,10,40,0.72); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 20px; }
+  #shareBackdrop.open { display: flex; }
+  #shareModal { background: #fff; border-radius: 18px; width: min(540px, 94vw); max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 64px rgba(0,25,92,0.28); padding: 28px 30px; }
+  .share-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .share-title { font-size: 18px; font-weight: 800; color: var(--navy); }
+  .share-close { border: none; background: none; font-size: 24px; line-height: 1; cursor: pointer; color: #7a8aa0; }
+  .share-sub { font-size: 12.5px; color: var(--text-muted); margin-bottom: 4px; }
+  .share-tabs { display: flex; gap: 4px; margin: 18px 0 20px; background: var(--bg); border-radius: 10px; padding: 4px; }
+  .share-tab { flex: 1; padding: 9px; border: none; border-radius: 7px; cursor: pointer; font-size: 12.5px; font-weight: 700; background: transparent; color: var(--text-muted); transition: all .2s; font-family: inherit; }
+  .share-tab.active { background: #fff; color: var(--navy); box-shadow: 0 2px 8px rgba(0,25,92,0.1); }
+  .share-panel { display: none; }
+  .share-panel.active { display: block; }
+  .share-option-card { border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex; gap: 14px; align-items: flex-start; cursor: pointer; transition: border-color .2s, background .2s; background: #fff; text-align: left; width: 100%; font-family: inherit; }
+  .share-option-card:hover { border-color: var(--blue); background: #F0F4FF; }
+  .share-option-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; background: linear-gradient(135deg, var(--teal), var(--blue)); }
+  .share-option-title { font-weight: 700; font-size: 13px; color: var(--navy); margin-bottom: 3px; }
+  .share-option-desc { font-size: 11.5px; color: var(--text-muted); line-height: 1.45; }
+  #qrContainer { display: flex; justify-content: center; margin: 18px 0; min-height: 180px; align-items: center; }
+  #qrContainer canvas, #qrContainer img { border-radius: 12px; border: 4px solid var(--bg); }
+  #qrUrlDisplay { text-align: center; font-size: 11px; color: var(--text-muted); word-break: break-all; margin-bottom: 14px; }
+  .qr-instructions { background: #F0F6FF; border: 1px solid #C7D9F0; border-radius: 10px; padding: 12px 14px; font-size: 11.5px; color: #2B3B5E; line-height: 1.6; margin-bottom: 14px; }
+  .qr-url-row { display: flex; gap: 8px; }
+  .qr-url-row input { flex: 1; border: 1.5px solid var(--border); border-radius: 9px; padding: 9px 11px; font-size: 12.5px; font-family: inherit; outline: none; }
+  .qr-url-row input:focus { border-color: var(--blue); }
+  .qr-url-row button { border: none; background: var(--gradient); color: #fff; border-radius: 9px; padding: 0 16px; font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .share-actions { margin-top: 18px; display: flex; justify-content: flex-end; }
+  .share-actions button { border: 1.5px solid var(--border); background: var(--bg); color: var(--navy); border-radius: 9px; padding: 9px 18px; font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  /* ===== MODALE GESTION RESPONSABLES (style ANDRH) ===== */
+  #memberModalBackdrop { display: none; position: fixed; inset: 0; background: rgba(0,25,92,0.55); backdrop-filter: blur(4px); z-index: 4200; align-items: center; justify-content: center; padding: 20px; }
+  #memberModalBackdrop.open { display: flex; }
+  #memberModal { background: #fff; border-radius: 14px; padding: 24px; width: 400px; max-width: 95vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 16px 48px rgba(0,25,92,0.25); }
+  .member-modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  #memberModal .modal-title { font-size: 17px; font-weight: 800; color: var(--navy); }
+  .member-close { border: none; background: none; font-size: 24px; line-height: 1; cursor: pointer; color: #7a8aa0; }
+  #memberList { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; max-height: 240px; overflow-y: auto; }
+  .member-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 10px; background: #fafcff; }
+  .member-item.editing { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(0,68,195,0.12); }
+  .member-item-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--gradient); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: #fff; flex-shrink: 0; text-transform: uppercase; overflow: hidden; position: relative; }
+  .member-item-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .member-item-info { flex: 1; min-width: 0; }
+  .member-item-name { font-size: 13px; font-weight: 700; color: var(--navy); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .member-item-email { font-size: 11px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .member-item-btn { border: 1px solid var(--border); background: #fff; border-radius: 7px; padding: 4px 8px; font-size: 13px; cursor: pointer; }
+  .member-item-btn:hover { border-color: var(--blue); }
+  .member-empty { color: var(--text-muted); font-size: 12.5px; padding: 10px 4px; text-align: center; }
+  .member-form { border-top: 1px solid var(--border); padding-top: 14px; }
+  .member-form-title { font-size: 13px; font-weight: 800; color: var(--navy); margin-bottom: 10px; }
+
+  /* ===== CHAT (par projet) ===== */
+  .chat-card { display: flex; flex-direction: column; }
+  .chat-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .chat-head .chat-title { font-size: 14px; font-weight: 800; color: var(--navy); }
+  .chat-me { margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); }
+  .chat-me select { border: 1.5px solid var(--border); border-radius: 8px; padding: 5px 9px; font-size: 12px; font-family: inherit; font-weight: 600; color: var(--navy); background: #fff; cursor: pointer; max-width: 170px; }
+  .chat-input-row select { border: 1.5px solid var(--border); border-radius: 10px; padding: 0 8px; font-size: 12.5px; font-family: inherit; color: var(--navy); background: #fff; cursor: pointer; height: 40px; }
+  .chat-messages { flex: 1; min-height: 200px; max-height: 320px; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; padding: 12px; background: #FAFCFF; display: flex; flex-direction: column; gap: 8px; }
+  .chat-msg { max-width: 82%; padding: 8px 12px; border-radius: 12px; font-size: 13px; line-height: 1.4; box-shadow: 0 1px 3px rgba(0,25,92,0.06); }
+  .chat-msg .cm-author { font-size: 10.5px; font-weight: 800; margin-bottom: 2px; opacity: .8; }
+  .chat-msg .cm-time { font-size: 9.5px; opacity: .55; margin-top: 3px; text-align: right; }
+  .chat-msg.mine { align-self: flex-end; background: var(--gradient); color: #fff; }
+  .chat-msg.theirs { align-self: flex-start; background: #fff; border: 1px solid var(--border); color: var(--text); }
+  .chat-empty { color: var(--text-muted); font-size: 12.5px; text-align: center; margin: auto; }
+  .chat-input-row { display: flex; gap: 8px; margin-top: 10px; }
+  .chat-input-row input { flex: 1; border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 12px; font-family: inherit; font-size: 13px; outline: none; }
+  .chat-input-row input:focus { border-color: var(--blue); }
+  .chat-input-wrap { position: relative; flex: 1; display: flex; }
+  /* ===== MENU AUTOCOMPLÉTION @ (mentions chat, style ANDRH) ===== */
+  .mention-menu { display: none; position: absolute; bottom: calc(100% + 6px); left: 0; right: 0; background: #fff; border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 12px 32px rgba(0,25,92,0.2); max-height: 220px; overflow-y: auto; z-index: 200; }
+  .mention-menu.open { display: block; }
+  .mention-item { padding: 7px 12px; cursor: pointer; font-size: 13px; color: var(--navy); display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--bg); }
+  .mention-item:last-child { border-bottom: none; }
+  .mention-item:hover, .mention-item.active { background: #eef3fb; }
+  .mention-avatar { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: #fff; flex-shrink: 0; background: var(--gradient); text-transform: uppercase; overflow: hidden; position: relative; }
+  .mention-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .mention-email { margin-left: auto; font-size: 10.5px; color: var(--text-muted); font-weight: 600; }
+
+  /* ===== RESSOURCES (liens OneDrive / SharePoint) ===== */
+  .res-toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 18px; }
+  .res-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .res-card { display: flex; gap: 12px; align-items: flex-start; background: #fff; border: 1px solid var(--border); border-radius: 13px; padding: 15px 16px; box-shadow: 0 2px 12px rgba(0,25,92,0.06); transition: transform .15s, box-shadow .15s; }
+  .res-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,25,92,0.12); }
+  .res-ico { width: 42px; height: 42px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .res-ico.onedrive { background: #E5F0FF; }
+  .res-ico.sharepoint { background: #E6F7F0; }
+  .res-body { flex: 1; min-width: 0; }
+  .res-title { font-weight: 700; color: var(--navy); font-size: 13.5px; }
+  .res-url { font-size: 11px; color: var(--blue); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; display: block; text-decoration: none; }
+  .res-badge { display: inline-block; font-size: 10px; font-weight: 700; border-radius: 999px; padding: 2px 9px; margin-top: 6px; }
+  .res-badge.onedrive { background: #E5F0FF; color: #2952B3; }
+  .res-badge.sharepoint { background: #E6F7F0; color: #1BA05E; }
+
+  /* ===== GANTT MODERNE (style ANDRH) ===== */
+  .gantt-legend { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; padding: 10px 14px; background: var(--bg); border-radius: 10px; }
+  .gantt-legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+  .gantt-legend-color { width: 14px; height: 14px; border-radius: 4px; }
+  .gantt-phase-group { margin: 14px 0 6px; padding: 7px 14px; background: var(--gradient); color: #fff; font-weight: 700; border-radius: 9px; font-size: 12.5px; letter-spacing: .2px; }
+  .gantt-header { display: grid; grid-template-columns: 260px 1fr; gap: 12px; align-items: center; padding: 8px 0 10px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); font-weight: 700; }
+  .gantt-dates { display: flex; justify-content: space-between; }
+  .gantt-row { display: grid; grid-template-columns: 260px 1fr; gap: 12px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--bg); }
+  .gantt-task-name { font-size: 13px; font-weight: 600; color: var(--navy); }
+  .gantt-bar-container { position: relative; height: 26px; background: repeating-linear-gradient(90deg, var(--bg) 0 1px, transparent 1px 100%); background-size: calc(100%/12) 100%; border-radius: 6px; }
+  .gantt-bar { position: absolute; top: 3px; height: 20px; border-radius: 6px; display: flex; align-items: center; padding: 0 8px; font-size: 10.5px; font-weight: 700; color: #fff; overflow: hidden; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,25,92,0.18); min-width: 6px; }
+  .gantt-bar.status-todo { background: linear-gradient(135deg, #5B8DEF, #3B6FE0); }
+  .gantt-bar.status-progress { background: linear-gradient(135deg, #F5A623, #E8910A); }
+  .gantt-bar.status-done { background: linear-gradient(135deg, #2ECC8F, #1BA05E); }
+  .gantt-bar.status-blocked { background: linear-gradient(135deg, #EF5B5B, #D62B2B); }
+
+  /* ===== RESPONSABLES MULTIPLES (puces + avatars) ===== */
+  .resp-picker { display: flex; flex-wrap: wrap; gap: 6px; }
+  .resp-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--bg); border: 1.5px solid var(--border); color: var(--navy); border-radius: 999px; padding: 5px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all .16s; font-family: inherit; }
+  .resp-chip:hover { border-color: var(--blue); }
+  .resp-chip.selected { background: var(--gradient); color: #fff; border-color: transparent; }
+  /* ===== SÉLECTEUR RESPONSABLES style ANDRH (checklist fluide) ===== */
+  .owner-row { display: flex; gap: 8px; align-items: stretch; }
+  .owner-checklist { flex: 1; border: 1.5px solid var(--border); border-radius: 10px; padding: 6px 10px; max-height: 168px; overflow-y: auto; background: #fafcff; }
+  .owner-check-item { display: flex; align-items: center; gap: 9px; padding: 6px 4px; cursor: pointer; font-size: 13px; color: var(--navy); border-radius: 7px; transition: background .12s; }
+  .owner-check-item:hover { background: var(--bg); }
+  .owner-check-item input[type=checkbox] { accent-color: var(--blue); width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; }
+  .owner-chip { width: 24px; height: 24px; border-radius: 50%; background: var(--gradient); display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: #fff; flex-shrink: 0; text-transform: uppercase; overflow: hidden; position: relative; }
+  .owner-chip img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .owner-check-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .owner-empty { color: var(--text-muted); font-size: 12.5px; padding: 8px 4px; }
+  .btn-add-member { flex-shrink: 0; width: 40px; border: 1.5px solid var(--border); background: var(--bg); color: var(--navy); border-radius: 10px; font-size: 20px; font-weight: 700; cursor: pointer; font-family: inherit; line-height: 1; transition: all .16s; }
+  .btn-add-member:hover { border-color: var(--blue); color: var(--blue); background: #fff; }
+  /* ===== LIGNES 2 COLONNES (modale action) ===== */
+  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 540px) { .form-row-2 { grid-template-columns: 1fr; } }
+  /* ===== WIDGET « Dernières ressources rattachées » (style ANDRH) ===== */
+  .dash-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  #dashResourceCard .section-title { font-size: 16px; font-weight: 800; color: var(--navy); }
+  .btn-see-all-res { border: none; background: none; color: var(--blue); font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-see-all-res:hover { text-decoration: underline; }
+  .dash-res-item { display: flex; align-items: center; gap: 12px; padding: 10px 4px; border-bottom: 1px solid var(--bg); font-size: 13px; }
+  .dash-res-item:last-child { border-bottom: none; }
+  .dash-res-icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; background: linear-gradient(135deg, var(--teal), var(--blue)); }
+  .dash-res-title { flex: 1; font-weight: 600; color: var(--navy); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .dash-res-cat { font-size: 11px; font-weight: 700; color: var(--text-muted); background: var(--bg); border-radius: 999px; padding: 3px 10px; flex-shrink: 0; }
+  .btn-dash-res { flex-shrink: 0; text-decoration: none; border: 1.5px solid var(--border); background: #fff; border-radius: 8px; padding: 5px 9px; font-size: 13px; cursor: pointer; color: var(--navy); }
+  .btn-dash-res:hover { border-color: var(--blue); }
+  .dash-res-empty { color: var(--text-muted); font-size: 13px; padding: 14px 4px; }
+  .resp-avatars { display: inline-flex; align-items: center; gap: 3px; flex-wrap: wrap; }
+  .resp-avatar { width: 22px; height: 22px; border-radius: 50%; background: var(--gradient); color: #fff; font-size: 10px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,25,92,0.2); text-transform: uppercase; }
+  .team-avatars { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  /* ===== EXPORT LECTURE SEULE : header/tabs (structure héritée) ===== */
+  .header { background: rgba(255,255,255,0.12); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.28); border-radius: 18px; padding: 22px 28px; color: #fff; margin-bottom: 22px; box-shadow: 0 8px 32px rgba(0,25,92,0.22); }
+  .header h1 { font-size: 22px; font-weight: 800; margin-bottom: 10px; }
+  .header-meta { display: flex; gap: 18px; font-size: 13px; opacity: 0.85; flex-wrap: wrap; }
+  .tabs { display: flex; gap: 4px; background: rgba(255,255,255,0.14); border-radius: 12px; padding: 5px; margin-bottom: 22px; flex-wrap: wrap; }
+
+  @media (max-width: 900px) {
+    #sidebar { transform: translateX(-100%); } #sidebar.open { transform: none; }
+    #main { margin-left: 0; } .hamburger { display: inline-flex; } .banner::after { display: none; }
+  }
+    </style>
+    <style media="not all">
         * {
             margin: 0;
             padding: 0;
@@ -783,36 +1249,81 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>📊 DASHBOARD OPUS</h1>
-            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
-            <div class="header-meta">
-                <span>📅 <span id="currentDate"></span></span>
-                <span>🕐 Mise à jour en temps réel</span>
+    <aside id="sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-logo">
+                <div class="logo-mark">OP</div>
+                <div class="logo-text"><strong>DASHBOARD OPUS</strong><span>Gestion de projet</span></div>
             </div>
-            <div id="syncStatus" class="sync-status" style="display:none;"></div>
+        </div>
+        <div class="sidebar-scroll">
+            <div class="nav-section-title">Projet</div>
+            <div class="project-block">
+                <select id="projectSelector"></select>
+                <div class="project-actions">
+                    <button onclick="createNewProject()" title="Nouveau projet"><svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7.5 2v11M2 7.5h11"/></svg></button>
+                    <button onclick="renameCurrentProject()" title="Renommer"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2.5l2 2L5 11l-2.5.5L3 9z"/></svg></button>
+                    <button onclick="deleteCurrentProject()" title="Supprimer"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 3.5h9M5.5 3.5V2.5h3v1M3.5 3.5l.5 8h6l.5-8"/></svg></button>
+                    <button onclick="loadFromSheets()" title="Actualiser"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7a5 5 0 1 1-1.5-3.5"/><path d="M12 2v3H9"/></svg></button>
+                </div>
             </div>
-            <div style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                <label style="font-weight: 700; color: var(--gray-700);">📁 Projet actuel :</label>
-                <select id="projectSelector" style="padding: 0.8rem 1.5rem; border: 2px solid var(--gray-300); border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; min-width: 250px;">
-                </select>
-                <button class="btn btn-primary" onclick="createNewProject()" style="padding: 0.8rem 1.5rem;">➕ Nouveau projet</button>
-                <button class="btn btn-secondary" onclick="renameCurrentProject()" style="padding: 0.8rem 1.5rem;">✏️ Renommer</button>
-                <button class="btn btn-secondary" onclick="deleteCurrentProject()" style="padding: 0.8rem 1.5rem; background: #FEE2E2; color: var(--danger);">🗑️ Supprimer</button>
-                <button class="btn-reload" onclick="loadFromSheets()" title="Recharger depuis Google Sheets">🔄 Actualiser</button>
+            <div class="nav-section-title">Outils</div>
+            <div class="sidebar-tools">
+                <button class="nav-item" onclick="openModal()"><svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7.5 2v11M2 7.5h11"/></svg> Nouvelle action</button>
+                <button class="nav-item" onclick="switchTab('resources')"><svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2h6l3.5 3.5V13a.5.5 0 0 1-.5.5H2.5a.5.5 0 0 1-.5-.5V2.5a.5.5 0 0 1 .5-.5z"/><path d="M8.5 2v3.5H12"/></svg> Ressources</button>
+                <button class="nav-item" onclick="openPhaseManager()"><svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="7.5" r="5.5"/><path d="M10 5l-1.3 3.7L5 10l1.3-3.7z"/></svg> Gérer les phases</button>
+                <button class="nav-item" onclick="openTemplateManager()"><svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="11" height="11" rx="1.5"/><path d="M2 5.5h11M6 5.5V13"/></svg> Gérer les templates</button>
+                <button class="nav-item" onclick="openSyncConfig()"><svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6.5" width="9" height="6" rx="1.5"/><path d="M5 6.5V5a2.5 2.5 0 0 1 5 0v1.5"/></svg> Connexion Sheets</button>
+            </div>
+            <div class="nav-section-title">Équipe OPUS</div>
+            <div class="team-avatars" id="teamAvatars"></div>
+        </div>
+        <div class="sidebar-footer">
+            <button class="btn-sidebar" onclick="exportData()"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v7M4 6.5L7 9.5l3-3M2.5 11.5h9"/></svg> Exporter les données</button>
+            <button class="btn-sidebar" onclick="openShareModal()"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="3" r="1.6"/><circle cx="3" cy="7" r="1.6"/><circle cx="11" cy="11" r="1.6"/><path d="M4.4 6.2l5.2-2.4M4.4 7.8l5.2 2.4"/></svg> Partager / QR code</button>
+        </div>
+    </aside>
+
+    <div id="main">
+        <div id="topbar">
+            <div class="topbar-left">
+                <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+                <nav class="topnav">
+                    <button class="tab active" data-tab="dashboard"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="5" height="5" rx="1.2"/><rect x="8" y="1" width="5" height="5" rx="1.2"/><rect x="1" y="8" width="5" height="5" rx="1.2"/><rect x="8" y="8" width="5" height="5" rx="1.2"/></svg> Tableau de bord</button>
+                    <button class="tab" data-tab="tasks"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="12" height="12" rx="2"/><path d="M4.5 7L6.2 8.8L9.5 5.2"/></svg> Actions</button>
+                    <button class="tab" data-tab="gantt"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="2.5" width="12" height="10" rx="2"/><path d="M1 6H13"/><path d="M4.5 1V4M9.5 1V4"/><rect fill="currentColor" stroke="none" x="3" y="8" width="4" height="2" rx="1"/><rect fill="currentColor" stroke="none" opacity="0.5" x="7.5" y="8" width="3.5" height="2" rx="1"/></svg> Planning</button>
+                    <button class="tab" data-tab="analytics"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 12V8M4.5 12V5M7.5 12V7M10.5 12V3"/><path d="M1 12H13"/></svg> Analytiques</button>
+                </nav>
+            </div>
+            <div class="topbar-right">
+                <div class="last-update">
+                    <span class="lu-ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="2.5" width="11" height="10" rx="2"/><path d="M1.5 5.5h11M4.5 1v3M9.5 1v3"/></svg></span>
+                    <span id="currentDate"></span>
+                    <span class="lu-sep">·</span>
+                    <span class="lu-ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7.5" r="5.3"/><path d="M7 4.7V7.6l2 1.3"/></svg></span>
+                    <span id="currentTime"></span>
+                </div>
+                <div id="syncStatus" class="sync-status" style="display:none;"></div>
+                <button class="btn btn-primary" onclick="openModal()">➕ Nouvelle action</button>
             </div>
         </div>
 
-        <div class="tabs">
-            <button class="tab active" data-tab="dashboard">📊 Dashboard</button>
-            <button class="tab" data-tab="tasks">📝 Gestion des tâches</button>
-            <button class="tab" data-tab="gantt">📅 Vue Gantt</button>
-            <button class="tab" data-tab="analytics">📈 Analytiques</button>
-        </div>
+        <div class="container">
 
         <!-- Dashboard Section -->
         <div id="dashboard" class="content-section active">
+            <div class="banner">
+                <div>
+                    <div class="banner-title" id="bannerProjectName">Tableau de bord</div>
+                    <div class="banner-sub">Pilotage de projet · suivi des actions</div>
+                </div>
+                <div class="banner-stats">
+                    <div class="banner-stat"><span class="banner-stat-val" id="bannerTotal">0</span><span class="banner-stat-lbl">Actions</span></div>
+                    <div class="banner-stat"><span class="banner-stat-val" id="bannerDone">0</span><span class="banner-stat-lbl">Terminées</span></div>
+                    <div class="banner-stat"><span class="banner-stat-val" id="bannerPct">0%</span><span class="banner-stat-lbl">Avancement</span></div>
+                </div>
+            </div>
+
             <div class="kpi-grid">
                 <div class="kpi-card blue">
                     <div class="kpi-label">Tâches totales</div>
@@ -864,6 +1375,30 @@
                 </div>
             </div>
 
+            <div class="section-card chat-card" style="margin-bottom:22px;">
+                <div class="chat-head">
+                    <span class="chat-title">💬 Discussion du projet</span>
+                    <span class="chat-me">Connecté·e&nbsp;: <select id="chatMe" onchange="setChatMe()"></select></span>
+                </div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input-row">
+                    <span style="display:flex; align-items:center; gap:5px; flex:0 0 auto;"><span style="font-size:11px; font-weight:700; color:var(--text-muted);">À&nbsp;:</span><select id="chatTo" title="Destinataire" style="max-width:150px;"></select></span>
+                    <span class="chat-input-wrap">
+                        <input id="chatInput" type="text" placeholder="Votre message… (tapez @ pour citer une personne)" autocomplete="off" oninput="onChatInput()" onkeydown="onChatInputKeydown(event)">
+                        <div id="mentionMenu" class="mention-menu"></div>
+                    </span>
+                    <button class="btn btn-primary" onclick="sendChatMessage()">Envoyer</button>
+                </div>
+            </div>
+
+            <div class="section-card" id="dashResourceCard" style="margin-bottom:22px;">
+                <div class="section-header dash-section-header">
+                    <div class="section-title">📎 Dernières ressources rattachées</div>
+                    <button type="button" class="btn-see-all-res" onclick="switchTab('resources')">Voir tout →</button>
+                </div>
+                <div id="dashResourceItems"></div>
+            </div>
+
             <div class="phase-table">
                 <h2>📊 Avancement par phase</h2>
                 <table>
@@ -884,48 +1419,35 @@
         <!-- Tasks Section -->
         <div id="tasks" class="content-section">
             <div class="task-manager">
-                <div class="task-controls">
-                    <button class="btn btn-primary" id="btnNewTask">➕ Nouvelle tâche</button>
-                    
-                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <select id="templateSelector" style="padding: 0.8rem 1.5rem; border: 2px solid var(--gray-300); border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.95rem; cursor: pointer; min-width: 250px;">
-                            <option value="">📋 Sélectionner un template...</option>
-                        </select>
-                        <button class="btn btn-secondary" id="btnLoadSelectedTemplate" disabled>🔄 Charger</button>
-                    </div>
-                    
-                    <button class="btn btn-secondary" id="btnManageTemplate">⚙️ Gérer les templates</button>
-                    <button class="btn btn-secondary" id="btnExport">💾 Exporter données</button>
-                    <button class="btn btn-success" id="btnReadOnly">👁️ Partager en lecture seule</button>
+                <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap;">
+                    <div class="section-title" style="font-size:16px; font-weight:800; color:var(--navy);">📝 Gestion des actions</div>
+                    <button class="btn btn-primary" id="btnNewTask">➕ Nouvelle action</button>
                 </div>
 
-                <div class="filter-section">
-                    <span class="filter-label">Filtrer par statut :</span>
-                    <div class="filter-group" id="statusFilters">
-                        <button class="filter-btn active" data-status="all">Toutes</button>
-                        <button class="filter-btn" data-status="À faire">À faire</button>
-                        <button class="filter-btn" data-status="En cours">En cours</button>
-                        <button class="filter-btn" data-status="Terminé">Terminées</button>
-                        <button class="filter-btn" data-status="Bloqué">Bloquées</button>
-                    </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; align-items:center;">
+                    <select id="templateSelector" class="filter-select" style="min-width:210px;"><option value="">📋 Sélectionner un template…</option></select>
+                    <button class="btn btn-secondary" id="btnLoadSelectedTemplate" disabled>🔄 Charger</button>
+                    <button class="btn btn-secondary" id="btnManageTemplate">⚙️ Templates</button>
+                    <button class="btn btn-secondary" id="btnExport">💾 Exporter</button>
+                    <button class="btn btn-success" id="btnReadOnly">👁️ Lecture seule</button>
+                    <button class="btn-delete-selected" id="btnDeleteSelected" onclick="deleteSelectedTasks()" disabled style="margin-left:auto;">🗑️ Supprimer <span id="selCount"></span></button>
                 </div>
 
-                <div class="filter-section">
-                    <span class="filter-label">Filtrer par phase :</span>
-                    <div class="filter-group" id="phaseFilters">
-                        <button class="filter-btn-phase active" data-phase="all">Toutes</button>
-                        <button class="filter-btn-phase" data-phase="1. Cadrage & validation dispositif">Phase 1</button>
-                        <button class="filter-btn-phase" data-phase="2. Ingénierie pédagogique">Phase 2</button>
-                        <button class="filter-btn-phase" data-phase="3. Communication & recrutement">Phase 3</button>
-                        <button class="filter-btn-phase" data-phase="4. Préparation opérationnelle">Phase 4</button>
-                        <button class="filter-btn-phase" data-phase="5. Démarrage de la formation">Phase 5</button>
-                        <button class="filter-btn-phase" data-phase="6. Suivi en cours de formation">Phase 6</button>
-                        <button class="filter-btn-phase" data-phase="7. Clôture & obligations de sortie">Phase 7</button>
-                        <button class="filter-btn-phase" data-phase="8. Actions périphériques">Phase 8</button>
-                    </div>
-                </div>
+                <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:8px;">💡 Filtres dans l'en-tête · cliquez sur une cellule (titre, responsables, phase, date, priorité, statut) pour la modifier directement.</p>
 
-                <div class="tasks-grid" id="tasksGrid"></div>
+                <div class="task-table">
+                    <div class="task-list-head">
+                        <div><input type="checkbox" id="selectAllTasks" class="row-check" onchange="toggleSelectAll(this.checked)" title="Tout sélectionner"></div>
+                        <div><input type="text" id="taskSearch" class="head-filter" placeholder="🔍 Action…" oninput="renderTasks()" autocomplete="off"></div>
+                        <div><select id="filterResponsible" class="head-filter" onchange="renderTasks()"><option value="">Responsables</option></select></div>
+                        <div><select id="filterPhase" class="head-filter" onchange="renderTasks()"><option value="">Phase</option></select></div>
+                        <div><button type="button" id="dateFilterBtn" class="head-filter" style="cursor:pointer; text-align:left;" onclick="openDateFilter(event)">📅 Échéance</button></div>
+                        <div><select id="filterPriority" class="head-filter" onchange="renderTasks()"><option value="">Priorité</option><option value="Haute">Haute</option><option value="Moyenne">Moyenne</option><option value="Basse">Basse</option></select></div>
+                        <div><select id="filterStatus" class="head-filter" onchange="renderTasks()"><option value="">Statut</option><option value="À faire">À faire</option><option value="En cours">En cours</option><option value="Terminé">Terminé</option><option value="Bloqué">Bloqué</option></select></div>
+                        <div>Gérer</div>
+                    </div>
+                    <div id="tasksGrid"></div>
+                </div>
             </div>
         </div>
 
@@ -954,12 +1476,37 @@
                     <canvas id="phaseChart"></canvas>
                 </div>
             </div>
-            <div class="chart-card" style="margin-bottom: 2rem;">
+            <div class="chart-card" style="margin-bottom: 22px;">
                 <h3>Charge par responsable</h3>
                 <canvas id="responsibleChart"></canvas>
             </div>
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>Répartition par priorité</h3>
+                    <canvas id="priorityChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>Complétion des sous-actions</h3>
+                    <canvas id="subtaskChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- Resources Section -->
+        <div id="resources" class="content-section">
+            <div class="section-card">
+                <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap;">
+                    <div class="section-title" style="font-size:16px; font-weight:800; color:var(--navy);">📎 Ressources — liens OneDrive / SharePoint</div>
+                </div>
+                <div class="res-toolbar">
+                    <input type="text" id="resTitle" class="task-search" style="flex:0 0 220px; min-width:170px;" placeholder="Titre du lien (optionnel)">
+                    <input type="text" id="resUrl" class="task-search" placeholder="Coller un lien OneDrive ou SharePoint…" onkeydown="if(event.key==='Enter'){event.preventDefault();addResource();}">
+                    <button class="btn btn-primary" onclick="addResource()">➕ Ajouter</button>
+                </div>
+                <div class="res-grid" id="resGrid"></div>
+            </div>
         </div>
     </div>
+    </div><!-- /main -->
 
     <!-- Modal -->
     <div class="modal" id="taskModal">
@@ -985,50 +1532,75 @@
                     <input type="text" id="taskTitle" required>
                 </div>
                 <div class="form-group">
-                    <label>Responsable</label>
-                    <div style="display:flex; gap:0.5rem; align-items:stretch;">
-                        <select id="taskResponsible" style="flex:1;">
-                            <option value="">Non assigné</option>
-                        </select>
-                        <button type="button" id="btnAddResponsible" title="Ajouter un nouveau responsable" style="padding:0 1.1rem; border:2px solid var(--gray-300); border-radius:8px; background:var(--gray-200); font-weight:700; font-size:1.3rem; cursor:pointer; line-height:1;">+</button>
-                        <button type="button" id="btnRemoveResponsible" title="Retirer le responsable sélectionné de la liste" style="padding:0 1.1rem; border:2px solid var(--gray-300); border-radius:8px; background:#FEE2E2; font-weight:700; font-size:1.3rem; cursor:pointer; line-height:1;">–</button>
+                    <label>Responsables (plusieurs possibles)</label>
+                    <div class="owner-row">
+                        <div class="owner-checklist" id="respPicker"></div>
+                        <button type="button" id="btnAddResponsible" class="btn-add-member" title="Gérer les responsables" onclick="openMemberModal()">+</button>
+                    </div>
+                    <input type="hidden" id="taskResponsible">
+                </div>
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label>Date de début</label>
+                        <input type="date" id="taskStartDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Date de fin</label>
+                        <input type="date" id="taskEndDate">
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Date de début</label>
-                    <input type="date" id="taskStartDate">
-                </div>
-                <div class="form-group">
-                    <label>Date de fin</label>
-                    <input type="date" id="taskEndDate">
-                </div>
-                <div class="form-group">
-                    <label>Statut *</label>
-                    <select id="taskStatus" required>
-                        <option value="À faire">À faire</option>
-                        <option value="En cours">En cours</option>
-                        <option value="Terminé">Terminé</option>
-                        <option value="Bloqué">Bloqué</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Priorité</label>
-                    <select id="taskPriority">
-                        <option value="">Aucune</option>
-                        <option value="Haute">Haute</option>
-                        <option value="Moyenne">Moyenne</option>
-                        <option value="Basse">Basse</option>
-                    </select>
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label>Statut *</label>
+                        <select id="taskStatus" required>
+                            <option value="À faire">À faire</option>
+                            <option value="En cours">En cours</option>
+                            <option value="Terminé">Terminé</option>
+                            <option value="Bloqué">Bloqué</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Priorité</label>
+                        <select id="taskPriority">
+                            <option value="">Aucune</option>
+                            <option value="Haute">Haute</option>
+                            <option value="Moyenne">Moyenne</option>
+                            <option value="Basse">Basse</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Commentaires</label>
                     <textarea id="taskComments"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Sous-actions</label>
+                    <div id="subtasksEditor" style="border:2px solid var(--gray-200); border-radius:10px; padding:0.75rem; background:var(--gray-100);">
+                        <div id="subtasksList" style="display:flex; flex-direction:column; gap:0.4rem; margin-bottom:0.6rem;"></div>
+                        <div style="display:flex; gap:0.5rem;">
+                            <input type="text" id="subtaskInput" placeholder="Ajouter une sous-action…" style="flex:1; padding:0.5rem 0.7rem; border:2px solid var(--gray-300); border-radius:8px;" onkeydown="if(event.key==='Enter'){event.preventDefault();addSubtaskFromInput();}">
+                            <button type="button" onclick="addSubtaskFromInput()" style="padding:0 1.1rem; border:2px solid var(--gray-300); border-radius:8px; background:var(--gray-200); font-weight:700; font-size:1.2rem; cursor:pointer; line-height:1;">+</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" id="btnCancel">Annuler</button>
                     <button type="submit" class="btn btn-primary">Enregistrer</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Phase Manager Modal -->
+    <div class="modal" id="phaseModal">
+        <div class="modal-content">
+            <div class="modal-header">🧭 Gérer les phases</div>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px;">Ajoutez, renommez, réordonnez ou supprimez les phases (lots) du projet. Renommer une phase met à jour les actions concernées.</p>
+            <div id="phaseManagerList"></div>
+            <div class="modal-actions" style="justify-content:space-between;">
+                <button type="button" class="btn btn-primary" onclick="addPhase()">➕ Nouvelle phase</button>
+                <button type="button" class="btn btn-secondary" onclick="closePhaseManager()">Fermer</button>
+            </div>
         </div>
     </div>
 
@@ -1070,18 +1642,118 @@
         </div>
     </div>
 
+    <!-- MODALE PARTAGER / QR CODE (style ANDRH) -->
+    <div id="shareBackdrop" onclick="if(event.target===this)closeShareModal()">
+        <div id="shareModal">
+            <div class="share-head">
+                <div class="share-title">🔗 Partager le dashboard</div>
+                <button class="share-close" onclick="closeShareModal()">×</button>
+            </div>
+            <div class="share-sub">Diffusez une version consultable de « <span id="shareProjectName">votre projet</span> » ou générez un QR code.</div>
+            <div class="share-tabs">
+                <button class="share-tab active" data-tab="export" onclick="switchShareTab('export')">📄 Export consultation</button>
+                <button class="share-tab" data-tab="qr" onclick="switchShareTab('qr')">📱 QR code</button>
+            </div>
+
+            <div id="sharePanel-export" class="share-panel active">
+                <button type="button" class="share-option-card" onclick="closeShareModal(); generateReadOnlyLink();">
+                    <div class="share-option-icon">📥</div>
+                    <div>
+                        <div class="share-option-title">Exporter la version consultable (HTML)</div>
+                        <div class="share-option-desc">Génère un fichier HTML autonome avec les données actuelles, en lecture seule. Envoyez-le par e-mail ou déposez-le sur OneDrive/SharePoint — les destinataires consultent sans modifier.</div>
+                    </div>
+                </button>
+                <button type="button" class="share-option-card" onclick="exportData();">
+                    <div class="share-option-icon">💾</div>
+                    <div>
+                        <div class="share-option-title">Exporter les données (JSON)</div>
+                        <div class="share-option-desc">Sauvegarde complète des données brutes pour archivage ou transfert vers un autre dashboard.</div>
+                    </div>
+                </button>
+            </div>
+
+            <div id="sharePanel-qr" class="share-panel">
+                <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px;"><strong>Scannez ce QR code</strong> pour accéder au dashboard sur smartphone. Pour une consultation optimale, exportez d'abord la version HTML et déposez-la sur un partage OneDrive/SharePoint public.</p>
+                <div id="qrContainer"></div>
+                <div id="qrUrlDisplay"></div>
+                <div class="qr-instructions">
+                    📱 <strong>Comment l'utiliser :</strong><br>
+                    1. Exportez la version consultable (HTML) via l'onglet « Export consultation »<br>
+                    2. Déposez le fichier sur OneDrive / SharePoint avec un lien de partage<br>
+                    3. Revenez ici et collez l'URL du partage ci-dessous, puis « Générer »
+                </div>
+                <div class="qr-url-row">
+                    <input type="url" id="qrUrlInput" placeholder="https://votre-lien-onedrive.com/…" onkeydown="if(event.key==='Enter'){event.preventDefault();generateShareQR();}">
+                    <button type="button" onclick="generateShareQR()">Générer</button>
+                </div>
+            </div>
+
+            <div class="share-actions">
+                <button type="button" onclick="closeShareModal()">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALE GESTION DES RESPONSABLES (style ANDRH) -->
+    <div id="memberModalBackdrop" onclick="if(event.target===this)closeMemberModal()">
+        <div id="memberModal">
+            <div class="member-modal-head">
+                <div class="modal-title">👥 Responsables</div>
+                <button type="button" class="member-close" onclick="closeMemberModal()">×</button>
+            </div>
+            <div id="memberList"></div>
+            <div class="member-form">
+                <div id="memberFormTitle" class="member-form-title">➕ Nouveau responsable</div>
+                <div class="form-group">
+                    <label class="form-label">Prénom &amp; Nom *</label>
+                    <input type="text" id="mName" class="form-control" placeholder="Ex : Marie Dupont" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Adresse e-mail</label>
+                    <input type="email" id="mEmail" class="form-control" placeholder="marie.dupont@organisation.fr" autocomplete="off">
+                </div>
+                <input type="hidden" id="mEditingOriginal" value="">
+            </div>
+            <div class="modal-actions" style="margin-top:16px;">
+                <button type="button" class="btn btn-secondary" onclick="closeMemberModal()">Fermer</button>
+                <button type="button" id="memberSaveBtn" class="btn btn-primary" onclick="saveMember()">✅ Ajouter</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // =============================================
         // CONFIGURATION GOOGLE SHEETS
         // =============================================
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOUDR-aWQxZpVSNUQetzK1ZSt7ALqSMGS8j7ll1FxF9eAHWbOXr1mC3nRE4ykwR6U5Vg/exec';
+        // Connexion Google Sheets : URL + jeton NON stockés dans le code (saisis une fois → localStorage)
+        let APPS_SCRIPT_URL = '';
+        let SYNC_TOKEN = '';
+        function loadSyncConfig() {
+            APPS_SCRIPT_URL = localStorage.getItem('opus_sync_url') || '';
+            SYNC_TOKEN = localStorage.getItem('opus_sync_token') || '';
+        }
+        function saveSyncConfig(url, token) {
+            APPS_SCRIPT_URL = (url || '').trim();
+            SYNC_TOKEN = (token || '').trim();
+            localStorage.setItem('opus_sync_url', APPS_SCRIPT_URL);
+            localStorage.setItem('opus_sync_token', SYNC_TOKEN);
+        }
+        function openSyncConfig() {
+            const url = prompt('URL de votre Apps Script (déploiement « application web » se terminant par /exec) :', APPS_SCRIPT_URL);
+            if (url === null) return;
+            const token = prompt('Jeton d\'accès (identique à celui défini dans Code.gs) :', SYNC_TOKEN);
+            if (token === null) return;
+            saveSyncConfig(url, token);
+            showSyncStatus('🔐 Connexion enregistrée', 'success');
+            loadFromSheets();
+        }
 
         // Variables globales
         let tasks = [];
         let editingTaskId = null;
         let currentStatusFilter = 'all';
         let currentPhaseFilter = 'all';
-        let statusChart, phaseChart, responsibleChart;
+        let statusChart, phaseChart, responsibleChart, priorityChart, subtaskChart;
         let currentProject = 'Projet par défaut';
         let allProjects = {};
         let isSyncing = false;
@@ -1091,10 +1763,24 @@
 
         function init() {
             updateCurrentDate();
+            setInterval(updateCurrentDate, 20000);
+            loadSyncConfig();
             loadResponsibles();
+            loadResponsibleEmails();
+            loadMemberProfiles();
+            loadPhases();
+            loadChats();
+            loadResources();
+            renderPhaseFilters();
+            renderResponsibleFilter();
             setupEventListeners();
             showSyncStatus('⏳ Chargement des données...', 'loading');
             loadFromSheets();
+            if (!APPS_SCRIPT_URL) {
+                setTimeout(() => {
+                    if (!APPS_SCRIPT_URL && confirm('Connecter ce tableau de bord à votre Google Sheet maintenant ?\n\n(Sinon, tout reste en local ; vous pourrez le faire plus tard via « 🔐 Connexion Sheets » dans la barre latérale.)')) openSyncConfig();
+                }, 500);
+            }
         }
 
         // =============================================
@@ -1117,25 +1803,613 @@
 
         function saveResponsibles() {
             localStorage.setItem('poei_responsibles', JSON.stringify(responsibles));
+            renderTeamAvatars();
         }
 
-        function populateResponsibleSelect(selected = '') {
-            const sel = document.getElementById('taskResponsible');
-            if (!sel) return;
-            // Liste enregistrée + noms déjà utilisés dans les tâches
-            const names = [...new Set([
-                ...responsibles,
-                ...tasks.map(t => t.responsible).filter(Boolean)
-            ])].sort((a, b) => a.localeCompare(b, 'fr'));
+        // Emails des responsables (map nom -> email)
+        let responsibleEmails = {};
+        function loadResponsibleEmails() {
+            try { responsibleEmails = JSON.parse(localStorage.getItem('opus_responsible_emails')) || {}; } catch (e) { responsibleEmails = {}; }
+        }
+        function saveResponsibleEmails() { localStorage.setItem('opus_responsible_emails', JSON.stringify(responsibleEmails)); }
+        function getEmail(name) { return responsibleEmails[name] || ''; }
+        function setEmail(name, email) {
+            email = (email || '').trim();
+            if (email) responsibleEmails[name] = email; else delete responsibleEmails[name];
+            saveResponsibleEmails();
+        }
 
-            sel.innerHTML = '<option value="">Non assigné</option>';
-            names.forEach(name => {
-                const opt = document.createElement('option');
-                opt.value = name;
-                opt.textContent = name;
-                sel.appendChild(opt);
+        // =============================================
+        // PROFILS MEMBRES (photo + LinkedIn) — style ANDRH
+        // =============================================
+        let memberProfiles = {};
+        function loadMemberProfiles() {
+            try { memberProfiles = JSON.parse(localStorage.getItem('opus_member_profiles')) || {}; } catch (e) { memberProfiles = {}; }
+        }
+        function saveMemberProfiles() { localStorage.setItem('opus_member_profiles', JSON.stringify(memberProfiles)); }
+        function getMemberProfile(name) { return memberProfiles[name] || {}; }
+        function setMemberPhoto(name, url) {
+            const p = memberProfiles[name] || {};
+            url = (url || '').trim();
+            if (url) p.photo = url; else delete p.photo;
+            memberProfiles[name] = p; saveMemberProfiles(); renderTeamAvatars();
+        }
+        function setMemberLinkedin(name, url) {
+            const p = memberProfiles[name] || {};
+            url = (url || '').trim();
+            if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+            if (url) p.linkedin = url; else delete p.linkedin;
+            memberProfiles[name] = p; saveMemberProfiles(); renderTeamAvatars();
+        }
+
+        // =============================================
+        // PHASES DYNAMIQUES
+        // =============================================
+        let phases = [];
+        const DEFAULT_PHASES = [
+            '1. Cadrage & validation dispositif', '2. Ingénierie pédagogique',
+            '3. Communication & recrutement', '4. Préparation opérationnelle',
+            '5. Démarrage de la formation', '6. Suivi en cours de formation',
+            '7. Clôture & obligations de sortie', '8. Actions périphériques'
+        ];
+        function loadPhases() {
+            try { phases = JSON.parse(localStorage.getItem('opus_phases')) || []; } catch (e) { phases = []; }
+            if (!Array.isArray(phases) || phases.length === 0) phases = [...DEFAULT_PHASES];
+            window.__opusPhases = phases;
+        }
+        function savePhases() {
+            localStorage.setItem('opus_phases', JSON.stringify(phases));
+            window.__opusPhases = phases;
+        }
+        function populatePhaseSelect() {
+            const sel = document.getElementById('taskPhase');
+            if (!sel) return;
+            const cur = sel.value;
+            sel.innerHTML = '<option value="">Sélectionner une phase</option>' +
+                phases.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
+            sel.value = cur;
+        }
+        function renderPhaseFilters() {
+            const sel = document.getElementById('filterPhase');
+            if (!sel) return;
+            const cur = sel.value;
+            sel.innerHTML = '<option value="">Phase</option>' +
+                phases.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
+            sel.value = cur;
+        }
+        function renderResponsibleFilter() {
+            const sel = document.getElementById('filterResponsible');
+            if (!sel) return;
+            const cur = sel.value;
+            const names = allResponsibleNames();
+            sel.innerHTML = '<option value="">Responsables</option>' +
+                names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+            sel.value = names.includes(cur) ? cur : '';
+        }
+
+        // ===== FILTRE ÉCHÉANCE (à partir de / jusqu'au / le / entre) =====
+        let dateFilter = { mode: '', a: '', b: '' };
+        const DATE_MODE_LABELS = { from: 'À partir de', until: "Jusqu'au", on: 'Le', between: 'Entre' };
+        function fmtDateFr(iso) {
+            if (!iso) return '';
+            const p = iso.split('-'); return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : iso;
+        }
+        function updateDateFilterBtn() {
+            const btn = document.getElementById('dateFilterBtn');
+            if (!btn) return;
+            let label = '📅 Échéance';
+            if (dateFilter.mode === 'from' && dateFilter.a) label = '📅 ≥ ' + fmtDateFr(dateFilter.a);
+            else if (dateFilter.mode === 'until' && dateFilter.a) label = '📅 ≤ ' + fmtDateFr(dateFilter.a);
+            else if (dateFilter.mode === 'on' && dateFilter.a) label = '📅 ' + fmtDateFr(dateFilter.a);
+            else if (dateFilter.mode === 'between' && (dateFilter.a || dateFilter.b)) label = '📅 ' + fmtDateFr(dateFilter.a) + '→' + fmtDateFr(dateFilter.b);
+            btn.textContent = label;
+            btn.classList.toggle('df-active', !!(dateFilter.mode && (dateFilter.a || dateFilter.b)));
+        }
+        function closeDateFilter() {
+            const p = document.getElementById('dateFilterPop');
+            if (p) p.remove();
+            document.removeEventListener('click', closeDateFilterOnOutside, true);
+        }
+        function closeDateFilterOnOutside(e) {
+            const p = document.getElementById('dateFilterPop');
+            if (p && !p.contains(e.target) && e.target.id !== 'dateFilterBtn') closeDateFilter();
+        }
+        function renderDateFilterFields() {
+            const wrap = document.getElementById('dfFields');
+            if (!wrap) return;
+            const m = document.getElementById('dfMode').value;
+            let html = '';
+            if (m === 'from') html = `<label>À partir du</label><input type="date" id="dfA" value="${dateFilter.a || ''}">`;
+            else if (m === 'until') html = `<label>Jusqu'au</label><input type="date" id="dfA" value="${dateFilter.a || ''}">`;
+            else if (m === 'on') html = `<label>Le</label><input type="date" id="dfA" value="${dateFilter.a || ''}">`;
+            else if (m === 'between') html = `<label>Entre le</label><input type="date" id="dfA" value="${dateFilter.a || ''}"><label>et le</label><input type="date" id="dfB" value="${dateFilter.b || ''}">`;
+            wrap.innerHTML = html;
+        }
+        function openDateFilter(ev) {
+            ev.stopPropagation();
+            if (document.getElementById('dateFilterPop')) { closeDateFilter(); return; }
+            const pop = document.createElement('div');
+            pop.className = 'date-filter-pop';
+            pop.id = 'dateFilterPop';
+            pop.onclick = (e) => e.stopPropagation();
+            const opt = (v, l) => `<option value="${v}" ${dateFilter.mode === v ? 'selected' : ''}>${l}</option>`;
+            pop.innerHTML = `
+                <label>Filtrer par échéance</label>
+                <select id="dfMode" onchange="renderDateFilterFields()">
+                    <option value="">Toutes les échéances</option>
+                    ${opt('from', 'À partir de…')}
+                    ${opt('until', "Jusqu'au…")}
+                    ${opt('on', 'Le…')}
+                    ${opt('between', 'Entre… et…')}
+                </select>
+                <div id="dfFields"></div>
+                <div class="date-filter-actions">
+                    <button type="button" onclick="resetDateFilter()">Effacer</button>
+                    <button type="button" class="df-apply" onclick="applyDateFilter()">Appliquer</button>
+                </div>`;
+            document.body.appendChild(pop);
+            const btn = document.getElementById('dateFilterBtn');
+            const r = btn.getBoundingClientRect();
+            pop.style.left = Math.max(8, Math.min(r.left, window.innerWidth - 262)) + 'px';
+            pop.style.top = (r.bottom + window.scrollY + 4) + 'px';
+            renderDateFilterFields();
+            setTimeout(() => document.addEventListener('click', closeDateFilterOnOutside, true), 0);
+        }
+        function applyDateFilter() {
+            const mode = document.getElementById('dfMode').value;
+            const a = document.getElementById('dfA') ? document.getElementById('dfA').value : '';
+            const b = document.getElementById('dfB') ? document.getElementById('dfB').value : '';
+            dateFilter = { mode, a, b };
+            updateDateFilterBtn();
+            closeDateFilter();
+            renderTasks();
+        }
+        function resetDateFilter() {
+            dateFilter = { mode: '', a: '', b: '' };
+            updateDateFilterBtn();
+            closeDateFilter();
+            renderTasks();
+        }
+        function taskPassesDateFilter(task) {
+            const { mode, a, b } = dateFilter;
+            if (!mode) return true;
+            const d = task.endDate || '';           // format ISO yyyy-mm-dd (comparaison lexicale OK)
+            if (!d) return false;                    // pas d'échéance → exclue si un filtre date est actif
+            if (mode === 'from') return !a || d >= a;
+            if (mode === 'until') return !a || d <= a;
+            if (mode === 'on') return !a || d === a;
+            if (mode === 'between') {
+                const lo = a && b ? (a <= b ? a : b) : a || b;
+                const hi = a && b ? (a <= b ? b : a) : a || b;
+                if (lo && d < lo) return false;
+                if (hi && d > hi) return false;
+                return true;
+            }
+            return true;
+        }
+        function openPhaseManager() {
+            renderPhaseManagerList();
+            document.getElementById('phaseModal').classList.add('active');
+        }
+        function closePhaseManager() {
+            document.getElementById('phaseModal').classList.remove('active');
+        }
+        function renderPhaseManagerList() {
+            const c = document.getElementById('phaseManagerList');
+            if (!c) return;
+            c.innerHTML = phases.length ? phases.map((p, i) => `
+                <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px; background:var(--bg); border-radius:9px; padding:8px 10px;">
+                    <span style="flex:1; font-weight:600; color:var(--navy); font-size:13px;">${escapeHtml(p)}</span>
+                    <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px;" onclick="movePhase(${i},-1)">↑</button>
+                    <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px;" onclick="movePhase(${i},1)">↓</button>
+                    <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px;" onclick="renamePhase(${i})">✏️</button>
+                    <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px; background:#FEE2E2; color:var(--danger);" onclick="deletePhase(${i})">🗑️</button>
+                </div>`).join('') : '<p style="color:var(--text-muted); font-size:13px;">Aucune phase définie.</p>';
+        }
+        function addPhase() {
+            const n = prompt('Nom de la nouvelle phase :');
+            if (!n || !n.trim()) return;
+            phases.push(n.trim());
+            savePhases();
+            afterPhaseChange();
+        }
+        function renamePhase(i) {
+            const old = phases[i];
+            const n = prompt('Nouveau nom de la phase :', old);
+            if (!n || !n.trim() || n.trim() === old) return;
+            phases[i] = n.trim();
+            savePhases();
+            // Répercuter sur les actions existantes (tous projets)
+            Object.keys(allProjects).forEach(pr => (allProjects[pr] || []).forEach(t => { if (t.phase === old) t.phase = phases[i]; }));
+            tasks = allProjects[currentProject] || tasks;
+            saveProjects();
+            afterPhaseChange();
+        }
+        function deletePhase(i) {
+            const p = phases[i];
+            let used = 0;
+            Object.keys(allProjects).forEach(pr => (allProjects[pr] || []).forEach(t => { if (t.phase === p) used++; }));
+            if (used > 0 && !confirm('« ' + p + ' » est utilisée par ' + used + ' action(s).\nSupprimer la phase de la liste ? (les actions conservent leur libellé)')) return;
+            phases.splice(i, 1);
+            savePhases();
+            afterPhaseChange();
+        }
+        function movePhase(i, d) {
+            const j = i + d;
+            if (j < 0 || j >= phases.length) return;
+            const tmp = phases[i]; phases[i] = phases[j]; phases[j] = tmp;
+            savePhases();
+            afterPhaseChange();
+        }
+        function afterPhaseChange() {
+            renderPhaseManagerList();
+            renderPhaseFilters();
+            renderResponsibleFilter();
+            populatePhaseSelect();
+            updateDashboard();
+            renderTasks();
+        }
+
+        // =============================================
+        // DISCUSSION PAR PROJET (local, un fil par projet)
+        // =============================================
+        let chats = {};
+        function loadChats() {
+            try { chats = JSON.parse(localStorage.getItem('opus_chats')) || {}; } catch (e) { chats = {}; }
+        }
+        function saveChats() { localStorage.setItem('opus_chats', JSON.stringify(chats)); }
+        function getChatMe() { return localStorage.getItem('opus_chat_me') || ''; }
+        function setChatMe() {
+            const el = document.getElementById('chatMe');
+            if (el) localStorage.setItem('opus_chat_me', (el.value || '').trim());
+        }
+        function populateChatSelects() {
+            const names = allResponsibleNames();
+            const meSel = document.getElementById('chatMe');
+            if (meSel) {
+                const me = getChatMe();
+                meSel.innerHTML = '<option value="">— Qui êtes-vous ? —</option>' + names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+                meSel.value = me;
+            }
+            const toSel = document.getElementById('chatTo');
+            if (toSel) {
+                const cur = toSel.value;
+                toSel.innerHTML = '<option value="">Tout le monde</option>' + names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+                toSel.value = cur;
+            }
+        }
+        function renderChat() {
+            const box = document.getElementById('chatMessages');
+            if (!box) return;
+            populateChatSelects();
+            const me = getChatMe();
+            const msgs = chats[currentProject] || [];
+            if (msgs.length === 0) {
+                box.innerHTML = '<div class="chat-empty">Aucun message pour ce projet.<br>Démarrez la discussion ✍️</div>';
+                return;
+            }
+            box.innerHTML = msgs.map(m => {
+                const mine = me && m.author === me;
+                const t = new Date(m.ts);
+                const time = isNaN(t.getTime()) ? '' : t.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) + ' ' + t.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                const to = m.to ? ` <span style="opacity:.75; font-weight:600;">→ ${escapeHtml(m.to)}</span>` : '';
+                return `<div class="chat-msg ${mine ? 'mine' : 'theirs'}"><div class="cm-author">${escapeHtml(m.author || 'Anonyme')}${to}</div><div>${escapeHtml(m.text)}</div><div class="cm-time">${time}</div></div>`;
+            }).join('');
+            box.scrollTop = box.scrollHeight;
+        }
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            if (!input) return;
+            const text = (input.value || '').trim();
+            if (!text) return;
+            const me = getChatMe();
+            if (!me) { alert('Sélectionnez d\'abord qui vous êtes (champ « Connecté·e »).'); return; }
+            const toSel = document.getElementById('chatTo');
+            const to = toSel ? toSel.value : '';
+            if (!chats[currentProject]) chats[currentProject] = [];
+            chats[currentProject].push({ author: me, to: to, text: text, ts: Date.now() });
+            saveChats();
+            closeMentionMenu();
+            input.value = '';
+            renderChat();
+            // Notifications e-mail (personnes citées @ + destinataire)
+            notifyChatRecipients(me, to, text);
+        }
+
+        // ===== NOTIFICATIONS E-MAIL DU CHAT (via Apps Script) =====
+        // Retourne les noms des responsables cités avec « @ » dans le texte
+        function chatMentionedNames(text) {
+            const names = allResponsibleNames();
+            const hits = [];
+            names.forEach(n => {
+                const esc = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                // « @ » + nom complet, pas suivi d'une lettre (évite les correspondances partielles)
+                const re = new RegExp('@' + esc + '(?![A-Za-zÀ-ÿ])', 'i');
+                if (re.test(text)) hits.push(n);
             });
-            sel.value = selected || '';
+            return hits;
+        }
+        // Calcule la liste d'e-mails à notifier (mentions + destinataire), sans l'auteur
+        function chatNotifyEmails(author, to, text) {
+            let targets = chatMentionedNames(text);
+            if (to) targets.push(to);
+            targets = [...new Set(targets)].filter(n => n && n !== author);
+            const emails = targets.map(n => getEmail(n)).filter(e => e && /@/.test(e));
+            return [...new Set(emails)];
+        }
+        async function notifyChatRecipients(author, to, text) {
+            const emails = chatNotifyEmails(author, to, text);
+            if (emails.length === 0) return;
+            if (!APPS_SCRIPT_URL) {
+                showSyncStatus('✉️ Notification non envoyée (connexion Sheets/Apps Script requise)', 'warning');
+                return;
+            }
+            const subject = 'Nouveau message dans le chat OPUS';
+            const message = 'Bonjour,\n\nVous avez un nouveau message dans le chat OPUS.\n\n'
+                + 'Projet : ' + currentProject + '\n'
+                + 'De : ' + author + '\n\n'
+                + '— Notification automatique du tableau de bord OPUS';
+            try {
+                // Envoi « fire-and-forget » en no-cors : la requête POST part vers l'Apps Script
+                // (qui envoie l'e-mail) même depuis un fichier local file:// ; on ne lit pas la réponse.
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'notify', token: SYNC_TOKEN, recipients: emails, subject: subject, message: message })
+                });
+                showSyncStatus('✉️ Notification envoyée à ' + emails.length + ' personne(s)', 'success');
+            } catch (err) {
+                console.warn('Notify error:', err);
+                showSyncStatus('⚠️ Notification e-mail non envoyée', 'warning');
+            }
+        }
+
+        // ===== AUTOCOMPLÉTION « @ » (mentions, style ANDRH) =====
+        let _mentionAt = -1;          // position du « @ » déclencheur
+        let _mentionActive = -1;      // index surligné
+        let _mentionMatches = [];
+        function mentionAvatarHtml(name) {
+            const p = (typeof getMemberProfile === 'function') ? getMemberProfile(name) : {};
+            return (p && p.photo)
+                ? `<span class="mention-avatar"><img src="${escapeHtml(p.photo)}" alt="" onerror="this.style.display='none'">${initials(name)}</span>`
+                : `<span class="mention-avatar">${initials(name)}</span>`;
+        }
+        function detectMentionQuery() {
+            const input = document.getElementById('chatInput');
+            if (!input) return null;
+            const caret = input.selectionStart;
+            const before = input.value.slice(0, caret);
+            const at = before.lastIndexOf('@');
+            if (at < 0) return null;
+            // le « @ » doit être en début de champ ou précédé d'un espace
+            if (at > 0 && !/\s/.test(before[at - 1])) return null;
+            const token = before.slice(at + 1);
+            if (/[\n]/.test(token)) return null;
+            return { at, token };
+        }
+        function onChatInput() {
+            const q = detectMentionQuery();
+            if (!q) { closeMentionMenu(); return; }
+            const names = allResponsibleNames();
+            const tok = q.token.toLowerCase().trim();
+            _mentionMatches = names.filter(n => n.toLowerCase().startsWith(tok)).slice(0, 8);
+            if (_mentionMatches.length === 0 && tok.length > 0) {
+                // essai : le jeton contenu n'importe où dans le nom
+                _mentionMatches = names.filter(n => n.toLowerCase().includes(tok)).slice(0, 8);
+            }
+            if (_mentionMatches.length === 0) { closeMentionMenu(); return; }
+            _mentionAt = q.at;
+            _mentionActive = 0;
+            renderMentionMenu();
+        }
+        function renderMentionMenu() {
+            const menu = document.getElementById('mentionMenu');
+            if (!menu) return;
+            menu.innerHTML = _mentionMatches.map((n, i) => {
+                const mail = getEmail(n);
+                return `<div class="mention-item${i === _mentionActive ? ' active' : ''}" data-i="${i}" onmousedown="event.preventDefault(); pickMention(${i});">
+                    ${mentionAvatarHtml(n)}<span>${escapeHtml(n)}</span>${mail ? `<span class="mention-email">${escapeHtml(mail)}</span>` : ''}
+                </div>`;
+            }).join('');
+            menu.classList.add('open');
+        }
+        function closeMentionMenu() {
+            const menu = document.getElementById('mentionMenu');
+            if (menu) { menu.classList.remove('open'); menu.innerHTML = ''; }
+            _mentionAt = -1; _mentionActive = -1; _mentionMatches = [];
+        }
+        function pickMention(i) {
+            const input = document.getElementById('chatInput');
+            if (!input || _mentionAt < 0) return;
+            const name = _mentionMatches[i];
+            if (!name) return;
+            const caret = input.selectionStart;
+            const before = input.value.slice(0, _mentionAt);
+            const after = input.value.slice(caret);
+            const insert = '@' + name + ' ';
+            input.value = before + insert + after;
+            const pos = (before + insert).length;
+            input.setSelectionRange(pos, pos);
+            closeMentionMenu();
+            input.focus();
+        }
+        function onChatInputKeydown(event) {
+            const menu = document.getElementById('mentionMenu');
+            const open = menu && menu.classList.contains('open');
+            if (open && _mentionMatches.length) {
+                if (event.key === 'ArrowDown') { event.preventDefault(); _mentionActive = (_mentionActive + 1) % _mentionMatches.length; renderMentionMenu(); return; }
+                if (event.key === 'ArrowUp') { event.preventDefault(); _mentionActive = (_mentionActive - 1 + _mentionMatches.length) % _mentionMatches.length; renderMentionMenu(); return; }
+                if (event.key === 'Enter' || event.key === 'Tab') { event.preventDefault(); pickMention(_mentionActive < 0 ? 0 : _mentionActive); return; }
+                if (event.key === 'Escape') { event.preventDefault(); closeMentionMenu(); return; }
+            }
+            if (event.key === 'Enter') { event.preventDefault(); sendChatMessage(); }
+        }
+
+        // =============================================
+        // RESSOURCES (liens OneDrive / SharePoint, par projet)
+        // =============================================
+        let resources = {};
+        function loadResources() {
+            try { resources = JSON.parse(localStorage.getItem('opus_resources')) || {}; } catch (e) { resources = {}; }
+        }
+        function saveResources() { localStorage.setItem('opus_resources', JSON.stringify(resources)); }
+        function detectResKind(url) {
+            const u = String(url).toLowerCase();
+            if (u.includes('sharepoint.')) return 'sharepoint';
+            if (u.includes('onedrive.') || u.includes('1drv.ms')) return 'onedrive';
+            return '';
+        }
+        function addResource() {
+            const t = document.getElementById('resTitle');
+            const u = document.getElementById('resUrl');
+            const title = (t.value || '').trim();
+            let url = (u.value || '').trim();
+            if (!url) { alert('Indiquez un lien.'); return; }
+            if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+            const kind = detectResKind(url);
+            if (!kind) { alert('❌ Seuls les liens OneDrive ou SharePoint sont acceptés.'); return; }
+            if (!resources[currentProject]) resources[currentProject] = [];
+            resources[currentProject].push({ title: title || url, url: url, kind: kind, ts: Date.now() });
+            saveResources();
+            t.value = ''; u.value = '';
+            renderResources();
+        }
+        function deleteResource(i) {
+            if (!resources[currentProject]) return;
+            if (!confirm('Supprimer ce lien ?')) return;
+            resources[currentProject].splice(i, 1);
+            saveResources();
+            renderResources();
+        }
+        function renderResources() {
+            const box = document.getElementById('resGrid');
+            if (!box) return;
+            const list = resources[currentProject] || [];
+            if (list.length === 0) {
+                box.innerHTML = '<div class="tl-empty" style="padding:24px;">Aucun lien pour ce projet. Ajoutez un lien OneDrive ou SharePoint ci-dessus.</div>';
+                return;
+            }
+            box.innerHTML = list.map((r, i) => `
+                <div class="res-card">
+                    <div class="res-ico ${r.kind}">${r.kind === 'sharepoint' ? '🌐' : '☁️'}</div>
+                    <div class="res-body">
+                        <div class="res-title">${escapeHtml(r.title)}</div>
+                        <a class="res-url" href="${escapeHtml(r.url)}" target="_blank" rel="noopener">${escapeHtml(r.url)}</a>
+                        <span class="res-badge ${r.kind}">${r.kind === 'sharepoint' ? 'SharePoint' : 'OneDrive'}</span>
+                    </div>
+                    <button class="btn-delete" onclick="deleteResource(${i})">🗑️</button>
+                </div>`).join('');
+            renderDashResources();
+        }
+        // Widget tableau de bord : dernières ressources rattachées (style ANDRH)
+        function renderDashResources() {
+            const box = document.getElementById('dashResourceItems');
+            if (!box) return;
+            const list = (resources[currentProject] || []).slice();
+            list.sort((a, b) => (b.ts || 0) - (a.ts || 0));
+            const recent = list.slice(0, 5);
+            if (recent.length === 0) {
+                box.innerHTML = '<div class="dash-res-empty">Aucune ressource rattachée à ce projet. Ajoutez un lien OneDrive/SharePoint dans l\'onglet Ressources.</div>';
+                return;
+            }
+            box.innerHTML = recent.map(r => {
+                const icon = r.kind === 'sharepoint' ? '🌐' : '☁️';
+                const cat = r.kind === 'sharepoint' ? 'SharePoint' : 'OneDrive';
+                return `<div class="dash-res-item">
+                    <span class="dash-res-icon">${icon}</span>
+                    <span class="dash-res-title" title="${escapeHtml(r.title)}">${escapeHtml(r.title)}</span>
+                    <span class="dash-res-cat">${cat}</span>
+                    <a class="btn-dash-res" href="${escapeHtml(r.url)}" target="_blank" rel="noopener" title="Ouvrir">🔗</a>
+                </div>`;
+            }).join('');
+        }
+
+        // Buffer de sélection dans la modale (responsables multiples)
+        let selectedResponsibles = [];
+
+        function splitResponsibles(str) {
+            return String(str == null ? '' : str).split(/[;,]/).map(s => s.trim()).filter(Boolean);
+        }
+
+        function initials(name) {
+            const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+            if (parts.length === 0) return '?';
+            if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+
+        function getAllKnownResponsibles() {
+            const used = [];
+            Object.keys(allProjects).forEach(p => (allProjects[p] || []).forEach(t => {
+                splitResponsibles(t.responsible).forEach(n => used.push(n));
+            }));
+            return [...new Set([...responsibles, ...used, ...selectedResponsibles])]
+                .filter(Boolean).sort((a, b) => a.localeCompare(b, 'fr'));
+        }
+
+        function syncResponsibleHidden() {
+            const h = document.getElementById('taskResponsible');
+            if (h) h.value = selectedResponsibles.join('; ');
+        }
+
+        function renderRespPicker() {
+            const box = document.getElementById('respPicker');
+            if (!box) return;
+            const all = getAllKnownResponsibles();
+            window.__respAll = all;
+            if (all.length === 0) {
+                box.innerHTML = '<div class="owner-empty">Aucun responsable — cliquez sur « + » pour en ajouter un.</div>';
+            } else {
+                box.innerHTML = all.map(n => {
+                    const on = selectedResponsibles.includes(n);
+                    const p = (typeof getMemberProfile === 'function') ? getMemberProfile(n) : {};
+                    const chip = p && p.photo
+                        ? `<span class="owner-chip"><img src="${escapeHtml(p.photo)}" alt="" onerror="this.style.display='none'">${initials(n)}</span>`
+                        : `<span class="owner-chip">${initials(n)}</span>`;
+                    return `<label class="owner-check-item">
+                        <input type="checkbox" ${on ? 'checked' : ''} data-name="${escapeHtml(n)}" onchange="onRespCheck(this.getAttribute('data-name'), this.checked)">
+                        ${chip}<span class="owner-check-name">${escapeHtml(n)}</span>
+                    </label>`;
+                }).join('');
+            }
+            syncResponsibleHidden();
+        }
+        // Coche/décoche fluide : met à jour sans reconstruire toute la liste (pas de saut de scroll)
+        function onRespCheck(name, checked) {
+            if (!name) return;
+            const idx = selectedResponsibles.indexOf(name);
+            if (checked) { if (idx < 0) selectedResponsibles.push(name); }
+            else { if (idx >= 0) selectedResponsibles.splice(idx, 1); }
+            syncResponsibleHidden();
+        }
+
+        // Emails éditables des responsables sélectionnés (dans la fiche action)
+        function renderRespEmails() {
+            const box = document.getElementById('respEmails');
+            if (!box) return;
+            if (selectedResponsibles.length === 0) { box.innerHTML = ''; return; }
+            box.innerHTML = '<div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px; margin:4px 0 6px;">✉️ Emails des responsables</div>' +
+                selectedResponsibles.map(n => `
+                    <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
+                        <span style="flex:0 0 130px; font-size:12.5px; font-weight:600; color:var(--navy); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(n)}</span>
+                        <input type="email" data-name="${escapeHtml(n)}" value="${escapeHtml(getEmail(n))}" placeholder="email@exemple.fr" style="flex:1; padding:7px 10px; border:1.5px solid var(--border); border-radius:8px; font-size:12.5px; font-family:inherit;" onchange="setEmail(this.getAttribute('data-name'), this.value)">
+                    </div>`).join('');
+        }
+
+        function toggleResponsibleIdx(i) {
+            const name = (window.__respAll || [])[i];
+            if (!name) return;
+            const idx = selectedResponsibles.indexOf(name);
+            if (idx >= 0) selectedResponsibles.splice(idx, 1);
+            else selectedResponsibles.push(name);
+            renderRespPicker();
+        }
+
+        // Conserve le nom d'origine : initialise la sélection depuis une chaîne
+        function populateResponsibleSelect(selected = '') {
+            selectedResponsibles = splitResponsibles(selected);
+            renderRespPicker();
         }
 
         function addResponsible() {
@@ -1146,29 +2420,151 @@
                 responsibles.push(clean);
                 saveResponsibles();
             }
-            populateResponsibleSelect(clean);
+            const email = prompt('Adresse e-mail de ' + clean + ' (facultatif) :', getEmail(clean));
+            if (email !== null) setEmail(clean, email);
+            if (!selectedResponsibles.includes(clean)) selectedResponsibles.push(clean);
+            renderRespPicker();
         }
 
         function removeResponsible() {
-            const sel = document.getElementById('taskResponsible');
-            const name = sel.value;
-            if (!name) {
-                alert('Sélectionnez d\'abord dans la liste le responsable à retirer.');
-                return;
-            }
-            // Compter les tâches qui utilisent encore ce nom (tous projets confondus)
+            const name = prompt('Nom du responsable à retirer de la liste enregistrée :');
+            if (!name || !name.trim()) return;
+            const clean = name.trim();
             let used = 0;
             Object.keys(allProjects).forEach(proj => {
-                (allProjects[proj] || []).forEach(t => { if (t.responsible === name) used++; });
+                (allProjects[proj] || []).forEach(t => { if (splitResponsibles(t.responsible).includes(clean)) used++; });
             });
             if (used > 0) {
-                alert('❌ Impossible de retirer "' + name + '" : il est encore assigné à ' + used + ' tâche(s).\n\nRéassignez d\'abord ces tâches à un autre responsable.');
+                alert('❌ Impossible de retirer "' + clean + '" : il est encore assigné à ' + used + ' action(s).\n\nRéassignez-les d\'abord.');
                 return;
             }
-            if (!confirm('Retirer "' + name + '" de la liste des responsables ?')) return;
-            responsibles = responsibles.filter(r => r !== name);
+            if (!confirm('Retirer "' + clean + '" de la liste des responsables ?')) return;
+            responsibles = responsibles.filter(r => r !== clean);
             saveResponsibles();
-            populateResponsibleSelect('');
+            selectedResponsibles = selectedResponsibles.filter(r => r !== clean);
+            renderRespPicker();
+        }
+
+        // =============================================
+        // MODALE GESTION DES RESPONSABLES (style ANDRH)
+        // Ajouter ET modifier / retirer les responsables
+        // =============================================
+        function openMemberModal() {
+            resetMemberForm();
+            renderMemberList();
+            const bd = document.getElementById('memberModalBackdrop');
+            if (bd) bd.classList.add('open');
+            setTimeout(() => { const el = document.getElementById('mName'); if (el) el.focus(); }, 50);
+        }
+        function closeMemberModal() {
+            const bd = document.getElementById('memberModalBackdrop');
+            if (bd) bd.classList.remove('open');
+            resetMemberForm();
+        }
+        function resetMemberForm() {
+            const n = document.getElementById('mName'), e = document.getElementById('mEmail'), o = document.getElementById('mEditingOriginal');
+            if (n) n.value = ''; if (e) e.value = ''; if (o) o.value = '';
+            const t = document.getElementById('memberFormTitle'); if (t) t.textContent = '➕ Nouveau responsable';
+            const b = document.getElementById('memberSaveBtn'); if (b) b.textContent = '✅ Ajouter';
+        }
+        function memberAvatarHtml(name) {
+            const p = (typeof getMemberProfile === 'function') ? getMemberProfile(name) : {};
+            return (p && p.photo)
+                ? `<span class="member-item-avatar"><img src="${escapeHtml(p.photo)}" alt="" onerror="this.style.display='none'">${initials(name)}</span>`
+                : `<span class="member-item-avatar">${initials(name)}</span>`;
+        }
+        function renderMemberList() {
+            const box = document.getElementById('memberList');
+            if (!box) return;
+            const names = getAllKnownResponsibles();
+            const editing = document.getElementById('mEditingOriginal') ? document.getElementById('mEditingOriginal').value : '';
+            if (names.length === 0) { box.innerHTML = '<div class="member-empty">Aucun responsable pour l\'instant.</div>'; return; }
+            box.innerHTML = names.map(n => {
+                const mail = getEmail(n);
+                return `<div class="member-item${n === editing ? ' editing' : ''}">
+                    ${memberAvatarHtml(n)}
+                    <div class="member-item-info">
+                        <div class="member-item-name">${escapeHtml(n)}</div>
+                        <div class="member-item-email">${mail ? escapeHtml(mail) : '—'}</div>
+                    </div>
+                    <button type="button" class="member-item-btn" title="Modifier" onclick="editMember('${encodeURIComponent(n)}')">✏️</button>
+                    <button type="button" class="member-item-btn" title="Retirer" onclick="deleteMember('${encodeURIComponent(n)}')">🗑️</button>
+                </div>`;
+            }).join('');
+        }
+        function editMember(enc) {
+            const name = decodeURIComponent(enc);
+            const n = document.getElementById('mName'), e = document.getElementById('mEmail'), o = document.getElementById('mEditingOriginal');
+            if (n) n.value = name; if (e) e.value = getEmail(name); if (o) o.value = name;
+            const t = document.getElementById('memberFormTitle'); if (t) t.textContent = '✏️ Modifier ' + name;
+            const b = document.getElementById('memberSaveBtn'); if (b) b.textContent = '💾 Enregistrer';
+            renderMemberList();
+            if (n) n.focus();
+        }
+        function saveMember() {
+            const nEl = document.getElementById('mName'), eEl = document.getElementById('mEmail'), oEl = document.getElementById('mEditingOriginal');
+            const name = (nEl ? nEl.value : '').trim();
+            const email = (eEl ? eEl.value : '').trim();
+            const original = (oEl ? oEl.value : '').trim();
+            if (!name) { alert('Indiquez un prénom & nom.'); return; }
+            if (original && original !== name) {
+                if (getAllKnownResponsibles().includes(name)) { alert('❌ Un responsable « ' + name + ' » existe déjà.'); return; }
+                renameResponsibleEverywhere(original, name);
+            }
+            if (!responsibles.includes(name)) { responsibles.push(name); saveResponsibles(); }
+            setEmail(name, email);
+            resetMemberForm();
+            renderMemberList();
+            if (typeof renderRespPicker === 'function') renderRespPicker();
+            if (typeof renderResponsibleFilter === 'function') renderResponsibleFilter();
+            if (typeof renderTeamAvatars === 'function') renderTeamAvatars();
+        }
+        function renameResponsibleEverywhere(oldName, newName) {
+            Object.keys(allProjects).forEach(proj => {
+                (allProjects[proj] || []).forEach(t => {
+                    const arr = splitResponsibles(t.responsible);
+                    if (arr.includes(oldName)) {
+                        t.responsible = [...new Set(arr.map(x => x === oldName ? newName : x))].join('; ');
+                    }
+                });
+            });
+            if (typeof saveProjects === 'function') saveProjects();
+            responsibles = [...new Set(responsibles.map(r => r === oldName ? newName : r))];
+            saveResponsibles();
+            if (responsibleEmails[oldName] !== undefined) {
+                if (responsibleEmails[newName] === undefined) responsibleEmails[newName] = responsibleEmails[oldName];
+                delete responsibleEmails[oldName]; saveResponsibleEmails();
+            }
+            if (typeof memberProfiles !== 'undefined' && memberProfiles[oldName] !== undefined) {
+                if (memberProfiles[newName] === undefined) memberProfiles[newName] = memberProfiles[oldName];
+                delete memberProfiles[oldName]; saveMemberProfiles();
+            }
+            selectedResponsibles = [...new Set(selectedResponsibles.map(x => x === oldName ? newName : x))];
+            if (typeof renderTasks === 'function') renderTasks();
+            if (typeof updateDashboard === 'function') updateDashboard();
+        }
+        function deleteMember(enc) {
+            const name = decodeURIComponent(enc);
+            let used = 0;
+            Object.keys(allProjects).forEach(proj => { (allProjects[proj] || []).forEach(t => { if (splitResponsibles(t.responsible).includes(name)) used++; }); });
+            if (used > 0) {
+                if (!confirm('« ' + name + ' » est assigné à ' + used + ' action(s).\n\nLe retirer de la liste ET le désassigner de ces actions ?')) return;
+                Object.keys(allProjects).forEach(proj => { (allProjects[proj] || []).forEach(t => { const arr = splitResponsibles(t.responsible); if (arr.includes(name)) t.responsible = arr.filter(x => x !== name).join('; '); }); });
+                if (typeof saveProjects === 'function') saveProjects();
+            } else {
+                if (!confirm('Retirer « ' + name + ' » de la liste des responsables ?')) return;
+            }
+            responsibles = responsibles.filter(r => r !== name); saveResponsibles();
+            if (responsibleEmails[name] !== undefined) { delete responsibleEmails[name]; saveResponsibleEmails(); }
+            if (typeof memberProfiles !== 'undefined' && memberProfiles[name] !== undefined) { delete memberProfiles[name]; saveMemberProfiles(); }
+            selectedResponsibles = selectedResponsibles.filter(x => x !== name);
+            resetMemberForm();
+            renderMemberList();
+            if (typeof renderRespPicker === 'function') renderRespPicker();
+            if (typeof renderResponsibleFilter === 'function') renderResponsibleFilter();
+            if (typeof renderTeamAvatars === 'function') renderTeamAvatars();
+            if (typeof renderTasks === 'function') renderTasks();
+            if (typeof updateDashboard === 'function') updateDashboard();
         }
 
         // =============================================
@@ -1187,10 +2583,20 @@
         }
 
         async function loadFromSheets() {
+            if (!APPS_SCRIPT_URL) {
+                loadProjectsFromLocal();
+                showSyncStatus('ℹ️ Mode local — cliquez sur « Connexion Sheets » pour synchroniser', 'warning');
+                return;
+            }
             showSyncStatus('⏳ Chargement des données...', 'loading');
             try {
-                const resp = await fetch(APPS_SCRIPT_URL + '?action=get&t=' + Date.now());
+                const resp = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'get', token: SYNC_TOKEN })
+                });
                 const allTasks = await resp.json();
+                if (!Array.isArray(allTasks)) throw new Error((allTasks && allTasks.error) || 'Réponse inattendue');
 
                 allProjects = {};
                 allTasks.forEach(task => {
@@ -1199,6 +2605,7 @@
                     // Ligne marqueur : projet vide, on crée le projet sans ajouter de tâche
                     if (task.title === PROJECT_MARKER) return;
                     task.id = Number(task.id) || task.id;
+                    decodeSubtasksFromComments(task);
                     allProjects[proj].push(task);
                 });
 
@@ -1239,11 +2646,18 @@
             localStorage.setItem('poei_all_projects', JSON.stringify(allProjects));
             localStorage.setItem('poei_current_project', currentProject);
 
+            if (!APPS_SCRIPT_URL) {
+                isSyncing = false;
+                showSyncStatus('💾 Enregistré en local', 'success');
+                if (pendingSave) { pendingSave = false; saveToSheets(); }
+                return;
+            }
+
             const allTasks = [];
             Object.keys(allProjects).forEach(proj => {
                 const projTasks = allProjects[proj] || [];
                 projTasks.forEach(task => {
-                    allTasks.push({ ...task, project: proj });
+                    allTasks.push(encodeSubtasksIntoComments({ ...task, project: proj }));
                 });
                 // Projet sans tâche : on enregistre une ligne marqueur pour qu'il survive au rechargement
                 if (projTasks.length === 0) {
@@ -1259,7 +2673,7 @@
                 const resp = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'save_all', tasks: allTasks })
+                    body: JSON.stringify({ action: 'save_all', token: SYNC_TOKEN, tasks: allTasks })
                 });
                 const result = await resp.json();
                 if (result.success) {
@@ -1296,8 +2710,7 @@
 
             // Task controls
             document.getElementById('btnNewTask').addEventListener('click', () => openModal());
-            document.getElementById('btnAddResponsible').addEventListener('click', addResponsible);
-            document.getElementById('btnRemoveResponsible').addEventListener('click', removeResponsible);
+            // Bouton « + » des responsables : géré par onclick="openMemberModal()" dans le HTML
             document.getElementById('templateSelector').addEventListener('change', function() {
                 const loadBtn = document.getElementById('btnLoadSelectedTemplate');
                 loadBtn.disabled = !this.value;
@@ -1334,8 +2747,11 @@
         }
 
         function updateCurrentDate() {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('fr-FR', options);
+            const now = new Date();
+            const d = document.getElementById('currentDate');
+            if (d) d.textContent = now.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'long' });
+            const t = document.getElementById('currentTime');
+            if (t) t.textContent = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
         }
 
         // Fallback localStorage si hors-ligne
@@ -1391,6 +2807,9 @@
                 }
                 selector.appendChild(option);
             });
+            renderChat();
+            renderResources();
+            renderTeamAvatars();
         }
 
         function switchProject(projectName) {
@@ -1410,37 +2829,111 @@
             renderTasks();
             updateProjectSelector();
             
-            // Réinitialiser les boutons de filtre
-            document.querySelectorAll('#statusFilters .filter-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('#statusFilters .filter-btn[data-status="all"]').classList.add('active');
-            document.querySelectorAll('#phaseFilters .filter-btn-phase').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('#phaseFilters .filter-btn-phase[data-phase="all"]').classList.add('active');
+            // Réinitialiser les filtres (selects + recherche)
+            ['filterStatus', 'filterPhase', 'filterPriority', 'filterResponsible', 'taskSearch'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            dateFilter = { mode: '', a: '', b: '' };
+            updateDateFilterBtn();
+            renderResponsibleFilter();
+            const selAll = document.getElementById('selectAllTasks');
+            if (selAll) selAll.checked = false;
         }
 
         function createNewProject() {
             const projectName = prompt('Nom du nouveau projet :');
             if (!projectName) return;
-            
+
             if (allProjects[projectName]) {
                 alert('❌ Un projet avec ce nom existe déjà !');
                 return;
             }
-            
-            // Sauvegarder le projet actuel
+
+            // Proposer le point de départ : de zéro ou depuis un template
+            _pendingProjectName = projectName.trim();
+            openProjectStarter();
+        }
+
+        // ===== MODALE « POINT DE DÉPART DU PROJET » =====
+        let _pendingProjectName = '';
+        function openProjectStarter() {
+            closeProjectStarter();
+            const overlay = document.createElement('div');
+            overlay.className = 'team-modal-overlay';
+            overlay.id = 'projectStarterOverlay';
+            overlay.onclick = (e) => { if (e.target === overlay) closeProjectStarter(); };
+            overlay.innerHTML = `<div class="team-modal" style="max-width:480px;">
+                <div class="team-modal-head"><h3>🚀 Démarrer « ${escapeHtml(_pendingProjectName)} »</h3><button class="team-modal-close" onclick="closeProjectStarter()">×</button></div>
+                <div class="team-modal-body" id="projectStarterBody">
+                    <p class="tm-hint">Comment souhaitez-vous démarrer ce projet ?</p>
+                    <div class="ps-choices">
+                        <button type="button" class="ps-card" onclick="finalizeNewProject(null)">
+                            <span class="ps-ico">📄</span>
+                            <span class="ps-title">Démarrer votre projet de zéro</span>
+                            <span class="ps-desc">Projet vierge, sans aucune action.</span>
+                        </button>
+                        <button type="button" class="ps-card" onclick="showProjectTemplatePicker()">
+                            <span class="ps-ico">📋</span>
+                            <span class="ps-title">Charger un template</span>
+                            <span class="ps-desc">Partir d'un modèle existant (POEI ou vos templates).</span>
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+            document.body.appendChild(overlay);
+        }
+        function showProjectTemplatePicker() {
+            const body = document.getElementById('projectStarterBody');
+            if (!body) return;
+            const saved = getSavedTemplates();
+            const names = Object.keys(saved);
+            const defaultCount = getOriginalTemplate().length;
+            let items = `<button type="button" class="ps-tpl" onclick="finalizeNewProject('default')">
+                    <span class="ps-tpl-name">🏠 Template POEI par défaut</span>
+                    <span class="ps-tpl-count">${defaultCount} actions</span>
+                </button>`;
+            names.forEach((name, i) => {
+                items += `<button type="button" class="ps-tpl" onclick="finalizeNewProject('saved', ${i})">
+                    <span class="ps-tpl-name">📋 ${escapeHtml(name)}</span>
+                    <span class="ps-tpl-count">${saved[name].length} actions</span>
+                </button>`;
+            });
+            body.innerHTML = `<p class="tm-hint">Choisissez le template à charger :</p>
+                <div class="ps-tpl-list">${items}</div>
+                <div style="margin-top:14px;"><button type="button" class="tm-btn" onclick="openProjectStarter()">← Retour</button></div>`;
+        }
+        function closeProjectStarter() {
+            const o = document.getElementById('projectStarterOverlay');
+            if (o) o.remove();
+        }
+        function finalizeNewProject(source, savedIndex) {
+            const projectName = _pendingProjectName;
+            if (!projectName) { closeProjectStarter(); return; }
+            let starterTasks = [];
+            if (source === 'default') {
+                starterTasks = JSON.parse(JSON.stringify(getOriginalTemplate()));
+            } else if (source === 'saved') {
+                const saved = getSavedTemplates();
+                const key = Object.keys(saved)[savedIndex];
+                const tpl = (key && saved[key]) || [];
+                starterTasks = tpl.map(t => ({ ...t, id: Date.now() + Math.random() }));
+            }
+
+            // Sauvegarder le projet courant puis créer le nouveau
             saveProjects();
-            
-            // Créer le nouveau projet
-            allProjects[projectName] = [];
+            allProjects[projectName] = starterTasks;
             currentProject = projectName;
-            tasks = [];
-            
-            // Sauvegarder et mettre à jour
+            tasks = starterTasks;
             saveProjects();
             updateProjectSelector();
             updateDashboard();
             renderTasks();
-            
-            alert('✅ Nouveau projet créé : ' + projectName);
+            closeProjectStarter();
+
+            const loaded = starterTasks.length;
+            alert('✅ Nouveau projet créé : ' + projectName +
+                (loaded ? '\n\n📋 Template chargé (' + loaded + ' actions).' : '\n\n📄 Projet vierge.'));
         }
 
         function renameCurrentProject() {
@@ -1455,6 +2948,7 @@
             // Renommer le projet
             allProjects[newName] = allProjects[currentProject];
             delete allProjects[currentProject];
+            if (chats[currentProject]) { chats[newName] = chats[currentProject]; delete chats[currentProject]; saveChats(); }
             currentProject = newName;
             
             // Sauvegarder et mettre à jour
@@ -1842,22 +3336,19 @@
             document.getElementById('alertBlocked').textContent = blocked;
             document.getElementById('alertHighPriority').textContent = highPriority;
             document.getElementById('alertUpcoming').textContent = upcoming;
+
+            const _bT = document.getElementById('bannerTotal'); if (_bT) _bT.textContent = total;
+            const _bD = document.getElementById('bannerDone'); if (_bD) _bD.textContent = completed;
+            const _bP = document.getElementById('bannerPct'); if (_bP) _bP.textContent = progress + '%';
+            const _bN = document.getElementById('bannerProjectName'); if (_bN) _bN.textContent = currentProject;
             
             updatePhaseTable();
             updateCharts();
+            renderDashResources();
         }
 
         function updatePhaseTable() {
-            const phases = [
-                '1. Cadrage & validation dispositif',
-                '2. Ingénierie pédagogique',
-                '3. Communication & recrutement',
-                '4. Préparation opérationnelle',
-                '5. Démarrage de la formation',
-                '6. Suivi en cours de formation',
-                '7. Clôture & obligations de sortie',
-                '8. Actions périphériques'
-            ];
+            const phases = [...new Set([].concat(window.__opusPhases || [], tasks.map(t => t.phase)))].filter(Boolean);
             
             const tbody = document.getElementById('phaseTableBody');
             tbody.innerHTML = '';
@@ -1891,60 +3382,274 @@
 
         function renderTasks() {
             const grid = document.getElementById('tasksGrid');
-            
-            // Si l'élément n'existe pas encore, on sort
             if (!grid) return;
-            
-            let filteredTasks = tasks;
-            
-            if (currentStatusFilter !== 'all') {
-                filteredTasks = filteredTasks.filter(t => t.status === currentStatusFilter);
-            }
-            
-            if (currentPhaseFilter !== 'all') {
-                filteredTasks = filteredTasks.filter(t => t.phase === currentPhaseFilter);
-            }
-            
-            if (filteredTasks.length === 0) {
-                grid.innerHTML = '<p style="text-align: center; color: var(--gray-700); padding: 2rem;">Aucune tâche à afficher</p>';
+
+            renderResponsibleFilter();
+            const search = (document.getElementById('taskSearch') ? document.getElementById('taskSearch').value : '').toLowerCase().trim();
+            const fStatus = document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : '';
+            const fPhase = document.getElementById('filterPhase') ? document.getElementById('filterPhase').value : '';
+            const fPrio = document.getElementById('filterPriority') ? document.getElementById('filterPriority').value : '';
+            const fResp = document.getElementById('filterResponsible') ? document.getElementById('filterResponsible').value : '';
+
+            const list = tasks.filter(t => {
+                if (fStatus && t.status !== fStatus) return false;
+                if (fPhase && t.phase !== fPhase) return false;
+                if (fPrio && t.priority !== fPrio) return false;
+                if (fResp && !splitResponsibles(t.responsible).includes(fResp)) return false;
+                if (!taskPassesDateFilter(t)) return false;
+                if (search) {
+                    const hay = (t.title + ' ' + (t.responsible || '') + ' ' + (t.phase || '') + ' ' + (t.comments || '')).toLowerCase();
+                    if (!hay.includes(search)) return false;
+                }
+                return true;
+            });
+
+            if (list.length === 0) {
+                grid.innerHTML = '<div class="tl-empty" style="padding:28px; text-align:center;">Aucune action à afficher</div>';
+                updateBulkBar();
                 return;
             }
-            
-            const priorityEmoji = {
-                'Haute': '🔴',
-                'Moyenne': '🟡',
-                'Basse': '🟢'
-            };
-            
-            grid.innerHTML = filteredTasks.map(task => `
-                <div class="task-card">
-                    <div class="task-header">
-                        <div>
-                            <div class="task-phase">${task.phase}</div>
-                            <div class="task-title">${task.title}</div>
-                            <div class="task-meta">
-                                ${task.responsible ? `<span>👤 ${task.responsible}</span>` : ''}
-                                ${task.startDate ? `<span>📅 ${formatDate(task.startDate)}</span>` : ''}
-                                ${task.endDate ? `<span>⏰ ${formatDate(task.endDate)}</span>` : ''}
-                                ${task.priority ? `<span>${priorityEmoji[task.priority]} ${task.priority}</span>` : ''}
-                            </div>
-                        </div>
-                        <div class="task-actions">
-                            <button class="btn-edit" onclick="editTask(${task.id})">✏️</button>
-                            <button class="btn-delete" onclick="deleteTask(${task.id})">🗑️</button>
+
+            const today = new Date(); today.setHours(0, 0, 0, 0);
+
+            grid.innerHTML = list.map(task => {
+                const subs = normalizeSubtasks(task.subtasks);
+                const done = subs.filter(s => s.done).length;
+                const prog = subs.length ? Math.round(done / subs.length * 100) : null;
+                const overdue = task.endDate && task.status !== 'Terminé' && new Date(task.endDate) < today;
+                return `
+                <div class="task-row">
+                    <div><input type="checkbox" class="row-check task-check" data-id="${task.id}" onchange="updateBulkBar()"></div>
+                    <div>
+                        <div class="tl-title" contenteditable="true" spellcheck="false" onblur="inlineUpdate(${task.id},'title',this.textContent)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">${escapeHtml(task.title)}</div>
+                        <div class="tl-comment" contenteditable="true" spellcheck="false" data-ph="Ajouter une note…" onblur="inlineUpdate(${task.id},'comments',this.textContent)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">${escapeHtml(task.comments || '')}</div>
+                        ${prog !== null ? `<div class="tl-sub">☑️ ${done}/${subs.length} <span class="tl-sub-bar"><i style="width:${prog}%"></i></span> ${prog}%</div>` : ''}
+                    </div>
+                    <div id="respcell-${task.id}" class="resp-cell" title="Cliquer pour modifier" onclick="openRespPopover(${task.id}, event)">${renderAvatarsHtml(task.responsible)}</div>
+                    <div><select class="cell-edit" onchange="inlineUpdate(${task.id},'phase',this.value)">${phaseOptions(task.phase)}</select></div>
+                    <div><input type="date" class="cell-edit${overdue ? ' overdue' : ''}" value="${task.endDate || ''}" onchange="inlineUpdate(${task.id},'endDate',this.value)"></div>
+                    <div><select class="cell-edit" onchange="inlineUpdate(${task.id},'priority',this.value)">
+                        ${['', 'Haute', 'Moyenne', 'Basse'].map(p => `<option value="${p}" ${task.priority === p ? 'selected' : ''}>${p || '—'}</option>`).join('')}
+                    </select></div>
+                    <div><select class="status-select s-${{ 'À faire': 'todo', 'En cours': 'progress', 'Terminé': 'done', 'Bloqué': 'blocked' }[task.status] || 'todo'}" onchange="updateTaskStatus(${task.id}, this.value)">
+                        ${['À faire', 'En cours', 'Terminé', 'Bloqué'].map(s => `<option value="${s}" ${task.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+                    </select></div>
+                    <div class="tl-actions">
+                        <button class="btn-edit" onclick="editTask(${task.id})" title="Édition complète">✏️</button>
+                        <button class="btn-delete" onclick="deleteTask(${task.id})">🗑️</button>
+                    </div>
+                </div>`;
+            }).join('');
+            updateBulkBar();
+        }
+
+        function updateBulkBar() {
+            const checks = [...document.querySelectorAll('.task-check')];
+            const selected = checks.filter(c => c.checked);
+            const btn = document.getElementById('btnDeleteSelected');
+            const cnt = document.getElementById('selCount');
+            if (btn) btn.disabled = selected.length === 0;
+            if (cnt) cnt.textContent = selected.length ? '(' + selected.length + ')' : '';
+            const all = document.getElementById('selectAllTasks');
+            if (all) all.checked = checks.length > 0 && selected.length === checks.length;
+        }
+
+        function toggleSelectAll(on) {
+            document.querySelectorAll('.task-check').forEach(c => { c.checked = on; });
+            updateBulkBar();
+        }
+
+        function deleteSelectedTasks() {
+            const ids = [...document.querySelectorAll('.task-check')].filter(c => c.checked).map(c => c.getAttribute('data-id'));
+            if (ids.length === 0) return;
+            if (!confirm('Supprimer ' + ids.length + ' action(s) ?')) return;
+            tasks = tasks.filter(t => !ids.includes(String(t.id)));
+            saveTasks();
+        }
+
+        // ===== ÉDITION INLINE (par colonne) =====
+        function phaseOptions(cur) {
+            const list = phases.slice();
+            if (cur && !list.includes(cur)) list.unshift(cur);
+            return '<option value="">—</option>' + list.map(p => `<option value="${escapeHtml(p)}" ${p === cur ? 'selected' : ''}>${escapeHtml(p)}</option>`).join('');
+        }
+
+        function renderAvatarsHtml(responsible) {
+            const names = splitResponsibles(responsible);
+            if (!names.length) return '<span class="tl-empty">+ assigner</span>';
+            return '<span class="resp-avatars">' + names.map(n => `<span class="resp-avatar" title="${escapeHtml(n)}">${initials(n)}</span>`).join('') + '</span>';
+        }
+
+        function inlineUpdate(id, field, value) {
+            const task = tasks.find(t => String(t.id) === String(id));
+            if (!task) return;
+            value = (value == null) ? '' : value;
+            if (field === 'title') { value = String(value).trim(); if (!value) { renderTasks(); return; } }
+            if (field === 'comments') value = String(value).trim();
+            if (task[field] === value) return;
+            task[field] = value;
+            saveProjects();
+            updateDashboard();
+            if (field === 'phase' || field === 'priority' || field === 'endDate') renderTasks();
+        }
+
+        // ===== POPOVER RESPONSABLES (édition directe dans la ligne) =====
+        function allResponsibleNames() {
+            const used = [];
+            Object.keys(allProjects).forEach(p => (allProjects[p] || []).forEach(t => splitResponsibles(t.responsible).forEach(n => used.push(n))));
+            return [...new Set([...responsibles, ...used])].filter(Boolean).sort((a, b) => a.localeCompare(b, 'fr'));
+        }
+        function renderTeamAvatars() {
+            const box = document.getElementById('teamAvatars');
+            if (!box) return;
+            const names = allResponsibleNames();
+            const manageBtn = `<button class="team-manage-btn" title="Gérer l'équipe (photos & LinkedIn)" onclick="openTeamManager()"><svg viewBox="0 0 14 14" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.5l2.5 2.5M8 3.5l2.5 2.5-5.5 5.5H2.5v-2.5z"/></svg></button>`;
+            if (names.length === 0) { box.innerHTML = '<span class="team-empty">Aucun membre pour l\'instant</span>' + manageBtn; return; }
+            box.innerHTML = names.map(n => {
+                const p = getMemberProfile(n);
+                const mail = getEmail(n);
+                const inner = p.photo
+                    ? `<div class="avatar-container"><img class="avatar-photo" src="${escapeHtml(p.photo)}" alt="${escapeHtml(n)}" onerror="this.style.display='none'"><span class="avatar-initials">${initials(n)}</span></div>`
+                    : `<div class="avatar-container"><span class="avatar-initials">${initials(n)}</span></div>`;
+                const tooltip = `<div class="avatar-tooltip"><span class="avatar-tooltip-name">${escapeHtml(n)}</span>` +
+                    (mail ? `<a class="avatar-tooltip-email" href="mailto:${escapeHtml(mail)}">${escapeHtml(mail)}</a>` : '') +
+                    (p.linkedin ? `<span class="avatar-tooltip-li">in · Voir le profil LinkedIn</span>` : '') +
+                    `</div>`;
+                const link = p.linkedin
+                    ? `<a class="team-member-link" href="${escapeHtml(p.linkedin)}" target="_blank" rel="noopener noreferrer">${inner}</a>`
+                    : `<div class="team-member-link" onclick="openTeamManager()">${inner}</div>`;
+                return `<div class="team-member-bubble">${link}${tooltip}</div>`;
+            }).join('') + manageBtn;
+        }
+
+        // ===== MODALE GESTION ÉQUIPE (photos + LinkedIn + email) =====
+        function openTeamManager() {
+            closeTeamManager();
+            const names = allResponsibleNames();
+            const overlay = document.createElement('div');
+            overlay.className = 'team-modal-overlay';
+            overlay.id = 'teamManagerOverlay';
+            overlay.onclick = (e) => { if (e.target === overlay) closeTeamManager(); };
+            const rows = names.length ? names.map(n => {
+                const p = getMemberProfile(n);
+                const mail = getEmail(n);
+                const prev = p.photo
+                    ? `<img src="${escapeHtml(p.photo)}" alt="" onerror="this.style.display='none'">${initials(n)}`
+                    : initials(n);
+                const nid = 'tm_' + btoa(unescape(encodeURIComponent(n))).replace(/=/g,'');
+                return `<div class="tm-row" data-member="${escapeHtml(n)}">
+                    <div class="tm-avatar-preview" id="prev_${nid}">${prev}</div>
+                    <div class="tm-fields">
+                        <div class="tm-name">${escapeHtml(n)}</div>
+                        <input type="url" placeholder="URL de la photo (https://…)" value="${escapeHtml(p.photo || '')}" onchange="setMemberPhoto(this.closest('.tm-row').getAttribute('data-member'), this.value); refreshTeamManagerPreview('${nid}', this.closest('.tm-row').getAttribute('data-member'));">
+                        <input type="url" placeholder="Lien LinkedIn (linkedin.com/in/…)" value="${escapeHtml(p.linkedin || '')}" onchange="setMemberLinkedin(this.closest('.tm-row').getAttribute('data-member'), this.value);">
+                        <input type="email" placeholder="email@exemple.fr" value="${escapeHtml(mail)}" onchange="setEmail(this.closest('.tm-row').getAttribute('data-member'), this.value);">
+                        <div class="tm-actions">
+                            <button type="button" class="tm-btn" onclick="uploadMemberPhoto(this.closest('.tm-row').getAttribute('data-member'), '${nid}')">📁 Importer une photo</button>
+                            ${p.photo ? `<button type="button" class="tm-btn" onclick="setMemberPhoto(this.closest('.tm-row').getAttribute('data-member'), ''); openTeamManager();">🗑️ Retirer la photo</button>` : ''}
                         </div>
                     </div>
-                    ${task.comments ? `<p style="margin-top: 0.5rem; color: var(--gray-700); font-size: 0.9rem;">${task.comments}</p>` : ''}
-                    <div style="margin-top: 1rem;">
-                        <select onchange="updateTaskStatus(${task.id}, this.value)" style="padding: 0.5rem; border-radius: 8px; border: 2px solid var(--gray-300); font-weight: 600;">
-                            <option value="À faire" ${task.status === 'À faire' ? 'selected' : ''}>À faire</option>
-                            <option value="En cours" ${task.status === 'En cours' ? 'selected' : ''}>En cours</option>
-                            <option value="Terminé" ${task.status === 'Terminé' ? 'selected' : ''}>Terminé</option>
-                            <option value="Bloqué" ${task.status === 'Bloqué' ? 'selected' : ''}>Bloqué</option>
-                        </select>
-                    </div>
+                </div>`;
+            }).join('') : '<div class="tm-hint">Aucun membre pour l\'instant. Ajoutez des responsables sur vos actions, ils apparaîtront ici.</div>';
+            overlay.innerHTML = `<div class="team-modal">
+                <div class="team-modal-head"><h3>👥 Équipe OPUS — photos &amp; LinkedIn</h3><button class="team-modal-close" onclick="closeTeamManager()">×</button></div>
+                <div class="team-modal-body">
+                    <div class="tm-hint">Collez l'URL d'une photo ou importez un fichier, ajoutez le lien LinkedIn et l'email de chaque membre. Sans photo, les initiales s'affichent.</div>
+                    ${rows}
                 </div>
-            `).join('');
+            </div>`;
+            document.body.appendChild(overlay);
+        }
+        function closeTeamManager() {
+            const o = document.getElementById('teamManagerOverlay');
+            if (o) o.remove();
+        }
+        function refreshTeamManagerPreview(nid, name) {
+            const el = document.getElementById('prev_' + nid);
+            if (!el) return;
+            const p = getMemberProfile(name);
+            el.innerHTML = p.photo
+                ? `<img src="${escapeHtml(p.photo)}" alt="" onerror="this.style.display='none'">${initials(name)}`
+                : initials(name);
+        }
+        function uploadMemberPhoto(name, nid) {
+            const input = document.createElement('input');
+            input.type = 'file'; input.accept = 'image/*';
+            input.onchange = () => {
+                const file = input.files && input.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = () => { setMemberPhoto(name, reader.result); refreshTeamManagerPreview(nid, name); openTeamManager(); };
+                reader.readAsDataURL(file);
+            };
+            input.click();
+        }
+        let _respPopId = null;
+        function closeRespPopover() {
+            const p = document.getElementById('respPopover');
+            if (p) p.remove();
+            _respPopId = null;
+            document.removeEventListener('click', closeRespPopoverOnOutside, true);
+        }
+        function closeRespPopoverOnOutside(e) {
+            const p = document.getElementById('respPopover');
+            if (p && !p.contains(e.target) && !(e.target.closest && e.target.closest('.resp-cell'))) closeRespPopover();
+        }
+        function openRespPopover(id, ev) {
+            ev.stopPropagation();
+            if (_respPopId === id) { closeRespPopover(); return; }
+            closeRespPopover();
+            const task = tasks.find(t => String(t.id) === String(id));
+            if (!task) return;
+            _respPopId = id;
+            const sel = splitResponsibles(task.responsible);
+            const names = allResponsibleNames();
+            const pop = document.createElement('div');
+            pop.className = 'resp-popover';
+            pop.id = 'respPopover';
+            pop.innerHTML =
+                (names.length ? names.map(n => `<label class="rp-item"><input type="checkbox" data-name="${escapeHtml(n)}" ${sel.includes(n) ? 'checked' : ''} onchange="toggleRowResponsible(${id}, this.getAttribute('data-name'), this.checked)"> ${escapeHtml(n)}</label>`).join('') : '<div class="rp-empty">Aucun responsable enregistré</div>') +
+                `<div class="rp-add"><input type="text" id="rpNew" placeholder="Nouveau responsable…" onkeydown="if(event.key==='Enter'){event.preventDefault();addRowResponsible(${id});}"><button type="button" onclick="addRowResponsible(${id})">+</button></div>`;
+            document.body.appendChild(pop);
+            const r = (ev.currentTarget || ev.target).getBoundingClientRect();
+            pop.style.left = Math.max(8, Math.min(r.left, window.innerWidth - 250)) + 'px';
+            pop.style.top = (r.bottom + window.scrollY + 4) + 'px';
+            setTimeout(() => document.addEventListener('click', closeRespPopoverOnOutside, true), 0);
+        }
+        function refreshRespCell(id, task) {
+            const cell = document.getElementById('respcell-' + id);
+            if (cell) cell.innerHTML = renderAvatarsHtml(task.responsible);
+        }
+        function toggleRowResponsible(id, name, on) {
+            const task = tasks.find(t => String(t.id) === String(id));
+            if (!task) return;
+            let arr = splitResponsibles(task.responsible);
+            if (on) { if (!arr.includes(name)) arr.push(name); }
+            else { arr = arr.filter(x => x !== name); }
+            task.responsible = arr.join('; ');
+            saveProjects();
+            updateDashboard();
+            refreshRespCell(id, task);
+        }
+        function addRowResponsible(id) {
+            const input = document.getElementById('rpNew');
+            const name = (input ? input.value : '').trim();
+            if (!name) return;
+            if (!responsibles.includes(name)) { responsibles.push(name); saveResponsibles(); }
+            const email = prompt('Adresse e-mail de ' + name + ' (facultatif) :', getEmail(name));
+            if (email !== null) setEmail(name, email);
+            const task = tasks.find(t => String(t.id) === String(id));
+            if (task) {
+                const arr = splitResponsibles(task.responsible);
+                if (!arr.includes(name)) arr.push(name);
+                task.responsible = arr.join('; ');
+                saveProjects();
+                updateDashboard();
+                refreshRespCell(id, task);
+            }
+            _respPopId = null;
+            const cell = document.getElementById('respcell-' + id);
+            if (cell) openRespPopover(id, { stopPropagation() {}, currentTarget: cell }); // re-render popover avec le nouveau nom
         }
 
         function formatDate(dateStr) {
@@ -1955,8 +3660,9 @@
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
-            
+            const _tabBtn = document.querySelector(`.tab[data-tab="${tabName}"]`);
+            if (_tabBtn) _tabBtn.classList.add('active');
+
             document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
             
@@ -1966,6 +3672,8 @@
                 setTimeout(updateCharts, 100);
             } else if (tabName === 'gantt') {
                 renderGantt();
+            } else if (tabName === 'resources') {
+                renderResources();
             }
         }
 
@@ -1983,10 +3691,132 @@
             renderTasks();
         }
 
+        // =============================================
+        // SOUS-ACTIONS (checklist par tâche)
+        // =============================================
+        // Séparateur invisible pour encoder les sous-actions dans la colonne commentaires du Sheet
+        const SUBTASK_DELIM = '␞';
+        let editingSubtasks = []; // buffer d'édition dans le modal
+
+        // Encode les sous-actions dans la colonne "comments" pour survivre au Sheet (10 colonnes fixes)
+        function encodeSubtasksIntoComments(sheetTask) {
+            const subs = normalizeSubtasks(sheetTask.subtasks);
+            const human = (sheetTask.comments || '').split(SUBTASK_DELIM)[0];
+            const out = { ...sheetTask };
+            delete out.subtasks;
+            out.comments = subs.length ? (human + SUBTASK_DELIM + JSON.stringify(subs)) : human;
+            return out;
+        }
+
+        // Décode les sous-actions depuis la colonne "comments" au chargement
+        function decodeSubtasksFromComments(task) {
+            const raw = task.comments || '';
+            const idx = raw.indexOf(SUBTASK_DELIM);
+            if (idx === -1) { task.subtasks = normalizeSubtasks(task.subtasks); return task; }
+            task.comments = raw.slice(0, idx);
+            try {
+                task.subtasks = normalizeSubtasks(JSON.parse(raw.slice(idx + SUBTASK_DELIM.length)));
+            } catch (e) {
+                task.subtasks = [];
+            }
+            return task;
+        }
+
+        function normalizeSubtasks(arr) {
+            if (!Array.isArray(arr)) return [];
+            return arr
+                .filter(s => s && (s.title || '').trim())
+                .map(s => ({ title: String(s.title).trim(), done: !!s.done }));
+        }
+
+        function subtaskProgress(task) {
+            const subs = normalizeSubtasks(task.subtasks);
+            if (subs.length === 0) return null;
+            const done = subs.filter(s => s.done).length;
+            return { done, total: subs.length, pct: Math.round((done / subs.length) * 100) };
+        }
+
+        // Rendu du bloc sous-actions sur une carte tâche (liste actions)
+        function renderSubtaskCard(task) {
+            const subs = normalizeSubtasks(task.subtasks);
+            if (subs.length === 0) return '';
+            const prog = subtaskProgress(task);
+            const items = subs.map((s, i) => `
+                <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.88rem; cursor:pointer;">
+                    <input type="checkbox" ${s.done ? 'checked' : ''} onchange="toggleTaskSubtask(${task.id}, ${i})" style="width:1rem; height:1rem; cursor:pointer;">
+                    <span style="${s.done ? 'text-decoration:line-through; color:var(--gray-700);' : ''}">${escapeHtml(s.title)}</span>
+                </label>
+            `).join('');
+            return `
+                <div style="margin-top:0.75rem; background:var(--gray-100); border-radius:10px; padding:0.6rem 0.75rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; font-weight:700; color:var(--gray-700); margin-bottom:0.4rem;">
+                        <span>☑️ Sous-actions ${prog.done}/${prog.total}</span>
+                        <span>${prog.pct}%</span>
+                    </div>
+                    <div style="height:6px; background:var(--gray-300); border-radius:3px; overflow:hidden; margin-bottom:0.5rem;">
+                        <div style="height:100%; width:${prog.pct}%; background:var(--success, #16A34A);"></div>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:0.25rem;">${items}</div>
+                </div>
+            `;
+        }
+
+        function renderSubtaskEditor() {
+            const list = document.getElementById('subtasksList');
+            if (!list) return;
+            if (editingSubtasks.length === 0) {
+                list.innerHTML = '<div style="font-size:0.85rem; color:var(--gray-700);">Aucune sous-action pour l\'instant.</div>';
+                return;
+            }
+            list.innerHTML = editingSubtasks.map((s, i) => `
+                <div style="display:flex; align-items:center; gap:0.5rem; background:#fff; border:1px solid var(--gray-200); border-radius:8px; padding:0.35rem 0.5rem;">
+                    <input type="checkbox" ${s.done ? 'checked' : ''} onchange="toggleEditingSubtask(${i})" style="width:1.1rem; height:1.1rem; cursor:pointer;">
+                    <span style="flex:1; font-size:0.9rem; ${s.done ? 'text-decoration:line-through; color:var(--gray-700);' : ''}">${escapeHtml(s.title)}</span>
+                    <button type="button" onclick="removeEditingSubtask(${i})" title="Supprimer" style="border:none; background:none; cursor:pointer; font-size:1rem;">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        function addSubtaskFromInput() {
+            const input = document.getElementById('subtaskInput');
+            const val = (input.value || '').trim();
+            if (!val) return;
+            editingSubtasks.push({ title: val, done: false });
+            input.value = '';
+            input.focus();
+            renderSubtaskEditor();
+        }
+
+        function toggleEditingSubtask(i) {
+            if (editingSubtasks[i]) editingSubtasks[i].done = !editingSubtasks[i].done;
+            renderSubtaskEditor();
+        }
+
+        function removeEditingSubtask(i) {
+            editingSubtasks.splice(i, 1);
+            renderSubtaskEditor();
+        }
+
+        function escapeHtml(str) {
+            return String(str == null ? '' : str)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        // Bascule une sous-action directement depuis la carte tâche
+        function toggleTaskSubtask(taskId, i) {
+            const task = tasks.find(t => t.id === taskId || t.id === Number(taskId));
+            if (!task || !Array.isArray(task.subtasks) || !task.subtasks[i]) return;
+            task.subtasks[i].done = !task.subtasks[i].done;
+            saveTasks();
+        }
+
         function openModal(taskId = null) {
             editingTaskId = taskId;
             const modal = document.getElementById('taskModal');
-            
+            editingSubtasks = [];
+            populatePhaseSelect();
+
             if (taskId) {
                 const task = tasks.find(t => t.id === taskId);
                 if (task) {
@@ -1998,6 +3828,7 @@
                     document.getElementById('taskStatus').value = task.status;
                     document.getElementById('taskPriority').value = task.priority;
                     document.getElementById('taskComments').value = task.comments;
+                    editingSubtasks = normalizeSubtasks(task.subtasks);
                     document.querySelector('.modal-header').textContent = 'Modifier la tâche';
                 }
             } else {
@@ -2005,7 +3836,8 @@
                 populateResponsibleSelect('');
                 document.querySelector('.modal-header').textContent = 'Nouvelle tâche';
             }
-            
+
+            renderSubtaskEditor();
             modal.classList.add('active');
         }
 
@@ -2013,7 +3845,8 @@
             const modal = document.getElementById('taskModal');
             modal.classList.remove('active');
             editingTaskId = null;
-            
+            editingSubtasks = [];
+
             // Réinitialiser le formulaire
             document.getElementById('taskForm').reset();
         }
@@ -2030,7 +3863,8 @@
                 endDate: document.getElementById('taskEndDate').value,
                 status: document.getElementById('taskStatus').value,
                 priority: document.getElementById('taskPriority').value,
-                comments: document.getElementById('taskComments').value
+                comments: document.getElementById('taskComments').value,
+                subtasks: normalizeSubtasks(editingSubtasks)
             };
             
             if (editingTaskId) {
@@ -2079,6 +3913,60 @@
             link.download = 'poei_tasks_' + new Date().toISOString().split('T')[0] + '.json';
             link.click();
             alert('✅ Données exportées avec succès !');
+        }
+
+        // =============================================
+        // PARTAGER / QR CODE (style ANDRH)
+        // =============================================
+        function openShareModal() {
+            const nameEl = document.getElementById('shareProjectName');
+            if (nameEl) nameEl.textContent = currentProject || 'votre projet';
+            switchShareTab('export');
+            const bd = document.getElementById('shareBackdrop');
+            if (bd) bd.classList.add('open');
+        }
+        function closeShareModal() {
+            const bd = document.getElementById('shareBackdrop');
+            if (bd) bd.classList.remove('open');
+        }
+        function switchShareTab(tab) {
+            document.querySelectorAll('.share-tab').forEach(b => b.classList.toggle('active', b.getAttribute('data-tab') === tab));
+            const ex = document.getElementById('sharePanel-export');
+            const qr = document.getElementById('sharePanel-qr');
+            if (ex) ex.classList.toggle('active', tab === 'export');
+            if (qr) qr.classList.toggle('active', tab === 'qr');
+            if (tab === 'qr') {
+                // Pré-remplir avec l'URL courante si le dashboard est déjà en ligne (http/https)
+                const input = document.getElementById('qrUrlInput');
+                if (input && !input.value) {
+                    const here = window.location.href;
+                    if (/^https?:\/\//i.test(here)) input.value = here;
+                }
+                generateShareQR();
+            }
+        }
+        function generateShareQR() {
+            const container = document.getElementById('qrContainer');
+            const display = document.getElementById('qrUrlDisplay');
+            const input = document.getElementById('qrUrlInput');
+            if (!container) return;
+            const url = (input && input.value.trim()) ? input.value.trim() : '';
+            container.innerHTML = '';
+            if (!url) {
+                container.innerHTML = '<div style="font-size:12px; color:var(--text-muted); text-align:center; padding:24px;">Collez une URL de partage ci-dessous puis cliquez sur « Générer » pour créer le QR code.</div>';
+                if (display) display.textContent = '';
+                return;
+            }
+            if (typeof QRCode === 'undefined') {
+                container.innerHTML = '<div style="font-size:12px; color:var(--danger); text-align:center; padding:24px;">Bibliothèque QR indisponible (vérifiez votre connexion Internet).</div>';
+                return;
+            }
+            try {
+                new QRCode(container, { text: url, width: 190, height: 190, colorDark: '#00195C', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+                if (display) display.textContent = url;
+            } catch (e) {
+                container.innerHTML = '<div style="font-size:12px; color:var(--danger); text-align:center; padding:24px;">Impossible de générer le QR code pour cette URL.</div>';
+            }
         }
 
         function generateReadOnlyLink() {
@@ -2236,16 +4124,26 @@
                     <canvas id="phaseChart"></canvas>
                 </div>
             </div>
-            <div class="chart-card" style="margin-bottom: 2rem;">
+            <div class="chart-card" style="margin-bottom: 22px;">
                 <h3>Charge par responsable</h3>
                 <canvas id="responsibleChart"></canvas>
+            </div>
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>Répartition par priorité</h3>
+                    <canvas id="priorityChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>Complétion des sous-actions</h3>
+                    <canvas id="subtaskChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         const tasks = ${dataStr};
-        let statusChart, phaseChart, responsibleChart;
+        let statusChart, phaseChart, responsibleChart, priorityChart, subtaskChart;
 
         document.addEventListener('DOMContentLoaded', init);
 
@@ -2293,21 +4191,17 @@
             document.getElementById('alertBlocked').textContent = blocked;
             document.getElementById('alertHighPriority').textContent = highPriority;
             document.getElementById('alertUpcoming').textContent = upcoming;
+
+            const _bT = document.getElementById('bannerTotal'); if (_bT) _bT.textContent = total;
+            const _bD = document.getElementById('bannerDone'); if (_bD) _bD.textContent = completed;
+            const _bP = document.getElementById('bannerPct'); if (_bP) _bP.textContent = progress + '%';
+            const _bN = document.getElementById('bannerProjectName'); if (_bN) _bN.textContent = currentProject;
             
             updatePhaseTable();
         }
 
         function updatePhaseTable() {
-            const phases = [
-                '1. Cadrage & validation dispositif',
-                '2. Ingénierie pédagogique',
-                '3. Communication & recrutement',
-                '4. Préparation opérationnelle',
-                '5. Démarrage de la formation',
-                '6. Suivi en cours de formation',
-                '7. Clôture & obligations de sortie',
-                '8. Actions périphériques'
-            ];
+            const phases = [...new Set([].concat(window.__opusPhases || [], tasks.map(t => t.phase)))].filter(Boolean);
             
             const tbody = document.getElementById('phaseTableBody');
             tbody.innerHTML = '';
@@ -2368,6 +4262,7 @@
                         </div>
                     </div>
                     \${task.comments ? \`<p style="margin-top: 0.5rem; color: var(--gray-700); font-size: 0.9rem;">\${task.comments}</p>\` : ''}
+                    \${renderSubsRO(task)}
                     <div style="margin-top: 1rem;">
                         <span style="padding: 0.5rem 1rem; border-radius: 8px; background: var(--gray-200); font-weight: 600; display: inline-block;">
                             \${task.status}
@@ -2383,13 +4278,31 @@
             return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
         }
 
+        // Rendu lecture seule des sous-actions
+        function renderSubsRO(task) {
+            const subs = (task.subtasks || []).filter(s => s && s.title);
+            if (subs.length === 0) return '';
+            const done = subs.filter(s => s.done).length;
+            const pct = Math.round((done / subs.length) * 100);
+            const items = subs.map(s =>
+                '<div style="font-size:0.88rem;' + (s.done ? 'text-decoration:line-through;color:var(--gray-700);' : '') + '">' +
+                (s.done ? '☑ ' : '☐ ') + (s.title || '') + '</div>'
+            ).join('');
+            return '<div style="margin-top:0.75rem;background:var(--gray-100);border-radius:10px;padding:0.6rem 0.75rem;">' +
+                '<div style="display:flex;justify-content:space-between;font-size:0.8rem;font-weight:700;color:var(--gray-700);margin-bottom:0.4rem;">' +
+                '<span>☑️ Sous-actions ' + done + '/' + subs.length + '</span><span>' + pct + '%</span></div>' +
+                '<div style="height:6px;background:var(--gray-300);border-radius:3px;overflow:hidden;margin-bottom:0.5rem;">' +
+                '<div style="height:100%;width:' + pct + '%;background:#16A34A;"></div></div>' +
+                '<div style="display:flex;flex-direction:column;gap:0.25rem;">' + items + '</div></div>';
+        }
+
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             document.querySelector(\`.tab[data-tab="\${tabName}"]\`).classList.add('active');
-            
+
             document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
-            
+
             if (tabName === 'analytics') {
                 setTimeout(updateCharts, 100);
             } else if (tabName === 'gantt') {
@@ -2420,16 +4333,7 @@
             
             const totalDays = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24));
             
-            const phases = [
-                '1. Cadrage & validation dispositif',
-                '2. Ingénierie pédagogique',
-                '3. Communication & recrutement',
-                '4. Préparation opérationnelle',
-                '5. Démarrage de la formation',
-                '6. Suivi en cours de formation',
-                '7. Clôture & obligations de sortie',
-                '8. Actions périphériques'
-            ];
+            const phases = [...new Set([].concat(window.__opusPhases || [], tasks.map(t => t.phase)))].filter(Boolean);
             
             let html = \`
                 <div class="gantt-header">
@@ -2543,16 +4447,7 @@
                 }
             });
             
-            const phases = [
-                '1. Cadrage & validation dispositif',
-                '2. Ingénierie pédagogique',
-                '3. Communication & recrutement',
-                '4. Préparation opérationnelle',
-                '5. Démarrage de la formation',
-                '6. Suivi en cours de formation',
-                '7. Clôture & obligations de sortie',
-                '8. Actions périphériques'
-            ];
+            const phases = [...new Set([].concat(window.__opusPhases || [], tasks.map(t => t.phase)))].filter(Boolean);
             
             const phaseData = phases.map(phase => {
                 const phaseTasks = tasks.filter(t => t.phase === phase);
@@ -2566,7 +4461,7 @@
             phaseChart = new Chart(phaseCtx, {
                 type: 'bar',
                 data: {
-                    labels: phases.map(p => p.split('.')[1].trim()),
+                    labels: phases.map(p => { const parts = String(p).split('.'); return (parts.length > 1 ? parts.slice(1).join('.') : p).trim(); }),
                     datasets: [{
                         label: '% Avancement',
                         data: phaseData,
@@ -2597,9 +4492,9 @@
             
             const responsibles = {};
             tasks.forEach(task => {
-                if (task.responsible) {
-                    responsibles[task.responsible] = (responsibles[task.responsible] || 0) + 1;
-                }
+                String(task.responsible || '').split(/[;,]/).map(s => s.trim()).filter(Boolean).forEach(name => {
+                    responsibles[name] = (responsibles[name] || 0) + 1;
+                });
             });
             
             const responsibleCtx = document.getElementById('responsibleChart');
@@ -2678,16 +4573,7 @@
             
             const totalDays = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24));
             
-            const phases = [
-                '1. Cadrage & validation dispositif',
-                '2. Ingénierie pédagogique',
-                '3. Communication & recrutement',
-                '4. Préparation opérationnelle',
-                '5. Démarrage de la formation',
-                '6. Suivi en cours de formation',
-                '7. Clôture & obligations de sortie',
-                '8. Actions périphériques'
-            ];
+            const phases = [...new Set([].concat(window.__opusPhases || [], tasks.map(t => t.phase)))].filter(Boolean);
             
             let html = `
                 <div class="gantt-header">
@@ -2704,9 +4590,7 @@
                 
                 if (phaseTasks.length > 0) {
                     html += `
-                        <div style="margin-top: 1rem; margin-bottom: 0.5rem; padding: 0.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: 700; border-radius: 8px; font-size: 0.9rem;">
-                            ${phase}
-                        </div>
+                        <div class="gantt-phase-group">${phase}</div>
                     `;
                     
                     phaseTasks.forEach(task => {
@@ -2801,16 +4685,7 @@
                 }
             });
             
-            const phases = [
-                '1. Cadrage & validation dispositif',
-                '2. Ingénierie pédagogique',
-                '3. Communication & recrutement',
-                '4. Préparation opérationnelle',
-                '5. Démarrage de la formation',
-                '6. Suivi en cours de formation',
-                '7. Clôture & obligations de sortie',
-                '8. Actions périphériques'
-            ];
+            const phases = [...new Set([].concat(window.__opusPhases || [], tasks.map(t => t.phase)))].filter(Boolean);
             
             const phaseData = phases.map(phase => {
                 const phaseTasks = tasks.filter(t => t.phase === phase);
@@ -2824,7 +4699,7 @@
             phaseChart = new Chart(phaseCtx, {
                 type: 'bar',
                 data: {
-                    labels: phases.map(p => p.split('.')[1].trim()),
+                    labels: phases.map(p => { const parts = String(p).split('.'); return (parts.length > 1 ? parts.slice(1).join('.') : p).trim(); }),
                     datasets: [{
                         label: '% Avancement',
                         data: phaseData,
@@ -2855,9 +4730,9 @@
             
             const responsibles = {};
             tasks.forEach(task => {
-                if (task.responsible) {
-                    responsibles[task.responsible] = (responsibles[task.responsible] || 0) + 1;
-                }
+                String(task.responsible || '').split(/[;,]/).map(s => s.trim()).filter(Boolean).forEach(name => {
+                    responsibles[name] = (responsibles[name] || 0) + 1;
+                });
             });
             
             const responsibleCtx = document.getElementById('responsibleChart');
@@ -2897,6 +4772,36 @@
                 });
             } else {
                 responsibleContainer.innerHTML = '<h3>Charge par responsable</h3><p style="text-align: center; color: var(--gray-700); padding: 2rem;">Assignez des responsables pour voir la répartition</p>';
+            }
+
+            // Répartition par priorité
+            const prioCtx = document.getElementById('priorityChart');
+            if (prioCtx) {
+                const pc = { 'Haute': 0, 'Moyenne': 0, 'Basse': 0, 'Aucune': 0 };
+                tasks.forEach(t => { pc[(t.priority && pc[t.priority] !== undefined) ? t.priority : 'Aucune']++; });
+                if (priorityChart) priorityChart.destroy();
+                priorityChart = new Chart(prioCtx, {
+                    type: 'doughnut',
+                    data: { labels: ['Haute', 'Moyenne', 'Basse', 'Aucune'], datasets: [{ data: [pc['Haute'], pc['Moyenne'], pc['Basse'], pc['Aucune']], backgroundColor: ['#D62B2B', '#E8910A', '#1BA05E', '#CBD8EF'] }] },
+                    options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } } }
+                });
+            }
+
+            // Complétion des sous-actions
+            const subCtx = document.getElementById('subtaskChart');
+            if (subCtx) {
+                const withSubs = tasks.map(t => {
+                    const s = normalizeSubtasks(t.subtasks);
+                    return s.length ? { title: t.title, pct: Math.round(s.filter(x => x.done).length / s.length * 100) } : null;
+                }).filter(Boolean);
+                if (subtaskChart) subtaskChart.destroy();
+                if (withSubs.length) {
+                    subtaskChart = new Chart(subCtx, {
+                        type: 'bar',
+                        data: { labels: withSubs.map(w => w.title.length > 18 ? w.title.slice(0, 18) + '…' : w.title), datasets: [{ label: '% complété', data: withSubs.map(w => w.pct), backgroundColor: '#00B4D8' }] },
+                        options: { responsive: true, maintainAspectRatio: true, indexAxis: 'y', scales: { x: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } } }, plugins: { legend: { display: false } } }
+                    });
+                }
             }
         }
     </script>
