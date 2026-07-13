@@ -147,6 +147,9 @@
   .kpi-card.blue::before { background: var(--blue); }
   .kpi-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .6px; }
   .kpi-value { font-size: 34px; font-weight: 800; color: var(--navy); margin-top: 6px; line-height: 1; }
+  .kpi-card.clickable, .alert-card.clickable { cursor: pointer; transition: transform .15s, box-shadow .15s; }
+  .kpi-card.clickable:hover, .alert-card.clickable:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(0,25,92,0.18); }
+  .kpi-card.clickable:active, .alert-card.clickable:active { transform: translateY(0); }
   .progress-card { background: var(--bg-card); border-radius: 15px; padding: 20px 24px; box-shadow: 0 4px 20px rgba(0,25,92,0.1); margin-bottom: 22px; }
   .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .progress-label { font-size: 13px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: .5px; }
@@ -373,7 +376,10 @@
   .chat-me select { border: 1.5px solid var(--border); border-radius: 8px; padding: 5px 9px; font-size: 12px; font-family: inherit; font-weight: 600; color: var(--navy); background: #fff; cursor: pointer; max-width: 170px; }
   .chat-input-row select { border: 1.5px solid var(--border); border-radius: 10px; padding: 0 8px; font-size: 12.5px; font-family: inherit; color: var(--navy); background: #fff; cursor: pointer; height: 40px; }
   .chat-messages { flex: 1; min-height: 200px; max-height: 320px; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; padding: 12px; background: #FAFCFF; display: flex; flex-direction: column; gap: 8px; }
-  .chat-msg { max-width: 82%; padding: 8px 12px; border-radius: 12px; font-size: 13px; line-height: 1.4; box-shadow: 0 1px 3px rgba(0,25,92,0.06); }
+  .chat-msg { max-width: 82%; padding: 8px 12px; border-radius: 12px; font-size: 13px; line-height: 1.4; box-shadow: 0 1px 3px rgba(0,25,92,0.06); position: relative; }
+  .chat-msg .cm-del { position: absolute; top: 3px; right: 5px; background: none; border: none; cursor: pointer; font-size: 12px; line-height: 1; padding: 2px; opacity: 0; transition: opacity .15s; }
+  .chat-msg:hover .cm-del { opacity: .8; }
+  .chat-msg .cm-del:hover { opacity: 1; transform: scale(1.12); }
   .chat-msg .cm-author { font-size: 10.5px; font-weight: 800; margin-bottom: 2px; opacity: .8; }
   .chat-msg .cm-time { font-size: 9.5px; opacity: .55; margin-top: 3px; text-align: right; }
   .chat-msg.mine { align-self: flex-end; background: var(--gradient); color: #fff; }
@@ -1325,23 +1331,23 @@
             </div>
 
             <div class="kpi-grid">
-                <div class="kpi-card blue">
+                <div class="kpi-card blue clickable" onclick="dashboardDrill('all')" title="Voir toutes les actions">
                     <div class="kpi-label">Tâches totales</div>
                     <div class="kpi-value" id="totalTasks">0</div>
                 </div>
-                <div class="kpi-card blue">
+                <div class="kpi-card blue clickable" onclick="dashboardDrill('todo')" title="Voir les actions à faire">
                     <div class="kpi-label">À faire</div>
                     <div class="kpi-value" id="todoTasks">0</div>
                 </div>
-                <div class="kpi-card green">
+                <div class="kpi-card green clickable" onclick="dashboardDrill('done')" title="Voir les actions terminées">
                     <div class="kpi-label">Terminées</div>
                     <div class="kpi-value" id="completedTasks">0</div>
                 </div>
-                <div class="kpi-card orange">
+                <div class="kpi-card orange clickable" onclick="dashboardDrill('inprogress')" title="Voir les actions en cours">
                     <div class="kpi-label">En cours</div>
                     <div class="kpi-value" id="inProgressTasks">0</div>
                 </div>
-                <div class="kpi-card red">
+                <div class="kpi-card red clickable" onclick="dashboardDrill('blocked')" title="Voir les actions bloquées">
                     <div class="kpi-label">Bloquées</div>
                     <div class="kpi-value" id="blockedTasks">0</div>
                 </div>
@@ -1358,17 +1364,17 @@
             </div>
 
             <div class="alerts-grid">
-                <div class="alert-card danger">
+                <div class="alert-card danger clickable" onclick="dashboardDrill('blocked')" title="Voir les actions bloquées">
                     <div class="alert-header">🔴 Tâches bloquées</div>
                     <div class="alert-count" id="alertBlocked">0</div>
                     <div class="alert-description">Nécessitent une action immédiate</div>
                 </div>
-                <div class="alert-card warning">
+                <div class="alert-card warning clickable" onclick="dashboardDrill('highprio')" title="Voir les actions à haute priorité">
                     <div class="alert-header">⏰ Haute priorité</div>
                     <div class="alert-count" id="alertHighPriority">0</div>
                     <div class="alert-description">À traiter en urgence</div>
                 </div>
-                <div class="alert-card info">
+                <div class="alert-card info clickable" onclick="dashboardDrill('upcoming')" title="Voir les échéances des 7 prochains jours">
                     <div class="alert-header">📅 Échéances 7 jours</div>
                     <div class="alert-count" id="alertUpcoming">0</div>
                     <div class="alert-description">Tâches à venir cette semaine</div>
@@ -2088,12 +2094,12 @@
                 box.innerHTML = '<div class="chat-empty">Aucun message pour ce projet.<br>Démarrez la discussion ✍️</div>';
                 return;
             }
-            box.innerHTML = msgs.map(m => {
+            box.innerHTML = msgs.map((m, i) => {
                 const mine = me && m.author === me;
                 const t = new Date(m.ts);
                 const time = isNaN(t.getTime()) ? '' : t.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) + ' ' + t.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
                 const to = m.to ? ` <span style="opacity:.75; font-weight:600;">→ ${escapeHtml(m.to)}</span>` : '';
-                return `<div class="chat-msg ${mine ? 'mine' : 'theirs'}"><div class="cm-author">${escapeHtml(m.author || 'Anonyme')}${to}</div><div>${escapeHtml(m.text)}</div><div class="cm-time">${time}</div></div>`;
+                return `<div class="chat-msg ${mine ? 'mine' : 'theirs'}"><button class="cm-del" title="Supprimer ce message" onclick="deleteChatMessage(${i})">🗑️</button><div class="cm-author">${escapeHtml(m.author || 'Anonyme')}${to}</div><div>${escapeHtml(m.text)}</div><div class="cm-time">${time}</div></div>`;
             }).join('');
             box.scrollTop = box.scrollHeight;
         }
@@ -2114,6 +2120,17 @@
             renderChat();
             // Notifications e-mail (personnes citées @ + destinataire)
             notifyChatRecipients(me, to, text);
+        }
+        function deleteChatMessage(i) {
+            const msgs = chats[currentProject] || [];
+            if (i < 0 || i >= msgs.length) return;
+            const m = msgs[i];
+            const apercu = (m.text || '').slice(0, 80);
+            if (!confirm('Supprimer ce message ?\n\n« ' + apercu + (m.text && m.text.length > 80 ? '…' : '') + ' »')) return;
+            msgs.splice(i, 1);
+            chats[currentProject] = msgs;
+            saveChats();
+            renderChat();
         }
 
         // ===== NOTIFICATIONS E-MAIL DU CHAT (via Apps Script) =====
@@ -2150,18 +2167,27 @@
                 + 'De : ' + author + '\n\n'
                 + '— Notification automatique du tableau de bord OPUS';
             try {
-                // Envoi « fire-and-forget » en no-cors : la requête POST part vers l'Apps Script
-                // (qui envoie l'e-mail) même depuis un fichier local file:// ; on ne lit pas la réponse.
-                await fetch(APPS_SCRIPT_URL, {
+                const resp = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ action: 'notify', token: SYNC_TOKEN, recipients: emails, subject: subject, message: message })
                 });
-                showSyncStatus('✉️ Notification envoyée à ' + emails.length + ' personne(s)', 'success');
+                let result = null;
+                try { result = await resp.json(); } catch (e) { /* réponse non lisible */ }
+                if (result && result.success) {
+                    showSyncStatus('✉️ Notification envoyée à ' + (result.sent || emails.length) + ' personne(s)', 'success');
+                } else if (result && result.error) {
+                    // Erreur renvoyée par l'Apps Script (ex : "unauthorized" = jeton, "Action inconnue: notify" = redéploiement)
+                    showSyncStatus('⚠️ Notification refusée par le serveur : ' + result.error, 'warning');
+                    alert('❌ La notification e-mail a été refusée par l\'Apps Script :\n\n« ' + result.error + ' »\n\n'
+                        + '• "unauthorized" → le jeton de « Connexion Sheets » ne correspond pas au TOKEN de Code.gs.\n'
+                        + '• "Action inconnue: notify" → il faut redéployer le script en NOUVELLE version (l\'URL /exec utilise encore l\'ancien code).');
+                } else {
+                    showSyncStatus('⚠️ Réponse serveur illisible (notification incertaine)', 'warning');
+                }
             } catch (err) {
                 console.warn('Notify error:', err);
-                showSyncStatus('⚠️ Notification e-mail non envoyée', 'warning');
+                showSyncStatus('⚠️ Notification e-mail non envoyée : ' + err.message, 'warning');
             }
         }
 
@@ -3675,6 +3701,31 @@
             } else if (tabName === 'resources') {
                 renderResources();
             }
+        }
+
+        // Clic sur un widget du tableau de bord → onglet Actions filtré
+        function dashboardDrill(kind) {
+            // Réinitialiser tous les filtres
+            ['filterStatus', 'filterPhase', 'filterPriority', 'filterResponsible', 'taskSearch'].forEach(id => {
+                const el = document.getElementById(id); if (el) el.value = '';
+            });
+            if (typeof dateFilter !== 'undefined') dateFilter = { mode: '', a: '', b: '' };
+            const setStatus = v => { const el = document.getElementById('filterStatus'); if (el) el.value = v; };
+            const setPrio = v => { const el = document.getElementById('filterPriority'); if (el) el.value = v; };
+            if (kind === 'todo') setStatus('À faire');
+            else if (kind === 'done') setStatus('Terminé');
+            else if (kind === 'inprogress') setStatus('En cours');
+            else if (kind === 'blocked') setStatus('Bloqué');
+            else if (kind === 'highprio') setPrio('Haute');
+            else if (kind === 'upcoming') {
+                const pad = n => String(n).padStart(2, '0');
+                const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+                const today = new Date(); today.setHours(0, 0, 0, 0);
+                const in7 = new Date(today); in7.setDate(in7.getDate() + 7);
+                if (typeof dateFilter !== 'undefined') dateFilter = { mode: 'between', a: iso(today), b: iso(in7) };
+            }
+            if (typeof updateDateFilterBtn === 'function') updateDateFilterBtn();
+            switchTab('tasks');   // affiche l'onglet Actions et applique les filtres (renderTasks)
         }
 
         function filterByStatus(status) {
