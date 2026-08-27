@@ -249,7 +249,7 @@
   .btn-delete-selected { background: #FEE2E2; color: var(--danger); border: 1.5px solid #FBC5C5; border-radius: 10px; font-weight: 700; font-size: 12.5px; padding: 9px 14px; cursor: pointer; font-family: inherit; }
   .btn-delete-selected:disabled { opacity: .45; cursor: not-allowed; }
   .task-table { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: #fff; }
-  .task-list-head, .task-row { display: grid; grid-template-columns: 34px minmax(200px, 2.6fr) 1.5fr 1.3fr 1.1fr 1fr 1.15fr 84px; gap: 12px; align-items: center; }
+  .task-list-head, .task-row { display: grid; grid-template-columns: 54px 26px minmax(160px, 2fr) 1.6fr 1.2fr 1.4fr 1.2fr 1.2fr 80px; gap: 8px; align-items: center; }
   .task-list-head { padding: 12px 16px; font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--text-muted); font-weight: 700; background: var(--bg); border-bottom: 1px solid var(--border); }
   .task-row { padding: 13px 16px; border-bottom: 1px solid var(--bg); transition: background .15s; }
   .task-row:last-child { border-bottom: none; }
@@ -278,7 +278,30 @@
   /* Filtres intégrés à l'en-tête */
   .head-filter { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--navy); background: #fff; outline: none; }
   .head-filter:focus { border-color: var(--blue); }
-  .task-list-head > div { display: flex; align-items: center; }
+  .task-list-head > div { display: flex; align-items: center; gap: 3px; min-width: 0; }
+  .task-list-head #dateFilterBtn { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .task-list-head .head-filter { min-width: 0; padding-left: 5px; padding-right: 3px; }
+
+  /* Tri par colonne (bandeau d'en-tete) */
+  .sort-btn { flex: 0 0 auto; height: 26px; min-width: 19px; padding: 0 2px; border: 1px solid var(--border); border-radius: 7px; background: #fff; color: var(--text-muted); font-family: inherit; font-size: 10px; font-weight: 800; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 2px; transition: all .15s; }
+  .sort-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .sort-btn.active { background: var(--gradient); color: #fff; border-color: transparent; }
+  .sort-btn .sort-ar { font-size: 11px; }
+  .sort-btn-ord { width: 100%; font-size: 10.5px; }
+
+  /* Colonne N° et glisser-deposer */
+  .tl-ord { display: flex; align-items: center; gap: 5px; }
+  .drag-handle { cursor: grab; color: var(--gray-400); font-size: 14px; line-height: 1; user-select: none; -webkit-user-select: none; }
+  .drag-handle:hover { color: var(--blue); }
+  .drag-handle:active { cursor: grabbing; }
+  .ord-num { font-size: 11.5px; font-weight: 800; color: var(--text-muted); }
+  .task-row.dragging { opacity: .4; }
+  .task-row.drop-before { box-shadow: inset 0 3px 0 0 var(--blue); }
+  .task-row.drop-after { box-shadow: inset 0 -3px 0 0 var(--blue); }
+  .task-table.no-drag .drag-handle { opacity: .22; cursor: not-allowed; }
+  .task-table.no-drag .drag-handle:hover { color: var(--gray-400); }
+  #orderHint { display: none; font-size: 11.5px; color: #92400E; background: #FFF9E6; border-left: 3px solid #F59E0B; border-radius: 8px; padding: 8px 11px; margin-bottom: 9px; }
+  #orderHint button { border: none; background: transparent; color: var(--blue); font-family: inherit; font-size: 11.5px; font-weight: 800; cursor: pointer; text-decoration: underline; padding: 0; }
 
   /* Cellules éditables inline */
   .tl-title[contenteditable] { outline: none; border-radius: 6px; padding: 1px 4px; margin: -1px -4px; cursor: text; }
@@ -1439,17 +1462,20 @@
                     <button class="btn-delete-selected" id="btnDeleteSelected" onclick="deleteSelectedTasks()" disabled style="margin-left:auto;">🗑️ Supprimer <span id="selCount"></span></button>
                 </div>
 
-                <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:8px;">💡 Filtres dans l'en-tête · cliquez sur une cellule (titre, responsables, phase, date, priorité, statut) pour la modifier directement.</p>
+                <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:8px;">💡 Filtres et tri (⇅) dans l'en-tête · cliquez sur une cellule pour la modifier · glissez la poignée ⠿ pour changer l'ordre des actions.</p>
 
-                <div class="task-table">
+                <div id="orderHint">ℹ️ Le glisser-déposer est désactivé tant qu'un autre tri est actif. <button type="button" onclick="resetToManualOrder()">Revenir à l'ordre N° ↑</button></div>
+
+                <div class="task-table" id="taskTable">
                     <div class="task-list-head">
+                        <div><button type="button" class="sort-btn sort-btn-ord" data-sort="order" onclick="toggleSort('order')">N°<span class="sort-ar">↑</span></button></div>
                         <div><input type="checkbox" id="selectAllTasks" class="row-check" onchange="toggleSelectAll(this.checked)" title="Tout sélectionner"></div>
-                        <div><input type="text" id="taskSearch" class="head-filter" placeholder="🔍 Action…" oninput="renderTasks()" autocomplete="off"></div>
-                        <div><select id="filterResponsible" class="head-filter" onchange="renderTasks()"><option value="">Responsables</option></select></div>
-                        <div><select id="filterPhase" class="head-filter" onchange="renderTasks()"><option value="">Phase</option></select></div>
-                        <div><button type="button" id="dateFilterBtn" class="head-filter" style="cursor:pointer; text-align:left;" onclick="openDateFilter(event)">📅 Échéance</button></div>
-                        <div><select id="filterPriority" class="head-filter" onchange="renderTasks()"><option value="">Priorité</option><option value="Haute">Haute</option><option value="Moyenne">Moyenne</option><option value="Basse">Basse</option></select></div>
-                        <div><select id="filterStatus" class="head-filter" onchange="renderTasks()"><option value="">Statut</option><option value="À faire">À faire</option><option value="En cours">En cours</option><option value="Terminé">Terminé</option><option value="Bloqué">Bloqué</option></select></div>
+                        <div><input type="text" id="taskSearch" class="head-filter" placeholder="🔍 Action…" oninput="renderTasks()" autocomplete="off"><button type="button" class="sort-btn" data-sort="title" onclick="toggleSort('title')"><span class="sort-ar">⇅</span></button></div>
+                        <div><select id="filterResponsible" class="head-filter" onchange="renderTasks()"><option value="">Responsables</option></select><button type="button" class="sort-btn" data-sort="responsible" onclick="toggleSort('responsible')"><span class="sort-ar">⇅</span></button></div>
+                        <div><select id="filterPhase" class="head-filter" onchange="renderTasks()"><option value="">Phase</option></select><button type="button" class="sort-btn" data-sort="phase" onclick="toggleSort('phase')"><span class="sort-ar">⇅</span></button></div>
+                        <div><button type="button" id="dateFilterBtn" class="head-filter" style="cursor:pointer; text-align:left;" onclick="openDateFilter(event)">📅 Échéance</button><button type="button" class="sort-btn" data-sort="endDate" onclick="toggleSort('endDate')"><span class="sort-ar">⇅</span></button></div>
+                        <div><select id="filterPriority" class="head-filter" onchange="renderTasks()"><option value="">Priorité</option><option value="Haute">Haute</option><option value="Moyenne">Moyenne</option><option value="Basse">Basse</option></select><button type="button" class="sort-btn" data-sort="priority" onclick="toggleSort('priority')"><span class="sort-ar">⇅</span></button></div>
+                        <div><select id="filterStatus" class="head-filter" onchange="renderTasks()"><option value="">Statut</option><option value="À faire">À faire</option><option value="En cours">En cours</option><option value="Terminé">Terminé</option><option value="Bloqué">Bloqué</option></select><button type="button" class="sort-btn" data-sort="status" onclick="toggleSort('status')"><span class="sort-ar">⇅</span></button></div>
                         <div>Gérer</div>
                     </div>
                     <div id="tasksGrid"></div>
@@ -3406,6 +3432,181 @@
             });
         }
 
+        // =====================================================================
+        // TRI PAR COLONNE + ORDRE MANUEL (glisser-deposer)
+        // ---------------------------------------------------------------------
+        // L'ordre manuel n'est PAS un champ supplementaire : c'est la position
+        // de l'action dans le tableau `tasks`. Cette position est deja conservee
+        // telle quelle par Google Sheets (une ligne = une action, dans l'ordre
+        // d'ecriture) : aucun changement de schema, aucune colonne a ajouter.
+        // Le N° affiche vaut donc toujours « position + 1 », d'ou la
+        // renumerotation automatique des que l'on deplace une ligne.
+        // =====================================================================
+        let sortState = { key: 'order', dir: 'asc' };
+
+        const PRIO_RANK = { 'Haute': 1, 'Moyenne': 2, 'Basse': 3 };
+        const STATUS_RANK = { 'À faire': 1, 'En cours': 2, 'Bloqué': 3, 'Terminé': 4 };
+
+        // Le glisser-deposer n'a de sens que dans l'ordre manuel croissant
+        function isManualOrder() {
+            return sortState.key === 'order' && sortState.dir === 'asc';
+        }
+
+        function toggleSort(key) {
+            if (sortState.key === key) {
+                sortState.dir = (sortState.dir === 'asc') ? 'desc' : 'asc';
+            } else {
+                sortState = { key: key, dir: 'asc' };
+            }
+            renderTasks();
+        }
+
+        function resetToManualOrder() {
+            sortState = { key: 'order', dir: 'asc' };
+            renderTasks();
+        }
+
+        // Valeur de comparaison. '' = valeur vide -> toujours renvoyee en bas.
+        function sortValue(task, key, idx) {
+            switch (key) {
+                case 'order':
+                    return (idx === undefined || idx === null) ? 0 : idx;
+                case 'title':
+                    return (task.title || '').trim().toLowerCase();
+                case 'responsible':
+                    return splitResponsibles(task.responsible).join(' ').toLowerCase();
+                case 'phase': {
+                    if (!task.phase) return '';
+                    const i = phases.indexOf(task.phase);
+                    return (i >= 0) ? i : 900;   // phase inconnue : apres les phases connues
+                }
+                case 'endDate':
+                    return task.endDate || '';   // ISO : la comparaison texte suffit
+                case 'priority':
+                    return PRIO_RANK[task.priority] || '';
+                case 'status':
+                    return STATUS_RANK[task.status] || '';
+                default:
+                    return '';
+            }
+        }
+
+        function sortTaskList(list, orderIndex) {
+            const key = sortState.key;
+            const sign = (sortState.dir === 'desc') ? -1 : 1;
+            const isEmpty = v => (v === '' || v === null || v === undefined);
+            return list
+                .map((t, i) => ({ t: t, i: i, v: sortValue(t, key, orderIndex.get(String(t.id))) }))
+                .sort((a, b) => {
+                    // Les valeurs vides restent en bas quel que soit le sens du tri
+                    if (isEmpty(a.v) && isEmpty(b.v)) return a.i - b.i;
+                    if (isEmpty(a.v)) return 1;
+                    if (isEmpty(b.v)) return -1;
+                    let c;
+                    if (typeof a.v === 'number' && typeof b.v === 'number') c = a.v - b.v;
+                    else c = String(a.v).localeCompare(String(b.v), 'fr', { numeric: true, sensitivity: 'base' });
+                    if (c !== 0) return c * sign;
+                    return a.i - b.i;   // tri stable
+                })
+                .map(o => o.t);
+        }
+
+        function updateSortIndicators() {
+            document.querySelectorAll('.task-list-head .sort-btn').forEach(btn => {
+                const active = (btn.getAttribute('data-sort') === sortState.key);
+                btn.classList.toggle('active', active);
+                const ar = btn.querySelector('.sort-ar');
+                if (ar) ar.textContent = active ? (sortState.dir === 'asc' ? '↑' : '↓') : '⇅';
+                btn.title = active
+                    ? (sortState.dir === 'asc' ? 'Tri croissant — cliquer pour décroissant' : 'Tri décroissant — cliquer pour croissant')
+                    : 'Trier sur cette colonne';
+            });
+            const table = document.getElementById('taskTable');
+            if (table) table.classList.toggle('no-drag', !isManualOrder());
+            const hint = document.getElementById('orderHint');
+            if (hint) hint.style.display = isManualOrder() ? 'none' : 'block';
+        }
+
+        // ---- Glisser-deposer des lignes ----
+        let dragSrcId = null;
+
+        function clearDropMarks() {
+            document.querySelectorAll('#tasksGrid .task-row').forEach(r => {
+                r.classList.remove('drop-before', 'drop-after');
+            });
+        }
+
+        function setupRowDrag() {
+            const grid = document.getElementById('tasksGrid');
+            if (!grid) return;
+            grid.querySelectorAll('.task-row').forEach(row => {
+                const handle = row.querySelector('.drag-handle');
+                if (handle) {
+                    // La ligne ne devient deplacable que si le geste part de la
+                    // poignee : sinon on casserait la selection de texte des
+                    // cellules editables et les listes deroulantes.
+                    handle.addEventListener('mousedown', () => {
+                        if (isManualOrder()) row.setAttribute('draggable', 'true');
+                    });
+                    handle.addEventListener('mouseup', () => row.removeAttribute('draggable'));
+                }
+                row.addEventListener('dragstart', e => {
+                    if (!isManualOrder()) { e.preventDefault(); return; }
+                    dragSrcId = row.getAttribute('data-id');
+                    row.classList.add('dragging');
+                    if (e.dataTransfer) {
+                        e.dataTransfer.effectAllowed = 'move';
+                        try { e.dataTransfer.setData('text/plain', dragSrcId); } catch (err) { }
+                    }
+                });
+                row.addEventListener('dragover', e => {
+                    if (!dragSrcId || !isManualOrder()) return;
+                    e.preventDefault();
+                    if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+                    if (row.getAttribute('data-id') === dragSrcId) return;
+                    const r = row.getBoundingClientRect();
+                    const after = (e.clientY - r.top) > r.height / 2;
+                    row.classList.toggle('drop-after', after);
+                    row.classList.toggle('drop-before', !after);
+                });
+                row.addEventListener('dragleave', () => {
+                    row.classList.remove('drop-before', 'drop-after');
+                });
+                row.addEventListener('drop', e => {
+                    e.preventDefault();
+                    if (!dragSrcId || !isManualOrder()) return;
+                    const targetId = row.getAttribute('data-id');
+                    const after = row.classList.contains('drop-after');
+                    clearDropMarks();
+                    const src = dragSrcId;
+                    dragSrcId = null;
+                    if (targetId !== src) moveTaskBeside(src, targetId, after);
+                });
+                row.addEventListener('dragend', () => {
+                    row.removeAttribute('draggable');
+                    row.classList.remove('dragging');
+                    clearDropMarks();
+                    dragSrcId = null;
+                });
+            });
+        }
+
+        // Deplace une action juste avant ou juste apres une autre.
+        // Le N° etant la position dans `tasks`, la renumerotation 1..n se fait
+        // toute seule au reaffichage. Fonctionne aussi quand un filtre masque
+        // des lignes : on vise la position absolue de la ligne de destination.
+        function moveTaskBeside(srcId, targetId, after) {
+            const from = tasks.findIndex(t => String(t.id) === String(srcId));
+            const target = tasks.findIndex(t => String(t.id) === String(targetId));
+            if (from < 0 || target < 0 || from === target) return;
+            const moved = tasks.splice(from, 1)[0];
+            let to = tasks.findIndex(t => String(t.id) === String(targetId));
+            if (to < 0) to = tasks.length;
+            else if (after) to = to + 1;
+            tasks.splice(to, 0, moved);
+            saveTasks();   // enregistre en local + Google Sheets, puis reaffiche
+        }
+
         function renderTasks() {
             const grid = document.getElementById('tasksGrid');
             if (!grid) return;
@@ -3430,21 +3631,28 @@
                 return true;
             });
 
+            // Position absolue de chaque action dans le projet = son N° - 1
+            const orderIndex = new Map(tasks.map((t, i) => [String(t.id), i]));
+
             if (list.length === 0) {
                 grid.innerHTML = '<div class="tl-empty" style="padding:28px; text-align:center;">Aucune action à afficher</div>';
                 updateBulkBar();
+                updateSortIndicators();
                 return;
             }
 
             const today = new Date(); today.setHours(0, 0, 0, 0);
 
-            grid.innerHTML = list.map(task => {
+            grid.innerHTML = sortTaskList(list, orderIndex).map(task => {
                 const subs = normalizeSubtasks(task.subtasks);
                 const done = subs.filter(s => s.done).length;
                 const prog = subs.length ? Math.round(done / subs.length * 100) : null;
                 const overdue = task.endDate && task.status !== 'Terminé' && new Date(task.endDate) < today;
+                const oi = orderIndex.get(String(task.id));
+                const ordNum = ((oi === undefined) ? 0 : oi) + 1;
                 return `
-                <div class="task-row">
+                <div class="task-row" data-id="${task.id}">
+                    <div class="tl-ord"><span class="drag-handle" title="Glisser pour réordonner">⠿</span><span class="ord-num">${ordNum}</span></div>
                     <div><input type="checkbox" class="row-check task-check" data-id="${task.id}" onchange="updateBulkBar()"></div>
                     <div>
                         <div class="tl-title" contenteditable="true" spellcheck="false" onblur="inlineUpdate(${task.id},'title',this.textContent)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">${escapeHtml(task.title)}</div>
@@ -3467,6 +3675,8 @@
                 </div>`;
             }).join('');
             updateBulkBar();
+            setupRowDrag();
+            updateSortIndicators();
         }
 
         function updateBulkBar() {
