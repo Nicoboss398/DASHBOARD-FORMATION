@@ -500,7 +500,20 @@
     #sidebar { transform: translateX(-100%); } #sidebar.open { transform: none; }
     #main { margin-left: 0; } .hamburger { display: inline-flex; } .banner::after { display: none; }
   }
-    </style>
+    
+        /* ===== Suivi détaillé : réf., visibilité, notes internes ===== */
+        .tm-chips { display:flex; flex-wrap:wrap; gap:4px; margin-top:4px; }
+        .tm-chip { font-size:10.5px; line-height:1.5; padding:0 7px; border-radius:999px; background:#EEF2FF; color:#1F3864; font-weight:600; white-space:nowrap; }
+        .tm-ref { background:#1F3864; color:#fff; font-family:'Space Mono', monospace; }
+        .tm-int { background:#FDECEA; color:#B42318; }
+        .tm-cli { background:#E6F4EA; color:#1E7B34; }
+        .tm-sub { background:#FFF4E5; color:#B54708; }
+        .tm-org { background:#F2F4F7; color:#344054; font-weight:500; }
+        .tm-due { background:#F2F4F7; color:#475467; }
+        .tm-dep { background:#F4F3FF; color:#5925DC; }
+        .tm-deliv { margin-top:3px; font-size:11px; color:#475467; }
+        .tm-note { margin-top:4px; font-size:11px; color:#93370D; background:#FFFAEB; border-left:3px solid #F79009; padding:3px 6px; border-radius:4px; }
+</style>
     <style media="not all">
         * {
             margin: 0;
@@ -1299,6 +1312,7 @@
             <div class="nav-section-title">Outils</div>
             <div class="sidebar-tools">
                 <button class="nav-item" onclick="openModal()"><svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7.5 2v11M2 7.5h11"/></svg> Nouvelle action</button>
+                <button class="nav-item" onclick="openImportModal()"><svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 2v8M4.5 7l3 3 3-3M2.5 12.5h10"/></svg> Importer des actions</button>
                 <button class="nav-item" onclick="switchTab('resources')"><svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2h6l3.5 3.5V13a.5.5 0 0 1-.5.5H2.5a.5.5 0 0 1-.5-.5V2.5a.5.5 0 0 1 .5-.5z"/><path d="M8.5 2v3.5H12"/></svg> Ressources</button>
                 <button class="nav-item" onclick="openPhaseManager()"><svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="7.5" r="5.5"/><path d="M10 5l-1.3 3.7L5 10l1.3-3.7z"/></svg> Gérer les phases</button>
                 <button class="nav-item" onclick="openTemplateManager()"><svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="11" height="11" rx="1.5"/><path d="M2 5.5h11M6 5.5V13"/></svg> Gérer les templates</button>
@@ -1459,6 +1473,8 @@
                     <button class="btn btn-secondary" id="btnManageTemplate">⚙️ Templates</button>
                     <button class="btn btn-secondary" id="btnExport">💾 Exporter</button>
                     <button class="btn btn-success" id="btnReadOnly">👁️ Lecture seule</button>
+                    <button class="btn btn-secondary" type="button" onclick="openImportModal()">📥 Importer CSV / Excel</button>
+                    <select id="filterVisibility" class="btn btn-secondary" onchange="renderTasks()" title="Filtrer par visibilité"><option value="">👁️ Toutes visibilités</option><option value="Client">👁️ Vue client</option><option value="Interne Opus">🔒 Interne Opus</option></select>
                     <button class="btn-delete-selected" id="btnDeleteSelected" onclick="deleteSelectedTasks()" disabled style="margin-left:auto;">🗑️ Supprimer <span id="selCount"></span></button>
                 </div>
 
@@ -1605,6 +1621,24 @@
                     <label>Commentaires</label>
                     <textarea id="taskComments"></textarea>
                 </div>
+                <details class="form-group" id="taskExtraDetails" style="border:2px solid var(--gray-200); border-radius:10px; padding:0.6rem 0.75rem;">
+                    <summary style="cursor:pointer; font-weight:600;">📋 Suivi détaillé (réf., visibilité client, dépendances…)</summary>
+                    <div class="form-row-2" style="margin-top:0.6rem;">
+                        <div class="form-group"><label>Réf.</label><input type="text" id="taskRef" placeholder="ex. DOU-D-01"></div>
+                        <div class="form-group"><label>Visibilité</label><select id="taskVisibility"><option value="">—</option><option value="Client">👁️ Client</option><option value="Interne Opus">🔒 Interne Opus</option></select></div>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group"><label>Organisation</label><input type="text" id="taskOrganisation" placeholder="Opus ; Client ; Partenaire"></div>
+                        <div class="form-group"><label>Sous-statut</label><select id="taskSubStatus"><option value="">—</option><option value="En attente client">En attente client</option><option value="À recaler">À recaler</option><option value="Annulé">Annulé</option></select></div>
+                    </div>
+                    <div class="form-group"><label>Livrable / critère de réussite</label><input type="text" id="taskDeliverable"></div>
+                    <div class="form-row-2">
+                        <div class="form-group"><label>Échéance (libellé)</label><input type="text" id="taskDueLabel" placeholder="ex. Fin de semaine"></div>
+                        <div class="form-group"><label>Dépend de</label><input type="text" id="taskDependsOn" placeholder="ex. FIN-01 ; GOV-12"></div>
+                    </div>
+                    <div class="form-group"><label>Source</label><input type="text" id="taskSource"></div>
+                    <div class="form-group"><label>🔒 Note interne Opus (jamais diffusée au client)</label><textarea id="taskInternalNote" style="min-height:60px;"></textarea></div>
+                </details>
                 <div class="form-group">
                     <label>Sous-actions</label>
                     <div id="subtasksEditor" style="border:2px solid var(--gray-200); border-radius:10px; padding:0.75rem; background:var(--gray-100);">
@@ -1693,6 +1727,13 @@
                     <div>
                         <div class="share-option-title">Exporter la version consultable (HTML)</div>
                         <div class="share-option-desc">Génère un fichier HTML autonome avec les données actuelles, en lecture seule. Envoyez-le par e-mail ou déposez-le sur OneDrive/SharePoint — les destinataires consultent sans modifier.</div>
+                    </div>
+                </button>
+                <button type="button" class="share-option-card" onclick="closeShareModal(); generateReadOnlyLink(true);">
+                    <div class="share-option-icon">🤝</div>
+                    <div>
+                        <div class="share-option-title">Exporter la vue client (HTML)</div>
+                        <div class="share-option-desc">Même export consultable, mais sans les actions « Interne Opus » ni les notes internes. À envoyer au client.</div>
                     </div>
                 </button>
                 <button type="button" class="share-option-card" onclick="exportData();">
@@ -1898,7 +1939,7 @@
             if (!sel) return;
             const cur = sel.value;
             sel.innerHTML = '<option value="">Sélectionner une phase</option>' +
-                phases.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
+                projectPhaseList(tasks).map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
             sel.value = cur;
         }
         function renderPhaseFilters() {
@@ -1906,7 +1947,7 @@
             if (!sel) return;
             const cur = sel.value;
             sel.innerHTML = '<option value="">Phase</option>' +
-                phases.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
+                projectPhaseList(tasks).map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
             sel.value = cur;
         }
         function renderResponsibleFilter() {
@@ -2882,7 +2923,7 @@
             updateProjectSelector();
             
             // Réinitialiser les filtres (selects + recherche)
-            ['filterStatus', 'filterPhase', 'filterPriority', 'filterResponsible', 'taskSearch'].forEach(id => {
+            ['filterStatus', 'filterPhase', 'filterPriority', 'filterResponsible', 'filterVisibility', 'taskSearch'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.value = '';
             });
@@ -3400,7 +3441,7 @@
         }
 
         function updatePhaseTable() {
-            const phases = [...new Set([].concat(window.__opusPhases || [], tasks.map(t => t.phase)))].filter(Boolean);
+            const phases = projectPhaseList(tasks);
             
             const tbody = document.getElementById('phaseTableBody');
             tbody.innerHTML = '';
@@ -3617,15 +3658,17 @@
             const fPhase = document.getElementById('filterPhase') ? document.getElementById('filterPhase').value : '';
             const fPrio = document.getElementById('filterPriority') ? document.getElementById('filterPriority').value : '';
             const fResp = document.getElementById('filterResponsible') ? document.getElementById('filterResponsible').value : '';
+            const fVis = document.getElementById('filterVisibility') ? document.getElementById('filterVisibility').value : '';
 
             const list = tasks.filter(t => {
+                if (fVis && (t.visibility || '') !== fVis) return false;
                 if (fStatus && t.status !== fStatus) return false;
                 if (fPhase && t.phase !== fPhase) return false;
                 if (fPrio && t.priority !== fPrio) return false;
                 if (fResp && !splitResponsibles(t.responsible).includes(fResp)) return false;
                 if (!taskPassesDateFilter(t)) return false;
                 if (search) {
-                    const hay = (t.title + ' ' + (t.responsible || '') + ' ' + (t.phase || '') + ' ' + (t.comments || '')).toLowerCase();
+                    const hay = (t.title + ' ' + (t.responsible || '') + ' ' + (t.phase || '') + ' ' + (t.comments || '') + ' ' + (t.ref || '') + ' ' + (t.internalNote || '') + ' ' + (t.source || '') + ' ' + (t.deliverable || '') + ' ' + (t.subStatus || '')).toLowerCase();
                     if (!hay.includes(search)) return false;
                 }
                 return true;
@@ -3657,6 +3700,7 @@
                     <div>
                         <div class="tl-title" contenteditable="true" spellcheck="false" onblur="inlineUpdate(${task.id},'title',this.textContent)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">${escapeHtml(task.title)}</div>
                         <div class="tl-comment" contenteditable="true" spellcheck="false" data-ph="Ajouter une note…" onblur="inlineUpdate(${task.id},'comments',this.textContent)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">${escapeHtml(task.comments || '')}</div>
+                        ${renderTaskMetaHtml(task)}
                         ${prog !== null ? `<div class="tl-sub">☑️ ${done}/${subs.length} <span class="tl-sub-bar"><i style="width:${prog}%"></i></span> ${prog}%</div>` : ''}
                     </div>
                     <div id="respcell-${task.id}" class="resp-cell" title="Cliquer pour modifier" onclick="openRespPopover(${task.id}, event)">${renderAvatarsHtml(task.responsible)}</div>
@@ -3705,7 +3749,7 @@
 
         // ===== ÉDITION INLINE (par colonne) =====
         function phaseOptions(cur) {
-            const list = phases.slice();
+            const list = projectPhaseList(tasks).slice();
             if (cur && !list.includes(cur)) list.unshift(cur);
             return '<option value="">—</option>' + list.map(p => `<option value="${escapeHtml(p)}" ${p === cur ? 'selected' : ''}>${escapeHtml(p)}</option>`).join('');
         }
@@ -3916,7 +3960,7 @@
         // Clic sur un widget du tableau de bord → onglet Actions filtré
         function dashboardDrill(kind) {
             // Réinitialiser tous les filtres
-            ['filterStatus', 'filterPhase', 'filterPriority', 'filterResponsible', 'taskSearch'].forEach(id => {
+            ['filterStatus', 'filterPhase', 'filterPriority', 'filterResponsible', 'filterVisibility', 'taskSearch'].forEach(id => {
                 const el = document.getElementById(id); if (el) el.value = '';
             });
             if (typeof dateFilter !== 'undefined') dateFilter = { mode: '', a: '', b: '' };
@@ -3957,29 +4001,74 @@
         // =============================================
         // Séparateur invisible pour encoder les sous-actions dans la colonne commentaires du Sheet
         const SUBTASK_DELIM = '␞';
+        // Champs de suivi détaillé (réf., visibilité client…) : encodés dans la colonne "comments" du Sheet
+        const META_DELIM = '␟';
+        const EXTRA_FIELDS = ['ref', 'visibility', 'organisation', 'deliverable', 'type', 'subStatus', 'dueLabel', 'dependsOn', 'source', 'internalNote', 'createdAt'];
+        function extractMeta(task) {
+            const m = {};
+            EXTRA_FIELDS.forEach(k => { if (task[k] !== undefined && task[k] !== null && String(task[k]).trim() !== '') m[k] = task[k]; });
+            return m;
+        }
+        // Phases d'un projet : si le projet utilise ses propres lots, on n'affiche que ceux-ci
+        function projectPhaseList(list) {
+            const glob = window.__opusPhases || [];
+            const used = [...new Set((list || []).map(t => t.phase).filter(Boolean))];
+            if (used.length && used.some(p => !glob.includes(p))) return used;
+            return [...new Set([].concat(glob, used))].filter(Boolean);
+        }
+        function renderTaskMetaHtml(t) {
+            const chips = [];
+            if (t.ref) chips.push(`<span class="tm-chip tm-ref">${escapeHtml(t.ref)}</span>`);
+            if (t.visibility === 'Interne Opus') chips.push('<span class="tm-chip tm-int" title="Action interne : jamais diffusée au client">🔒 Interne</span>');
+            else if (t.visibility === 'Client') chips.push('<span class="tm-chip tm-cli" title="Action visible par le client">👁️ Client</span>');
+            if (t.subStatus) chips.push(`<span class="tm-chip tm-sub">${escapeHtml(t.subStatus)}</span>`);
+            if (t.organisation) chips.push(`<span class="tm-chip tm-org">${escapeHtml(t.organisation)}</span>`);
+            if (t.dueLabel && !t.endDate) chips.push(`<span class="tm-chip tm-due" title="Échéance (libellé)">📅 ${escapeHtml(t.dueLabel)}</span>`);
+            if (t.dependsOn) chips.push(`<span class="tm-chip tm-dep" title="Dépend de">⛓ ${escapeHtml(t.dependsOn)}</span>`);
+            let h = chips.length ? `<div class="tm-chips">${chips.join('')}</div>` : '';
+            if (t.deliverable) h += `<div class="tm-deliv" title="Livrable / critère de réussite">🎯 ${escapeHtml(t.deliverable)}</div>`;
+            if (t.internalNote) h += `<div class="tm-note" title="Note interne Opus — jamais diffusée">🔒 ${escapeHtml(t.internalNote)}</div>`;
+            return h;
+        }
         let editingSubtasks = []; // buffer d'édition dans le modal
 
         // Encode les sous-actions dans la colonne "comments" pour survivre au Sheet (10 colonnes fixes)
         function encodeSubtasksIntoComments(sheetTask) {
             const subs = normalizeSubtasks(sheetTask.subtasks);
-            const human = (sheetTask.comments || '').split(SUBTASK_DELIM)[0];
+            const human = (sheetTask.comments || '').split(SUBTASK_DELIM)[0].split(META_DELIM)[0];
+            const meta = extractMeta(sheetTask);
             const out = { ...sheetTask };
             delete out.subtasks;
-            out.comments = subs.length ? (human + SUBTASK_DELIM + JSON.stringify(subs)) : human;
+            EXTRA_FIELDS.forEach(k => delete out[k]);
+            let c = human;
+            if (Object.keys(meta).length) c += META_DELIM + JSON.stringify(meta);
+            out.comments = subs.length ? (c + SUBTASK_DELIM + JSON.stringify(subs)) : c;
             return out;
         }
 
         // Décode les sous-actions depuis la colonne "comments" au chargement
         function decodeSubtasksFromComments(task) {
-            const raw = task.comments || '';
+            let raw = task.comments || '';
             const idx = raw.indexOf(SUBTASK_DELIM);
-            if (idx === -1) { task.subtasks = normalizeSubtasks(task.subtasks); return task; }
-            task.comments = raw.slice(0, idx);
-            try {
-                task.subtasks = normalizeSubtasks(JSON.parse(raw.slice(idx + SUBTASK_DELIM.length)));
-            } catch (e) {
-                task.subtasks = [];
+            if (idx === -1) {
+                task.subtasks = normalizeSubtasks(task.subtasks);
+            } else {
+                try {
+                    task.subtasks = normalizeSubtasks(JSON.parse(raw.slice(idx + SUBTASK_DELIM.length)));
+                } catch (e) {
+                    task.subtasks = [];
+                }
+                raw = raw.slice(0, idx);
             }
+            const mi = raw.indexOf(META_DELIM);
+            if (mi !== -1) {
+                try {
+                    const meta = JSON.parse(raw.slice(mi + META_DELIM.length));
+                    EXTRA_FIELDS.forEach(k => { if (meta[k] !== undefined) task[k] = meta[k]; });
+                } catch (e) { /* méta illisible : ignorée */ }
+                raw = raw.slice(0, mi);
+            }
+            task.comments = raw;
             return task;
         }
 
@@ -4089,6 +4178,12 @@
                     document.getElementById('taskStatus').value = task.status;
                     document.getElementById('taskPriority').value = task.priority;
                     document.getElementById('taskComments').value = task.comments;
+                    const xs = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+                    xs('taskRef', task.ref); xs('taskVisibility', task.visibility); xs('taskOrganisation', task.organisation);
+                    xs('taskSubStatus', task.subStatus); xs('taskDeliverable', task.deliverable); xs('taskDueLabel', task.dueLabel);
+                    xs('taskDependsOn', task.dependsOn); xs('taskSource', task.source); xs('taskInternalNote', task.internalNote);
+                    const det = document.getElementById('taskExtraDetails');
+                    if (det) det.open = Object.keys(extractMeta(task)).length > 0;
                     editingSubtasks = normalizeSubtasks(task.subtasks);
                     document.querySelector('.modal-header').textContent = 'Modifier la tâche';
                 }
@@ -4115,7 +4210,9 @@
         function saveTask(event) {
             event.preventDefault();
             
+            const prevTask = editingTaskId ? (tasks.find(t => t.id === editingTaskId) || {}) : {};
             const task = {
+                ...prevTask,
                 id: editingTaskId || Date.now(),
                 phase: document.getElementById('taskPhase').value,
                 title: document.getElementById('taskTitle').value,
@@ -4127,7 +4224,11 @@
                 comments: document.getElementById('taskComments').value,
                 subtasks: normalizeSubtasks(editingSubtasks)
             };
-            
+            const xv = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+            task.ref = xv('taskRef'); task.visibility = xv('taskVisibility'); task.organisation = xv('taskOrganisation');
+            task.subStatus = xv('taskSubStatus'); task.deliverable = xv('taskDeliverable'); task.dueLabel = xv('taskDueLabel');
+            task.dependsOn = xv('taskDependsOn'); task.source = xv('taskSource'); task.internalNote = xv('taskInternalNote');
+
             if (editingTaskId) {
                 const index = tasks.findIndex(t => t.id === editingTaskId);
                 tasks[index] = task;
@@ -4162,6 +4263,246 @@
             if (task) {
                 task.status = newStatus;
                 saveTasks();
+            }
+        }
+
+
+        // =============================================
+        // IMPORT D'ACTIONS (CSV / EXCEL)
+        // =============================================
+        const IMPORT_COLS = {
+            ref: ['id', 'réf', 'réf.', 'ref', 'référence'],
+            phase: ['lot / thématique', 'lot', 'phase', 'thématique'],
+            title: ['action', 'titre', 'title', 'tâche', 'titre de la tâche'],
+            deliverable: ['livrable / critère de réussite', 'livrable', 'critère de réussite'],
+            type: ['type'],
+            responsible: ['responsable', 'responsables', 'responsible', 'qui'],
+            organisation: ['organisation'],
+            visibility: ['visibilité', 'visibility'],
+            priority: ['priorité', 'priority'],
+            status: ['statut', 'status'],
+            createdAt: ['date de création'],
+            endDate: ['échéance (date)', 'date de fin', 'enddate', 'échéance'],
+            startDate: ['date de début', 'startdate'],
+            dueLabel: ['échéance (libellé)'],
+            dependsOn: ['dépend de'],
+            source: ['source'],
+            comments: ['commentaire (visible client)', 'commentaire', 'commentaires', 'comments'],
+            internalNote: ['note interne opus', 'note interne']
+        };
+        let _importTasks = null;
+
+        function parseCsvText(text) {
+            text = text.replace(/^﻿/, '');
+            const firstLine = text.split(/\r?\n/)[0] || '';
+            const delim = (firstLine.split(';').length > firstLine.split(',').length) ? ';' : ',';
+            const rows = []; let row = []; let cell = ''; let q = false;
+            for (let i = 0; i < text.length; i++) {
+                const ch = text[i];
+                if (q) {
+                    if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; }
+                    else cell += ch;
+                } else if (ch === '"') q = true;
+                else if (ch === delim) { row.push(cell); cell = ''; }
+                else if (ch === '\n' || ch === '\r') {
+                    if (ch === '\r' && text[i + 1] === '\n') i++;
+                    row.push(cell); rows.push(row); row = []; cell = '';
+                } else cell += ch;
+            }
+            if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
+            return rows.filter(r => r.some(c => String(c).trim() !== ''));
+        }
+        function loadSheetJs() {
+            return new Promise((resolve, reject) => {
+                if (window.XLSX) return resolve(window.XLSX);
+                const sc = document.createElement('script');
+                sc.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+                sc.onload = () => resolve(window.XLSX);
+                sc.onerror = () => reject(new Error('Lecteur Excel indisponible (connexion ?)'));
+                document.head.appendChild(sc);
+            });
+        }
+        function importDate(v) {
+            if (v === undefined || v === null || v === '') return '';
+            const pad = n => String(n).padStart(2, '0');
+            if (v instanceof Date && !isNaN(v)) return v.getFullYear() + '-' + pad(v.getMonth() + 1) + '-' + pad(v.getDate());
+            const str = String(v).trim();
+            let m = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+            if (m) return m[1] + '-' + m[2] + '-' + m[3];
+            m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            if (m) return m[3] + '-' + pad(m[2]) + '-' + pad(m[1]);
+            return '';
+        }
+        function importStatus(v) {
+            const st = String(v || '').trim().toLowerCase();
+            if (['terminé', 'termine', 'fait', 'done'].includes(st)) return { status: 'Terminé', subStatus: '' };
+            if (['annulé', 'annule'].includes(st)) return { status: 'Terminé', subStatus: 'Annulé' };
+            if (st === 'en cours') return { status: 'En cours', subStatus: '' };
+            if (['bloqué', 'bloque'].includes(st)) return { status: 'Bloqué', subStatus: '' };
+            if (st === 'en attente client') return { status: 'Bloqué', subStatus: 'En attente client' };
+            if (['à recaler', 'a recaler'].includes(st)) return { status: 'À faire', subStatus: 'À recaler' };
+            return { status: 'À faire', subStatus: '' };
+        }
+        function importPriority(v) {
+            const p = String(v || '').trim().toLowerCase();
+            if (['p1', 'haute', 'high', 'urgent'].includes(p)) return 'Haute';
+            if (['p2', 'moyenne', 'medium'].includes(p)) return 'Moyenne';
+            if (['p3', 'basse', 'low'].includes(p)) return 'Basse';
+            return '';
+        }
+        // « N. Bossard » -> « Nicolas BOSSARD » si la personne est connue de l'équipe
+        function importResponsible(str) {
+            const known = allResponsibleNames();
+            return splitResponsibles(str).map(n => {
+                const m = n.match(/^([A-Za-zÀ-ÿ])\.\s*(.+)$/);
+                if (m) {
+                    const hit = known.find(k => {
+                        const parts = k.trim().split(/\s+/);
+                        return parts.length > 1 && parts[0][0].toLowerCase() === m[1].toLowerCase()
+                            && parts.slice(1).join(' ').toLowerCase() === m[2].trim().toLowerCase();
+                    });
+                    if (hit) return hit;
+                }
+                return n;
+            }).join('; ');
+        }
+        function rowsToTasks(rows) {
+            if (!rows.length) return { tasks: [], cols: [] };
+            const head = rows[0].map(h => String(h || '').replace(/^﻿/, '').trim().toLowerCase());
+            const colIdx = {};
+            Object.keys(IMPORT_COLS).forEach(k => {
+                const i = head.findIndex(h => IMPORT_COLS[k].includes(h));
+                if (i !== -1) colIdx[k] = i;
+            });
+            const base = Date.now();
+            const out = rows.slice(1).map((r, n) => {
+                const g = k => (colIdx[k] === undefined ? '' : (r[colIdx[k]] === undefined || r[colIdx[k]] === null ? '' : r[colIdx[k]]));
+                const st = importStatus(g('status'));
+                const t = {
+                    id: base + n,
+                    project: '',
+                    phase: String(g('phase')).trim(),
+                    title: String(g('title')).trim(),
+                    responsible: importResponsible(g('responsible')),
+                    startDate: importDate(g('startDate')),
+                    endDate: importDate(g('endDate')),
+                    status: st.status,
+                    priority: importPriority(g('priority')),
+                    comments: String(g('comments')).trim(),
+                    subtasks: [],
+                    ref: String(g('ref')).trim(),
+                    visibility: String(g('visibility')).trim(),
+                    organisation: String(g('organisation')).trim(),
+                    deliverable: String(g('deliverable')).trim(),
+                    type: String(g('type')).trim(),
+                    subStatus: st.subStatus,
+                    dueLabel: String(g('dueLabel')).trim(),
+                    dependsOn: String(g('dependsOn')).trim(),
+                    source: String(g('source')).trim(),
+                    internalNote: String(g('internalNote')).trim(),
+                    createdAt: importDate(g('createdAt'))
+                };
+                Object.keys(t).forEach(k => { if (t[k] === '' && EXTRA_FIELDS.includes(k)) delete t[k]; });
+                return t;
+            }).filter(t => t.title);
+            return { tasks: out, cols: Object.keys(colIdx) };
+        }
+        function openImportModal() {
+            closeImportModal();
+            _importTasks = null;
+            const overlay = document.createElement('div');
+            overlay.className = 'team-modal-overlay';
+            overlay.id = 'importOverlay';
+            overlay.onclick = (e) => { if (e.target === overlay) closeImportModal(); };
+            overlay.innerHTML = `<div class="team-modal" style="max-width:560px;">
+                <div class="team-modal-head"><h3>📥 Importer des actions (CSV / Excel)</h3><button class="team-modal-close" onclick="closeImportModal()">×</button></div>
+                <div class="team-modal-body">
+                    <p class="tm-hint">Colonnes reconnues : ID / Réf., Lot (ou Phase), Action, Responsable, Statut, Priorité, Échéance, Visibilité, Organisation, Dépend de, Source, Commentaire, Note interne… Pour un fichier Excel, l'onglet « Actions (import) » est lu en priorité.</p>
+                    <input type="file" id="importFile" accept=".csv,.xlsx,.xls" onchange="onImportFile(this)" style="margin:8px 0;">
+                    <div id="importPreview" class="tm-hint" style="min-height:22px;"></div>
+                    <div style="margin:10px 0; display:flex; flex-direction:column; gap:6px; font-size:13px;">
+                        <label><input type="radio" name="importTarget" value="current" checked> Projet actuel : <strong>${escapeHtml(currentProject || '')}</strong></label>
+                        <label><input type="radio" name="importTarget" value="new"> Nouveau projet : <input type="text" id="importNewName" placeholder="Nom du projet" style="padding:4px 8px; border:1px solid var(--gray-200); border-radius:6px;" oninput="document.querySelector('input[name=importTarget][value=new]').checked=true"></label>
+                        <label><input type="checkbox" id="importUpdate" checked> Mettre à jour les actions qui ont la même Réf. (sinon elles sont ajoutées)</label>
+                    </div>
+                    <div id="importResult" style="font-size:13px; margin:6px 0;"></div>
+                    <div style="display:flex; gap:8px; justify-content:flex-end;">
+                        <button class="btn btn-secondary" type="button" onclick="closeImportModal()">Fermer</button>
+                        <button class="btn btn-primary" type="button" id="btnRunImport" onclick="runImport()" disabled>Importer</button>
+                    </div>
+                </div></div>`;
+            document.body.appendChild(overlay);
+        }
+        function closeImportModal() {
+            const o = document.getElementById('importOverlay');
+            if (o) o.remove();
+        }
+        async function onImportFile(input) {
+            const prev = document.getElementById('importPreview');
+            const btn = document.getElementById('btnRunImport');
+            _importTasks = null; if (btn) btn.disabled = true;
+            const f = input.files && input.files[0];
+            if (!f) return;
+            try {
+                let rows;
+                if (/\.xlsx?$/i.test(f.name)) {
+                    prev.textContent = '⏳ Lecture du fichier Excel…';
+                    const XLSX = await loadSheetJs();
+                    const wb = XLSX.read(await f.arrayBuffer(), { type: 'array', cellDates: true });
+                    const name = wb.SheetNames.includes('Actions (import)') ? 'Actions (import)' : wb.SheetNames[0];
+                    rows = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, raw: true, defval: '' });
+                } else {
+                    rows = parseCsvText(await f.text());
+                }
+                const res = rowsToTasks(rows);
+                if (!res.tasks.length || !res.cols.includes('title')) throw new Error('aucune colonne « Action » / « Titre » reconnue');
+                _importTasks = res.tasks;
+                const lots = [...new Set(res.tasks.map(t => t.phase).filter(Boolean))].length;
+                const internal = res.tasks.filter(t => t.visibility === 'Interne Opus').length;
+                prev.innerHTML = `✅ <strong>${res.tasks.length}</strong> actions détectées · ${lots} lots · ${internal} internes Opus · ${res.cols.length} colonnes reconnues`;
+                if (btn) btn.disabled = false;
+            } catch (e) {
+                prev.textContent = '❌ Fichier non lisible : ' + e.message;
+            }
+        }
+        function runImport() {
+            if (!_importTasks || !_importTasks.length) return;
+            const res = document.getElementById('importResult');
+            const target = (document.querySelector('input[name=importTarget]:checked') || {}).value;
+            const update = document.getElementById('importUpdate').checked;
+            let projectName = currentProject;
+            if (target === 'new') {
+                projectName = (document.getElementById('importNewName').value || '').trim();
+                if (!projectName) { res.textContent = '❌ Indiquez le nom du nouveau projet.'; return; }
+                if (allProjects[projectName]) { res.textContent = '❌ Un projet porte déjà ce nom : choisissez « Projet actuel » après l\'avoir sélectionné.'; return; }
+            }
+            const list = target === 'new' ? [] : (allProjects[projectName] || []).slice();
+            let added = 0, updated = 0;
+            _importTasks.forEach(t => {
+                t.project = projectName;
+                const i = (update && t.ref) ? list.findIndex(x => x.ref && x.ref === t.ref) : -1;
+                if (i !== -1) { list[i] = { ...list[i], ...t, id: list[i].id, subtasks: list[i].subtasks || [] }; updated++; }
+                else { list.push(t); added++; }
+            });
+            allProjects[projectName] = list;
+            _importTasks = null;
+            const btn = document.getElementById('btnRunImport'); if (btn) btn.disabled = true;
+            res.innerHTML = `✅ Import terminé dans « <strong>${escapeHtml(projectName)}</strong> » : ${added} ajoutée(s), ${updated} mise(s) à jour.`;
+            try {
+                if (projectName !== currentProject) {
+                    switchProject(projectName);
+                } else {
+                    tasks = list;
+                }
+                saveTasks();
+                updateProjectSelector();
+                renderPhaseFilters();
+                populatePhaseSelect();
+            } catch (e) {
+                console.error('[import]', e);
+                // Les données sont déjà enregistrées : on garantit la sauvegarde locale + Sheets
+                localStorage.setItem('poei_all_projects', JSON.stringify(allProjects));
+                saveToSheets();
             }
         }
 
@@ -4230,8 +4571,13 @@
             }
         }
 
-        function generateReadOnlyLink() {
-            const dataStr = JSON.stringify(tasks);
+        function generateReadOnlyLink(clientOnly) {
+            // clientOnly === true : vue client (sans actions internes ni notes internes)
+            const isClient = clientOnly === true;
+            const roTasks = isClient
+                ? tasks.filter(t => t.visibility !== 'Interne Opus').map(t => { const c = { ...t }; delete c.internalNote; delete c.source; return c; })
+                : tasks;
+            const dataStr = JSON.stringify(roTasks);
             const timestamp = new Date().toISOString().split('T')[0];
             
             // Message d'information
@@ -4813,7 +5159,8 @@
 
         function renderGantt() {
             const container = document.getElementById('ganttChart');
-            const tasksWithDates = tasks.filter(t => t.startDate && t.endDate);
+            // Une action avec seulement une échéance s'affiche comme un jalon (début = fin)
+            const tasksWithDates = tasks.filter(t => t.endDate).map(t => t.startDate ? t : { ...t, startDate: t.endDate });
             
             if (tasksWithDates.length === 0) {
                 container.innerHTML = `
@@ -4834,7 +5181,7 @@
             
             const totalDays = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24));
             
-            const phases = [...new Set([].concat(window.__opusPhases || [], tasks.map(t => t.phase)))].filter(Boolean);
+            const phases = projectPhaseList(tasks);
             
             let html = `
                 <div class="gantt-header">
@@ -4946,7 +5293,7 @@
                 }
             });
             
-            const phases = [...new Set([].concat(window.__opusPhases || [], tasks.map(t => t.phase)))].filter(Boolean);
+            const phases = projectPhaseList(tasks);
             
             const phaseData = phases.map(phase => {
                 const phaseTasks = tasks.filter(t => t.phase === phase);
