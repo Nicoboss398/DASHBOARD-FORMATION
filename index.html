@@ -249,7 +249,7 @@
   .btn-delete-selected { background: #FEE2E2; color: var(--danger); border: 1.5px solid #FBC5C5; border-radius: 10px; font-weight: 700; font-size: 12.5px; padding: 9px 14px; cursor: pointer; font-family: inherit; }
   .btn-delete-selected:disabled { opacity: .45; cursor: not-allowed; }
   .task-table { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: #fff; }
-  .task-list-head, .task-row { display: grid; grid-template-columns: 54px 26px minmax(160px, 2fr) 1.6fr 1.2fr 1.4fr 1.2fr 1.2fr 80px; gap: 8px; align-items: center; }
+  .task-list-head, .task-row { display: grid; grid-template-columns: 54px 26px minmax(260px, 3.6fr) minmax(96px, .9fr) 1.2fr 1.3fr 1.1fr 1.2fr 80px; gap: 8px; align-items: center; }
   .task-list-head { padding: 12px 16px; font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--text-muted); font-weight: 700; background: var(--bg); border-bottom: 1px solid var(--border); }
   .task-row { padding: 13px 16px; border-bottom: 1px solid var(--bg); transition: background .15s; }
   .task-row:last-child { border-bottom: none; }
@@ -1527,7 +1527,7 @@
                         <div><button type="button" class="sort-btn sort-btn-ord" data-sort="order" onclick="toggleSort('order')">N°<span class="sort-ar">↑</span></button></div>
                         <div><input type="checkbox" id="selectAllTasks" class="row-check" onchange="toggleSelectAll(this.checked)" title="Tout sélectionner"></div>
                         <div><input type="text" id="taskSearch" class="head-filter" placeholder="🔍 Action…" oninput="renderTasks()" autocomplete="off"><button type="button" class="sort-btn" data-sort="title" onclick="toggleSort('title')"><span class="sort-ar">⇅</span></button></div>
-                        <div><select id="filterResponsible" class="head-filter" onchange="renderTasks()"><option value="">Responsables</option></select><button type="button" class="sort-btn" data-sort="responsible" onclick="toggleSort('responsible')"><span class="sort-ar">⇅</span></button></div>
+                        <div><select id="filterResponsible" class="head-filter" onchange="renderTasks()"><option value="">Resp.</option></select><button type="button" class="sort-btn" data-sort="responsible" onclick="toggleSort('responsible')"><span class="sort-ar">⇅</span></button></div>
                         <div><select id="filterPhase" class="head-filter" onchange="renderTasks()"><option value="">Phase</option></select><button type="button" class="sort-btn" data-sort="phase" onclick="toggleSort('phase')"><span class="sort-ar">⇅</span></button></div>
                         <div><button type="button" id="dateFilterBtn" class="head-filter" style="cursor:pointer; text-align:left;" onclick="openDateFilter(event)">📅 Échéance</button><button type="button" class="sort-btn" data-sort="endDate" onclick="toggleSort('endDate')"><span class="sort-ar">⇅</span></button></div>
                         <div><select id="filterPriority" class="head-filter" onchange="renderTasks()"><option value="">Priorité</option><option value="Haute">Haute</option><option value="Moyenne">Moyenne</option><option value="Basse">Basse</option></select><button type="button" class="sort-btn" data-sort="priority" onclick="toggleSort('priority')"><span class="sort-ar">⇅</span></button></div>
@@ -1988,7 +1988,7 @@
             if (!sel) return;
             const cur = sel.value;
             const names = allResponsibleNames();
-            sel.innerHTML = '<option value="">Responsables</option>' +
+            sel.innerHTML = '<option value="">Resp.</option>' +
                 names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
             sel.value = names.includes(cur) ? cur : '';
         }
@@ -3689,6 +3689,7 @@
             if (!grid) return;
 
             renderResponsibleFilter();
+            renderPhaseFilters(); // phases du filtre = phases du projet affiché
             const search = (document.getElementById('taskSearch') ? document.getElementById('taskSearch').value : '').toLowerCase().trim();
             const fStatus = document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : '';
             const fPhase = document.getElementById('filterPhase') ? document.getElementById('filterPhase').value : '';
