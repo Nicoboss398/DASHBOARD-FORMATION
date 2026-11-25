@@ -548,6 +548,7 @@
         .ac-btns { display:flex; flex-direction:column; gap:6px; }
         .ac-msg { font-size:12px; color:#1F3864; }
         .ac-code { font-family:'Space Mono',monospace; font-size:14px; letter-spacing:1px; background:#FFF4E5; padding:2px 6px; border-radius:5px; }
+        .ac-del { background:#FDECEA; color:#B42318; border:1px solid #F5C2C0; }
         .ac-flash { background:#E6F4EA; color:#1E7B34; padding:8px 12px; border-radius:8px; margin:8px 0; font-size:13px; }
 </style>
     <style media="not all">
@@ -3817,7 +3818,9 @@
         function renderTeamAvatars() {
             const box = document.getElementById('teamAvatars');
             if (!box) return;
-            const names = allResponsibleNames();
+            // Équipe OPUS = la liste des membres de l'équipe uniquement
+            // (les personnes côté client citées comme responsables d'actions n'y figurent plus)
+            const names = [...new Set(responsibles)].filter(Boolean).sort((a, b) => a.localeCompare(b, 'fr'));
             const manageBtn = `<button class="team-manage-btn" title="Gérer l'équipe (photos & LinkedIn)" onclick="openTeamManager()"><svg viewBox="0 0 14 14" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.5l2.5 2.5M8 3.5l2.5 2.5-5.5 5.5H2.5v-2.5z"/></svg></button>`;
             if (names.length === 0) { box.innerHTML = '<span class="team-empty">Aucun membre pour l\'instant</span>' + manageBtn; return; }
             box.innerHTML = names.map(n => {
@@ -5642,6 +5645,7 @@
                         <button class="btn btn-primary" type="button" onclick="saveAccessRow(${i})">Enregistrer</button>
                         <button class="btn btn-secondary" type="button" onclick="inviteAccess(${i}, true)">✉️ Envoyer une invitation</button>
                         <button class="btn btn-secondary" type="button" onclick="inviteAccess(${i}, false)">🔑 Afficher un code</button>
+                        ${CURRENT_USER && u.email === CURRENT_USER.email ? '' : `<button class="btn ac-del" type="button" id="acDel${i}" onclick="deleteAccess(${i})">🗑️ Supprimer le compte</button>`}
                         <div class="ac-msg" id="acMsg${i}"></div>
                     </div>
                 </div>`;
@@ -5679,6 +5683,24 @@
                 const res = await apiCall('user_save', { email, name: document.getElementById('acNewName').value, role: document.getElementById('acNewRole').value, projects: checkedProjects('new'), active: true });
                 if (!res.success) throw new Error(res.error);
                 await refreshAccessManager('✅ Compte créé pour ' + escapeHtml(email) + '. Envoyez-lui maintenant une invitation (bouton ✉️ sur sa ligne).');
+            } catch (e) { msg.textContent = '❌ ' + e.message; }
+        }
+        async function deleteAccess(i) {
+            const u = _accessData.users[i];
+            const btn = document.getElementById('acDel' + i);
+            const msg = document.getElementById('acMsg' + i);
+            if (!btn.dataset.armed) {
+                btn.dataset.armed = '1';
+                btn.textContent = '⚠️ Confirmer la suppression';
+                msg.textContent = 'Cliquez à nouveau pour supprimer définitivement ce compte (ses projets et actions ne sont pas touchés).';
+                setTimeout(() => { if (btn.isConnected && btn.dataset.armed) { delete btn.dataset.armed; btn.textContent = '🗑️ Supprimer le compte'; msg.textContent = ''; } }, 6000);
+                return;
+            }
+            msg.textContent = '⏳';
+            try {
+                const res = await apiCall('user_delete', { email: u.email });
+                if (!res.success) throw new Error(res.error);
+                await refreshAccessManager('🗑️ Compte ' + escapeHtml(u.email) + ' supprimé.');
             } catch (e) { msg.textContent = '❌ ' + e.message; }
         }
         async function inviteAccess(i, sendEmail) {
