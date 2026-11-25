@@ -513,6 +513,42 @@
         .tm-dep { background:#F4F3FF; color:#5925DC; }
         .tm-deliv { margin-top:3px; font-size:11px; color:#475467; }
         .tm-note { margin-top:4px; font-size:11px; color:#93370D; background:#FFFAEB; border-left:3px solid #F79009; padding:3px 6px; border-radius:4px; }
+
+        /* ===== Connexion & droits ===== */
+        #loginOverlay { position:fixed; inset:0; z-index:99999; display:flex; align-items:center; justify-content:center; background:linear-gradient(145deg,#00195C,#0A2A7A 55%,#0044C3); }
+        #loginOverlay .lg-card { width:380px; max-width:92vw; background:#fff; border-radius:18px; padding:30px 30px 22px; box-shadow:0 24px 70px rgba(0,0,0,.45); text-align:center; font-family:'Outfit',sans-serif; }
+        #loginOverlay .lg-logo { width:56px; height:56px; margin:0 auto 10px; border-radius:14px; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:20px; background:linear-gradient(145deg,#00C8E8,#0044C3,#00195C); }
+        #loginOverlay h2 { margin:0 0 4px; color:#00195C; font-size:19px; letter-spacing:.5px; }
+        #loginOverlay .lg-sub { margin:0 0 16px; color:#5A6B9A; font-size:13px; }
+        #loginOverlay input { width:100%; box-sizing:border-box; padding:11px 13px; margin-bottom:9px; border:1px solid #D0DCF5; border-radius:9px; font-size:14px; color:#00195C; }
+        #loginOverlay .lg-err { min-height:18px; color:#D62B2B; font-size:12.5px; margin:2px 0 8px; }
+        #loginOverlay .lg-btn { width:100%; padding:11px; border:0; border-radius:9px; color:#fff; font-size:14px; font-weight:700; cursor:pointer; background:linear-gradient(145deg,#0044C3,#00195C); }
+        #loginOverlay .lg-btn:disabled { opacity:.6; cursor:wait; }
+        #loginOverlay .lg-link { margin-top:12px; background:none; border:0; color:#0044C3; font-size:12.5px; cursor:pointer; text-decoration:underline; }
+        #userBadge { color:#fff; padding:8px 10px; margin-bottom:8px; border-radius:10px; background:rgba(255,255,255,.07); font-size:12px; }
+        #userBadge .ub-name { font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        #userBadge .ub-role { opacity:.75; margin:2px 0 6px; }
+        #userBadge .ub-out { background:none; border:1px solid rgba(255,255,255,.35); color:#fff; border-radius:7px; padding:3px 9px; font-size:11.5px; cursor:pointer; }
+        body:not(.role-admin) .sidebar-tools .nav-item[onclick="openSyncConfig()"] { display:none; }
+        body.role-partenaire #filterVisibility { display:none; }
+        body.read-only .project-actions, body.read-only #btnNewTask, body.read-only #taskToolbar, body.read-only .chat-card,
+        body.read-only .tl-actions, body.read-only .drag-handle, body.read-only .row-check, body.read-only .team-manage-btn,
+        body.read-only .sidebar-footer .btn-sidebar, body.read-only .btn[onclick="openModal()"],
+        body.read-only .sidebar-tools .nav-item:not([onclick*="resources"]) { display:none !important; }
+        body.read-only .tl-comment:empty { display:none; }
+        body.read-only .cell-edit, body.read-only .status-select { pointer-events:none; }
+        .ac-row { display:grid; grid-template-columns: 1.3fr .8fr 1.6fr 1fr; gap:12px; padding:12px 0; border-top:1px solid var(--gray-200, #E5E7EB); align-items:start; font-size:12.5px; }
+        .ac-row input[type=email], .ac-row input:not([type]), .ac-row select { width:100%; box-sizing:border-box; margin-top:5px; padding:6px 8px; border:1px solid #D0DCF5; border-radius:7px; font-size:12.5px; }
+        .ac-new { background:#F5F8FF; border-radius:10px; padding:12px; border-top:0; }
+        .ac-state { margin-top:5px; color:#5A6B9A; font-size:11.5px; }
+        .ac-active { display:block; margin-top:8px; }
+        .ac-projs { display:flex; flex-wrap:wrap; gap:4px 10px; max-height:150px; overflow:auto; }
+        .ac-proj { white-space:nowrap; }
+        .ac-all { font-weight:700; width:100%; }
+        .ac-btns { display:flex; flex-direction:column; gap:6px; }
+        .ac-msg { font-size:12px; color:#1F3864; }
+        .ac-code { font-family:'Space Mono',monospace; font-size:14px; letter-spacing:1px; background:#FFF4E5; padding:2px 6px; border-radius:5px; }
+        .ac-flash { background:#E6F4EA; color:#1E7B34; padding:8px 12px; border-radius:8px; margin:8px 0; font-size:13px; }
 </style>
     <style media="not all">
         * {
@@ -1318,6 +1354,9 @@
                 <button class="nav-item" onclick="openTemplateManager()"><svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="11" height="11" rx="1.5"/><path d="M2 5.5h11M6 5.5V13"/></svg> Gérer les templates</button>
                 <button class="nav-item" onclick="openSyncConfig()"><svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6.5" width="9" height="6" rx="1.5"/><path d="M5 6.5V5a2.5 2.5 0 0 1 5 0v1.5"/></svg> Connexion Sheets</button>
             </div>
+            <div id="accessNav" class="sidebar-tools" style="display:none;">
+                <button class="nav-item" onclick="openAccessManager()"><svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="5" r="2.2"/><path d="M1.8 12.5c.4-2.2 1.9-3.4 3.7-3.4s3.3 1.2 3.7 3.4"/><path d="M10.5 6.5h3M12 5v3"/></svg> Gérer les accès</button>
+            </div>
             <div class="nav-section-title">Équipe OPUS</div>
             <div class="team-avatars" id="teamAvatars"></div>
         </div>
@@ -1467,7 +1506,7 @@
                     <button class="btn btn-primary" id="btnNewTask">➕ Nouvelle action</button>
                 </div>
 
-                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; align-items:center;">
+                <div id="taskToolbar" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; align-items:center;">
                     <select id="templateSelector" class="filter-select" style="min-width:210px;"><option value="">📋 Sélectionner un template…</option></select>
                     <button class="btn btn-secondary" id="btnLoadSelectedTemplate" disabled>🔄 Charger</button>
                     <button class="btn btn-secondary" id="btnManageTemplate">⚙️ Templates</button>
@@ -1802,8 +1841,8 @@
         let APPS_SCRIPT_URL = '';
         let SYNC_TOKEN = '';
         function loadSyncConfig() {
-            APPS_SCRIPT_URL = localStorage.getItem('opus_sync_url') || '';
-            SYNC_TOKEN = localStorage.getItem('opus_sync_token') || '';
+            APPS_SCRIPT_URL = localStorage.getItem('opus_sync_url') || DEFAULT_SCRIPT_URL;
+            SYNC_TOKEN = '';
         }
         function saveSyncConfig(url, token) {
             APPS_SCRIPT_URL = (url || '').trim();
@@ -1814,9 +1853,7 @@
         function openSyncConfig() {
             const url = prompt('URL de votre Apps Script (déploiement « application web » se terminant par /exec) :', APPS_SCRIPT_URL);
             if (url === null) return;
-            const token = prompt('Jeton d\'accès (identique à celui défini dans Code.gs) :', SYNC_TOKEN);
-            if (token === null) return;
-            saveSyncConfig(url, token);
+            saveSyncConfig(url || DEFAULT_SCRIPT_URL, '');
             showSyncStatus('🔐 Connexion enregistrée', 'success');
             loadFromSheets();
         }
@@ -1847,13 +1884,8 @@
             renderPhaseFilters();
             renderResponsibleFilter();
             setupEventListeners();
-            showSyncStatus('⏳ Chargement des données...', 'loading');
-            loadFromSheets();
-            if (!APPS_SCRIPT_URL) {
-                setTimeout(() => {
-                    if (!APPS_SCRIPT_URL && confirm('Connecter ce tableau de bord à votre Google Sheet maintenant ?\n\n(Sinon, tout reste en local ; vous pourrez le faire plus tard via « 🔐 Connexion Sheets » dans la barre latérale.)')) openSyncConfig();
-                }, 500);
-            }
+            showSyncStatus('⏳ Connexion…', 'loading');
+            ensureLogin();
         }
 
         // =============================================
@@ -2237,7 +2269,7 @@
                 const resp = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'notify', token: SYNC_TOKEN, recipients: emails, subject: subject, message: message })
+                    body: JSON.stringify({ action: 'notify', session: SESSION, recipients: emails, subject: subject, message: message })
                 });
                 let result = null;
                 try { result = await resp.json(); } catch (e) { /* réponse non lisible */ }
@@ -2686,9 +2718,10 @@
                 const resp = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'get', token: SYNC_TOKEN })
+                    body: JSON.stringify({ action: 'get', session: SESSION })
                 });
                 const allTasks = await resp.json();
+                if (allTasks && allTasks.error === 'unauthorized') { onUnauthorized(); return; }
                 if (!Array.isArray(allTasks)) throw new Error((allTasks && allTasks.error) || 'Réponse inattendue');
 
                 allProjects = {};
@@ -2731,6 +2764,7 @@
         let pendingSave = false;
 
         async function saveToSheets() {
+            if (window.READ_ONLY || !SESSION) return; // profil client : consultation uniquement
             if (isSyncing) { pendingSave = true; return; }
             isSyncing = true;
             showSyncStatus('💾 Sauvegarde en cours...', 'loading');
@@ -2766,9 +2800,10 @@
                 const resp = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'save_all', token: SYNC_TOKEN, tasks: allTasks })
+                    body: JSON.stringify({ action: 'save_all', session: SESSION, tasks: allTasks })
                 });
                 const result = await resp.json();
+                if (result && result.error === 'unauthorized') { onUnauthorized(); return; }
                 if (result.success) {
                     showSyncStatus('✅ Sauvegardé dans Google Sheets', 'success');
                 } else {
@@ -5412,6 +5447,253 @@
                 }
             }
         }
+    
+        // =============================================
+        // CONNEXION, PROFILS ET DROITS D'ACCÈS
+        // Le script Google ne renvoie à chacun que ses projets ;
+        // partenaires et clients ne reçoivent ni actions ni notes internes.
+        // =============================================
+        const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOUDR-aWQxZpVSNUQetzK1ZSt7ALqSMGS8j7ll1FxF9eAHWbOXr1mC3nRE4ykwR6U5Vg/exec';
+        let SESSION = '';
+        let CURRENT_USER = null;
+        window.READ_ONLY = false;
+        const ROLE_LABELS = { admin: 'Administrateur', equipe: 'Équipe Opus', partenaire: 'Partenaire', client: 'Client' };
+
+        async function apiCall(action, extra) {
+            const resp = await fetch(APPS_SCRIPT_URL || DEFAULT_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(Object.assign({ action: action, session: SESSION }, extra || {}))
+            });
+            return resp.json();
+        }
+        function ensureLogin() {
+            SESSION = localStorage.getItem('opus_session') || '';
+            let saved = null;
+            try { saved = JSON.parse(localStorage.getItem('opus_user') || 'null'); } catch (e) { saved = null; }
+            if (!SESSION) { showLogin(); return; }
+            apiCall('me').then(res => {
+                if (res && res.success) { storeUser(res.user); applyUser(res.user); loadFromSheets(); }
+                else if (res && res.error === 'unauthorized') onUnauthorized();
+                else if (saved) { applyUser(saved); loadFromSheets(); }
+                else showLogin();
+            }).catch(() => {
+                if (saved) { applyUser(saved); loadFromSheets(); } else showLogin('Serveur injoignable : vérifiez votre connexion.');
+            });
+        }
+        function storeUser(u) { localStorage.setItem('opus_user', JSON.stringify(u)); }
+        function clearSessionData() {
+            SESSION = ''; CURRENT_USER = null;
+            ['opus_session', 'opus_user', 'poei_all_projects', 'poei_current_project'].forEach(k => localStorage.removeItem(k));
+            allProjects = {}; tasks = [];
+        }
+        function onUnauthorized() {
+            clearSessionData();
+            showLogin('Votre session a expiré ou vos accès ont changé : reconnectez-vous.');
+        }
+        function logout() { clearSessionData(); location.reload(); }
+        function applyUser(u) {
+            CURRENT_USER = u;
+            window.READ_ONLY = u.role === 'client';
+            const b = document.body;
+            ['role-admin', 'role-equipe', 'role-partenaire', 'role-client', 'read-only'].forEach(c => b.classList.remove(c));
+            b.classList.add('role-' + u.role);
+            if (window.READ_ONLY) b.classList.add('read-only');
+            const nav = document.getElementById('accessNav');
+            if (nav) nav.style.display = u.role === 'admin' ? '' : 'none';
+            renderUserBadge();
+        }
+        function renderUserBadge() {
+            const foot = document.querySelector('.sidebar-footer');
+            if (!foot || !CURRENT_USER) return;
+            let el = document.getElementById('userBadge');
+            if (!el) { el = document.createElement('div'); el.id = 'userBadge'; foot.insertBefore(el, foot.firstChild); }
+            el.innerHTML = `<div class="ub-name" title="${escapeHtml(CURRENT_USER.email)}">👤 ${escapeHtml(CURRENT_USER.name || CURRENT_USER.email)}</div>
+                <div class="ub-role">${escapeHtml(ROLE_LABELS[CURRENT_USER.role] || CURRENT_USER.role)}${window.READ_ONLY ? ' · consultation' : ''}</div>
+                <button type="button" class="ub-out" onclick="logout()">Se déconnecter</button>`;
+        }
+
+        // ----- Écran de connexion -----
+        function showLogin(msg, mode) {
+            mode = mode || 'login';
+            let ov = document.getElementById('loginOverlay');
+            if (!ov) { ov = document.createElement('div'); ov.id = 'loginOverlay'; document.body.appendChild(ov); }
+            const act = mode === 'activate';
+            ov.innerHTML = `<div class="lg-card">
+                <div class="lg-logo">OP</div>
+                <h2>DASHBOARD OPUS</h2>
+                <p class="lg-sub">${act ? 'Première connexion : saisissez le code d\'invitation reçu et choisissez votre mot de passe.' : 'Connectez-vous pour accéder à vos projets.'}</p>
+                <input id="lgEmail" type="email" placeholder="Adresse e-mail" autocomplete="username">
+                ${act ? '<input id="lgCode" type="text" placeholder="Code d\'invitation (ex. ABCDE-FGH23)" autocomplete="off">' : ''}
+                <input id="lgPwd" type="password" placeholder="${act ? 'Nouveau mot de passe (8 caractères minimum)' : 'Mot de passe'}" autocomplete="${act ? 'new-password' : 'current-password'}">
+                ${act ? '<input id="lgPwd2" type="password" placeholder="Confirmez le mot de passe" autocomplete="new-password">' : ''}
+                <div id="lgErr" class="lg-err">${msg ? escapeHtml(msg) : ''}</div>
+                <button type="button" id="lgBtn" class="lg-btn">${act ? 'Activer mon accès' : 'Se connecter'}</button>
+                <button type="button" class="lg-link" onclick="showLogin('', '${act ? 'login' : 'activate'}')">${act ? '← J\'ai déjà un mot de passe' : 'Première connexion ou mot de passe oublié ? J\'ai un code d\'invitation'}</button>
+            </div>`;
+            const last = localStorage.getItem('opus_last_email') || '';
+            const em = document.getElementById('lgEmail'); em.value = last;
+            setTimeout(() => (last ? (document.getElementById(act ? 'lgCode' : 'lgPwd')) : em).focus(), 50);
+            document.getElementById('lgBtn').onclick = () => (act ? doActivate() : doLogin());
+            ov.querySelectorAll('input').forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('lgBtn').click(); }));
+            showSyncStatus('🔐 Connexion requise', 'warning');
+        }
+        const LOGIN_ERRORS = {
+            invalid: 'E-mail ou mot de passe incorrect.',
+            locked: 'Trop d\'essais infructueux : réessayez dans 15 minutes.',
+            invalid_code: 'Code d\'invitation incorrect ou déjà utilisé.',
+            expired: 'Code expiré : demandez-en un nouveau à votre administrateur.',
+            weak: 'Le mot de passe doit contenir au moins 8 caractères.'
+        };
+        async function loginRequest(action, payload) {
+            const err = document.getElementById('lgErr');
+            const btn = document.getElementById('lgBtn');
+            btn.disabled = true; err.textContent = '⏳ Vérification…';
+            try {
+                const res = await apiCall(action, payload);
+                if (res && res.success) {
+                    SESSION = res.session;
+                    localStorage.setItem('opus_session', SESSION);
+                    localStorage.setItem('opus_last_email', payload.email);
+                    storeUser(res.user);
+                    // Données locales d'une session précédente : on repart du serveur
+                    ['poei_all_projects', 'poei_current_project'].forEach(k => localStorage.removeItem(k));
+                    const ov = document.getElementById('loginOverlay'); if (ov) ov.remove();
+                    applyUser(res.user);
+                    loadFromSheets();
+                } else {
+                    err.textContent = LOGIN_ERRORS[res && res.error] || ('Connexion refusée : ' + ((res && res.error) || 'erreur inconnue'));
+                }
+            } catch (e) {
+                err.textContent = 'Serveur injoignable : vérifiez votre connexion.';
+            } finally { btn.disabled = false; }
+        }
+        function doLogin() {
+            const email = document.getElementById('lgEmail').value.trim().toLowerCase();
+            const password = document.getElementById('lgPwd').value;
+            if (!email || !password) { document.getElementById('lgErr').textContent = 'Saisissez votre e-mail et votre mot de passe.'; return; }
+            loginRequest('login', { email, password });
+        }
+        function doActivate() {
+            const email = document.getElementById('lgEmail').value.trim().toLowerCase();
+            const code = document.getElementById('lgCode').value.trim().toUpperCase();
+            const password = document.getElementById('lgPwd').value;
+            const err = document.getElementById('lgErr');
+            if (!email || !code || !password) { err.textContent = 'Tous les champs sont obligatoires.'; return; }
+            if (password.length < 8) { err.textContent = LOGIN_ERRORS.weak; return; }
+            if (password !== document.getElementById('lgPwd2').value) { err.textContent = 'Les deux mots de passe ne sont pas identiques.'; return; }
+            loginRequest('activate', { email, code, password });
+        }
+
+        // ----- Lecture seule (profil client) : aucune modification possible -----
+        ['openModal', 'inlineUpdate', 'updateTaskStatus', 'deleteTask', 'deleteSelectedTasks', 'openRespPopover', 'toggleTaskSubtask',
+         'createNewProject', 'renameCurrentProject', 'deleteCurrentProject', 'openImportModal', 'openPhaseManager', 'openTemplateManager',
+         'openSyncConfig', 'openTeamManager', 'openMemberModal', 'loadSelectedTemplate', 'sendChatMessage', 'addResource', 'deleteResource',
+         'exportData', 'openShareModal', 'generateReadOnlyLink'].forEach(n => {
+            const f = window[n];
+            if (typeof f === 'function') window[n] = function () { if (window.READ_ONLY) return; return f.apply(this, arguments); };
+        });
+        (function () {
+            const f = window.renderTasks;
+            window.renderTasks = function () {
+                const r = f.apply(this, arguments);
+                if (window.READ_ONLY) {
+                    document.querySelectorAll('#tasksGrid select, #tasksGrid input').forEach(e => { e.disabled = true; });
+                    document.querySelectorAll('#tasksGrid [contenteditable]').forEach(e => e.setAttribute('contenteditable', 'false'));
+                }
+                return r;
+            };
+        })();
+
+        // ----- Administration des accès -----
+        let _accessData = null;
+        async function openAccessManager() {
+            if (!CURRENT_USER || CURRENT_USER.role !== 'admin') return;
+            closeAccessManager();
+            const ov = document.createElement('div');
+            ov.className = 'team-modal-overlay'; ov.id = 'accessOverlay';
+            ov.onclick = (e) => { if (e.target === ov) closeAccessManager(); };
+            ov.innerHTML = `<div class="team-modal" style="max-width:980px; width:96vw;">
+                <div class="team-modal-head"><h3>🔐 Gérer les accès</h3><button class="team-modal-close" onclick="closeAccessManager()">×</button></div>
+                <div class="team-modal-body" id="accessBody"><p class="tm-hint">⏳ Chargement des comptes…</p></div></div>`;
+            document.body.appendChild(ov);
+            await refreshAccessManager();
+        }
+        function closeAccessManager() { const o = document.getElementById('accessOverlay'); if (o) o.remove(); }
+        async function refreshAccessManager(flash) {
+            const body = document.getElementById('accessBody');
+            if (!body) return;
+            try {
+                const res = await apiCall('users_list');
+                if (!res || !res.success) throw new Error((res && res.error) || 'erreur');
+                _accessData = res;
+            } catch (e) { body.innerHTML = `<p class="tm-hint">❌ Impossible de charger les comptes (${escapeHtml(e.message)}).</p>`; return; }
+            const projects = [...new Set([...(_accessData.projects || []), ...Object.keys(allProjects)])].sort((a, b) => a.localeCompare(b, 'fr'));
+            const roleSel = (cur, id) => `<select id="${id}">${Object.keys(ROLE_LABELS).map(r => `<option value="${r}" ${r === cur ? 'selected' : ''}>${ROLE_LABELS[r]}</option>`).join('')}</select>`;
+            const projBoxes = (list, key) => `<label class="ac-proj ac-all"><input type="checkbox" data-k="${key}" value="*" ${list.includes('*') ? 'checked' : ''}> Tous les projets</label>` +
+                projects.map(p => `<label class="ac-proj"><input type="checkbox" data-k="${key}" value="${escapeHtml(p)}" ${list.includes(p) ? 'checked' : ''}> ${escapeHtml(p)}</label>`).join('');
+            const rows = _accessData.users.map((u, i) => {
+                const state = !u.active ? '⛔ Désactivé' : u.hasPassword ? ('✅ Actif' + (u.lastLogin ? ' · dernière connexion ' + escapeHtml(u.lastLogin) : '')) : (u.pendingInvite ? '✉️ Invitation en attente' : '⏳ Jamais invité');
+                return `<div class="ac-row">
+                    <div class="ac-id"><strong>${escapeHtml(u.email)}</strong><input id="acName${i}" value="${escapeHtml(u.name || '')}" placeholder="Nom affiché"><div class="ac-state">${state}</div></div>
+                    <div class="ac-role">${roleSel(u.role, 'acRole' + i)}<label class="ac-active"><input type="checkbox" id="acActive${i}" ${u.active ? 'checked' : ''}> Compte actif</label></div>
+                    <div class="ac-projs">${projBoxes(u.projects || [], 'p' + i)}</div>
+                    <div class="ac-btns">
+                        <button class="btn btn-primary" type="button" onclick="saveAccessRow(${i})">Enregistrer</button>
+                        <button class="btn btn-secondary" type="button" onclick="inviteAccess(${i}, true)">✉️ Envoyer une invitation</button>
+                        <button class="btn btn-secondary" type="button" onclick="inviteAccess(${i}, false)">🔑 Afficher un code</button>
+                        <div class="ac-msg" id="acMsg${i}"></div>
+                    </div>
+                </div>`;
+            }).join('');
+            body.innerHTML = `
+                <p class="tm-hint">Chaque personne ne voit que les projets cochés. <strong>Partenaire</strong> : modifie ses projets, sans les actions ni notes « Interne Opus ». <strong>Client</strong> : consultation seule, sans interne. <strong>Équipe Opus</strong> : voit tout sur ses projets. Un projet créé par un partenaire ou un membre de l'équipe lui est attribué automatiquement.</p>
+                ${flash ? `<div class="ac-flash">${flash}</div>` : ''}
+                <div class="ac-row ac-new">
+                    <div class="ac-id"><strong>➕ Nouvelle personne</strong><input id="acNewEmail" type="email" placeholder="E-mail"><input id="acNewName" placeholder="Nom affiché"></div>
+                    <div class="ac-role">${roleSel('client', 'acNewRole')}</div>
+                    <div class="ac-projs">${projBoxes([], 'new')}</div>
+                    <div class="ac-btns"><button class="btn btn-primary" type="button" onclick="addAccess()">Créer le compte</button><div class="ac-msg" id="acNewMsg"></div></div>
+                </div>
+                ${rows}`;
+        }
+        function checkedProjects(key) {
+            return [...document.querySelectorAll(`#accessBody input[data-k="${key}"]:checked`)].map(i => i.value);
+        }
+        async function saveAccessRow(i) {
+            const u = _accessData.users[i];
+            const msg = document.getElementById('acMsg' + i);
+            msg.textContent = '⏳';
+            try {
+                const res = await apiCall('user_save', { email: u.email, name: document.getElementById('acName' + i).value, role: document.getElementById('acRole' + i).value, projects: checkedProjects('p' + i), active: document.getElementById('acActive' + i).checked });
+                if (!res.success) throw new Error(res.error);
+                await refreshAccessManager('✅ Accès de ' + escapeHtml(u.email) + ' enregistrés.');
+            } catch (e) { msg.textContent = '❌ ' + e.message; }
+        }
+        async function addAccess() {
+            const email = document.getElementById('acNewEmail').value.trim().toLowerCase();
+            const msg = document.getElementById('acNewMsg');
+            if (!email) { msg.textContent = '❌ Indiquez un e-mail.'; return; }
+            msg.textContent = '⏳';
+            try {
+                const res = await apiCall('user_save', { email, name: document.getElementById('acNewName').value, role: document.getElementById('acNewRole').value, projects: checkedProjects('new'), active: true });
+                if (!res.success) throw new Error(res.error);
+                await refreshAccessManager('✅ Compte créé pour ' + escapeHtml(email) + '. Envoyez-lui maintenant une invitation (bouton ✉️ sur sa ligne).');
+            } catch (e) { msg.textContent = '❌ ' + e.message; }
+        }
+        async function inviteAccess(i, sendEmail) {
+            const u = _accessData.users[i];
+            const msg = document.getElementById('acMsg' + i);
+            msg.textContent = '⏳';
+            try {
+                const res = await apiCall('user_invite', { email: u.email, sendEmail });
+                if (!res.success) throw new Error(res.error);
+                msg.innerHTML = sendEmail
+                    ? '✅ Invitation envoyée par e-mail (valable 7 jours).'
+                    : `Code à transmettre (valable 7 jours, usage unique) : <strong class="ac-code">${escapeHtml(res.code)}</strong>`;
+            } catch (e) { msg.textContent = '❌ ' + e.message; }
+        }
+
     </script>
 </body>
 </html>
