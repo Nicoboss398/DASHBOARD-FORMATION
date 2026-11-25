@@ -50,7 +50,7 @@ function doPost(e) {
       if (ctx.role === 'client') return json_({ success: false, error: 'forbidden' });
       return json_(sendNotify_(body));
     }
-    if (a === 'users_list' || a === 'user_save' || a === 'user_invite') {
+    if (a === 'users_list' || a === 'user_save' || a === 'user_invite' || a === 'user_delete') {
       if (ctx.role !== 'admin') return json_({ success: false, error: 'forbidden' });
       return json_(adminAction_(a, body, ctx));
     }
@@ -341,6 +341,14 @@ function adminAction_(a, b, ctx) {
     u.projets = (b.projects || []).map(function (p) { return String(p).trim(); }).filter(Boolean).join(' ; ');
     u.actif = active ? 'oui' : 'non';
     writeUser_(u);
+    return { success: true };
+  }
+  if (a === 'user_delete') {
+    if (!u) return { success: false, error: 'Compte introuvable.' };
+    if (u.email === ctx.email) return { success: false, error: 'Vous ne pouvez pas supprimer votre propre compte.' };
+    const admins = users.filter(function (x) { return x.role === 'admin' && isActive_(x); }).length;
+    if (u.role === 'admin' && isActive_(u) && admins <= 1) return { success: false, error: 'Impossible : dernier administrateur actif.' };
+    usersSheet_().deleteRow(u._row);
     return { success: true };
   }
   if (a === 'user_invite') {
