@@ -550,6 +550,67 @@
         .ac-code { font-family:'Space Mono',monospace; font-size:14px; letter-spacing:1px; background:#FFF4E5; padding:2px 6px; border-radius:5px; }
         .ac-del { background:#FDECEA; color:#B42318; border:1px solid #F5C2C0; }
         .ac-flash { background:#E6F4EA; color:#1E7B34; padding:8px 12px; border-radius:8px; margin:8px 0; font-size:13px; }
+
+        /* ===== Icônes (style ANDRH) ===== */
+        .ic { display:inline-block; vertical-align:-0.16em; flex-shrink:0; }
+        .btn .ic, .btn-delete-selected .ic { margin-right:1px; }
+        .alert-header { display:flex; align-items:center; gap:8px; }
+        .al-ico { width:28px; height:28px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; }
+        .al-red { background:#FDECEA; color:#D62B2B; }
+        .al-blue { background:#EAF1FF; color:#0044C3; }
+        .al-orange { background:#FFF3E0; color:#E8930C; }
+        .btn-edit, .btn-delete { display:inline-flex; align-items:center; justify-content:center; }
+        .section-title .ic, .chat-title .ic, .phase-table h2 .ic, .modal-header .ic, .modal-title .ic, .share-title .ic, .team-modal-head h3 .ic { color:var(--blue, #0044C3); margin-right:4px; }
+        .share-option-icon { display:flex; align-items:center; justify-content:center; color:var(--blue, #0044C3); }
+        .tm-chip .ic, .tm-deliv .ic, .tm-note .ic { vertical-align:-0.18em; }
+        /* ===== Planning interactif ===== */
+        .gx-toolbar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:8px; }
+        .gx-toolbar .gx-title { margin:0 auto 0 0 !important; display:flex; align-items:center; gap:8px; font-size:16px; font-weight:800; color:var(--navy); }
+        .gx-title .ic { color:var(--blue, #0044C3); }
+        .gx-views { display:inline-flex; background:var(--bg, #F0F4FF); border:1.5px solid var(--border, #D0DCF5); border-radius:10px; padding:3px; gap:2px; }
+        .gx-views button { border:0; background:none; padding:6px 14px; border-radius:7px; font-family:inherit; font-size:12.5px; font-weight:700; color:var(--text-muted, #5A6B9A); cursor:pointer; }
+        .gx-views button.active { background:#fff; color:var(--navy, #00195C); box-shadow:0 1px 4px rgba(0,25,92,.15); }
+        .gx-todaybtn { padding:7px 12px !important; font-size:12.5px !important; }
+        .gx-hint { font-size:11.5px; color:var(--text-muted, #5A6B9A); margin:0 0 10px; }
+        .gx-empty { text-align:center; padding:48px 0; color:var(--text-muted, #5A6B9A); }
+        .gx-scroll { overflow:auto; max-height:70vh; border:1px solid var(--border, #D0DCF5); border-radius:12px; background:#fff; position:relative; }
+        .gx-inner { position:relative; }
+        .gx-row { display:flex; min-height:34px; border-bottom:1px solid #F1F4FB; }
+        .gx-left { position:sticky; left:0; z-index:3; width:300px; min-width:300px; background:#fff; border-right:1px solid var(--border, #D0DCF5);
+                   display:flex; align-items:center; gap:7px; padding:5px 10px; font-size:12px; color:var(--text, #1A2B5C); cursor:pointer; overflow:hidden; }
+        .gx-left:hover .gx-name { color:var(--blue, #0044C3); text-decoration:underline; }
+        .gx-name { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .gx-name b { font-family:'Space Mono', monospace; font-size:10.5px; color:var(--navy, #00195C); }
+        .gx-track { position:relative; flex-shrink:0; }
+        .gx-head { position:sticky; z-index:5; background:#F7F9FE; }
+        .gx-head-top { top:0; min-height:26px; }
+        .gx-head-bot { top:26px; min-height:30px; border-bottom:1px solid var(--border, #D0DCF5); }
+        .gx-head .gx-left { background:#F7F9FE; z-index:6; font-size:10.5px; text-transform:uppercase; letter-spacing:.5px; font-weight:700; color:var(--text-muted, #5A6B9A); cursor:default; }
+        .gx-seg { position:absolute; top:0; bottom:0; border-left:1px solid #E3E9F7; font-size:11px; font-weight:700; color:var(--navy, #00195C); padding:5px 6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .gx-head-bot .gx-seg { font-weight:600; color:var(--text-muted, #5A6B9A); text-align:center; padding:4px 0; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1.15; }
+        .gx-head-bot .gx-seg i { font-style:normal; font-size:9.5px; opacity:.7; }
+        .gx-seg.gx-we { background:#F2F4F9; }
+        .gx-phase { background:#F5F8FF; min-height:28px; }
+        .gx-phase .gx-left { background:#F5F8FF; font-weight:800; color:var(--navy, #00195C); font-size:11.5px; cursor:default; }
+        .gx-phase .gx-left em { font-style:normal; font-weight:600; color:var(--text-muted, #5A6B9A); margin-left:auto; }
+        .gx-body { position:relative; }
+        .gx-grid { position:absolute; top:0; bottom:0; left:300px; pointer-events:none; z-index:1; }
+        .gx-line { position:absolute; top:0; bottom:0; border-left:1px solid #EEF2FA; }
+        .gx-wecol { position:absolute; top:0; bottom:0; background:rgba(240,244,255,.7); }
+        .gx-today { position:absolute; top:0; bottom:0; border-left:2px solid #D62B2B; z-index:2; }
+        .gx-today span { position:absolute; top:2px; left:4px; font-size:9.5px; font-weight:700; color:#D62B2B; background:#fff; padding:0 3px; border-radius:3px; white-space:nowrap; }
+        .gx-bar { position:absolute; top:7px; height:20px; border-radius:6px; z-index:2; cursor:grab; display:flex; align-items:center; padding:0 6px; color:#fff; font-size:10.5px; font-weight:600; box-shadow:0 1px 3px rgba(0,25,92,.2); user-select:none; touch-action:none; }
+        .gx-bar:hover { filter:brightness(1.07); }
+        .gx-bar.gx-dragging { cursor:grabbing; opacity:.85; box-shadow:0 4px 14px rgba(0,25,92,.35); z-index:4; }
+        .gx-bar-label { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events:none; }
+        .gx-handle { position:absolute; right:0; top:0; bottom:0; width:8px; cursor:ew-resize; border-radius:0 6px 6px 0; }
+        .gx-handle:hover { background:rgba(255,255,255,.35); }
+        .gx-todo { background:#3B6FE0; } .gx-progress { background:#E8930C; } .gx-done { background:#1E9E5A; } .gx-blocked { background:#D62B2B; }
+        .gx-bar.gx-milestone { border-radius:4px; background-image:repeating-linear-gradient(135deg, rgba(255,255,255,.22) 0 4px, transparent 4px 8px); }
+        .gx-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; display:inline-block; }
+        .gx-ms-sample { width:18px; height:10px; border-radius:3px; background:#3B6FE0; background-image:repeating-linear-gradient(135deg, rgba(255,255,255,.3) 0 3px, transparent 3px 6px); display:inline-block; }
+        body.read-only .gx-bar { cursor:pointer; }
+        body.read-only .gx-hint { display:none; }
 </style>
     <style media="not all">
         * {
@@ -1370,7 +1431,7 @@
     <div id="main">
         <div id="topbar">
             <div class="topbar-left">
-                <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+                <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')"><svg class="ic" width="18" height="18" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3.5h10M2 7h10M2 10.5h10"/></svg></button>
                 <nav class="topnav">
                     <button class="tab active" data-tab="dashboard"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="5" height="5" rx="1.2"/><rect x="8" y="1" width="5" height="5" rx="1.2"/><rect x="1" y="8" width="5" height="5" rx="1.2"/><rect x="8" y="8" width="5" height="5" rx="1.2"/></svg> Tableau de bord</button>
                     <button class="tab" data-tab="tasks"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="12" height="12" rx="2"/><path d="M4.5 7L6.2 8.8L9.5 5.2"/></svg> Actions</button>
@@ -1387,7 +1448,7 @@
                     <span id="currentTime"></span>
                 </div>
                 <div id="syncStatus" class="sync-status" style="display:none;"></div>
-                <button class="btn btn-primary" onclick="openModal()">➕ Nouvelle action</button>
+                <button class="btn btn-primary" onclick="openModal()"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 2.5v9M2.5 7h9"/></svg> Nouvelle action</button>
             </div>
         </div>
 
@@ -1442,17 +1503,17 @@
 
             <div class="alerts-grid">
                 <div class="alert-card danger clickable" onclick="dashboardDrill('blocked')" title="Voir les actions bloquées">
-                    <div class="alert-header">🔴 Tâches bloquées</div>
+                    <div class="alert-header"><span class="al-ico al-red"><svg class="ic" width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.6 1.5h4.8l3.1 3.1v4.8l-3.1 3.1H4.6l-3.1-3.1V4.6z"/><path d="M7 4.3v3.2"/><circle cx="7" cy="9.8" r=".45" fill="currentColor"/></svg></span> Tâches bloquées</div>
                     <div class="alert-count" id="alertBlocked">0</div>
                     <div class="alert-description">Nécessitent une action immédiate</div>
                 </div>
                 <div class="alert-card warning clickable" onclick="dashboardDrill('highprio')" title="Voir les actions à haute priorité">
-                    <div class="alert-header">⏰ Haute priorité</div>
+                    <div class="alert-header"><span class="al-ico al-orange"><svg class="ic" width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7.5" r="5.3"/><path d="M7 4.7V7.6l2 1.3"/><path d="M1.8 2.6l1.6-1.2M12.2 2.6l-1.6-1.2"/></svg></span> Haute priorité</div>
                     <div class="alert-count" id="alertHighPriority">0</div>
                     <div class="alert-description">À traiter en urgence</div>
                 </div>
                 <div class="alert-card info clickable" onclick="dashboardDrill('upcoming')" title="Voir les échéances des 7 prochains jours">
-                    <div class="alert-header">📅 Échéances 7 jours</div>
+                    <div class="alert-header"><span class="al-ico al-blue"><svg class="ic" width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="11" height="10" rx="2"/><path d="M1.5 5.5h11M4.5 1v3M9.5 1v3"/></svg></span> Échéances 7 jours</div>
                     <div class="alert-count" id="alertUpcoming">0</div>
                     <div class="alert-description">Tâches à venir cette semaine</div>
                 </div>
@@ -1460,7 +1521,7 @@
 
             <div class="section-card chat-card" style="margin-bottom:22px;">
                 <div class="chat-head">
-                    <span class="chat-title">💬 Discussion du projet</span>
+                    <span class="chat-title"><svg class="ic" width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 3.5A1.5 1.5 0 013 2h8a1.5 1.5 0 011.5 1.5v4A1.5 1.5 0 0111 9H5.5L3 11.2V9H3a1.5 1.5 0 01-1.5-1.5z"/><path d="M4.5 4.7h5M4.5 6.6h3"/></svg> Discussion du projet</span>
                     <span class="chat-me">Connecté·e&nbsp;: <select id="chatMe" onchange="setChatMe()"></select></span>
                 </div>
                 <div class="chat-messages" id="chatMessages"></div>
@@ -1476,14 +1537,14 @@
 
             <div class="section-card" id="dashResourceCard" style="margin-bottom:22px;">
                 <div class="section-header dash-section-header">
-                    <div class="section-title">📎 Dernières ressources rattachées</div>
+                    <div class="section-title"><svg class="ic" width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.6 4.6L5.3 8.9a1.2 1.2 0 001.7 1.7l4.5-4.5a2.4 2.4 0 00-3.4-3.4L3.6 7.2a3.6 3.6 0 005.1 5.1l3.3-3.3"/></svg> Dernières ressources rattachées</div>
                     <button type="button" class="btn-see-all-res" onclick="switchTab('resources')">Voir tout →</button>
                 </div>
                 <div id="dashResourceItems"></div>
             </div>
 
             <div class="phase-table">
-                <h2>📊 Avancement par phase</h2>
+                <h2><svg class="ic" width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 12V8M4.5 12V5M7.5 12V7M10.5 12V3"/><path d="M1 12H13"/></svg> Avancement par phase</h2>
                 <table>
                     <thead>
                         <tr>
@@ -1503,22 +1564,22 @@
         <div id="tasks" class="content-section">
             <div class="task-manager">
                 <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap;">
-                    <div class="section-title" style="font-size:16px; font-weight:800; color:var(--navy);">📝 Gestion des actions</div>
-                    <button class="btn btn-primary" id="btnNewTask">➕ Nouvelle action</button>
+                    <div class="section-title" style="font-size:16px; font-weight:800; color:var(--navy);"><svg class="ic" width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="1.5" width="10" height="11" rx="1.6"/><path d="M4.3 4.8h5.4M4.3 7h5.4M4.3 9.2h3.4"/></svg> Gestion des actions</div>
+                    <button class="btn btn-primary" id="btnNewTask"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 2.5v9M2.5 7h9"/></svg> Nouvelle action</button>
                 </div>
 
                 <div id="taskToolbar" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; align-items:center;">
-                    <select id="templateSelector" class="filter-select" style="min-width:210px;"><option value="">📋 Sélectionner un template…</option></select>
-                    <button class="btn btn-secondary" id="btnLoadSelectedTemplate" disabled>🔄 Charger</button>
-                    <button class="btn btn-secondary" id="btnManageTemplate">⚙️ Templates</button>
-                    <button class="btn btn-secondary" id="btnExport">💾 Exporter</button>
-                    <button class="btn btn-success" id="btnReadOnly">👁️ Lecture seule</button>
-                    <button class="btn btn-secondary" type="button" onclick="openImportModal()">📥 Importer CSV / Excel</button>
-                    <select id="filterVisibility" class="btn btn-secondary" onchange="renderTasks()" title="Filtrer par visibilité"><option value="">👁️ Toutes visibilités</option><option value="Client">👁️ Vue client</option><option value="Interne Opus">🔒 Interne Opus</option></select>
-                    <button class="btn-delete-selected" id="btnDeleteSelected" onclick="deleteSelectedTasks()" disabled style="margin-left:auto;">🗑️ Supprimer <span id="selCount"></span></button>
+                    <select id="templateSelector" class="filter-select" style="min-width:210px;"><option value="">Sélectionner un template…</option></select>
+                    <button class="btn btn-secondary" id="btnLoadSelectedTemplate" disabled><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7a5 5 0 11-1.5-3.5"/><path d="M12.5 1.5V4H10"/></svg> Charger</button>
+                    <button class="btn btn-secondary" id="btnManageTemplate"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="1.5" width="11" height="11" rx="2"/><path d="M4 5h6M4 7.5h4"/></svg> Templates</button>
+                    <button class="btn btn-secondary" id="btnExport"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 1.5v7M4 5.5l3 3 3-3M2 11.5h10"/></svg> Exporter</button>
+                    <button class="btn btn-success" id="btnReadOnly"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 7s2.2-4 6-4 6 4 6 4-2.2 4-6 4-6-4-6-4z"/><circle cx="7" cy="7" r="1.7"/></svg> Lecture seule</button>
+                    <button class="btn btn-secondary" type="button" onclick="openImportModal()"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 9V2M4 5l3-3 3 3M2 11.5h10"/></svg> Importer CSV / Excel</button>
+                    <select id="filterVisibility" class="btn btn-secondary" onchange="renderTasks()" title="Filtrer par visibilité"><option value="">Toutes visibilités</option><option value="Client">Vue client</option><option value="Interne Opus">Interne Opus</option></select>
+                    <button class="btn-delete-selected" id="btnDeleteSelected" onclick="deleteSelectedTasks()" disabled style="margin-left:auto;"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3.5h10M5 3.5V2.4a.7.7 0 01.7-.7h2.6a.7.7 0 01.7.7v1.1M5.3 6.2v4M8.7 6.2v4M3 3.5l.6 8h6.8l.6-8"/></svg> Supprimer <span id="selCount"></span></button>
                 </div>
 
-                <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:8px;">💡 Filtres et tri (⇅) dans l'en-tête · cliquez sur une cellule pour la modifier · glissez la poignée ⠿ pour changer l'ordre des actions.</p>
+                <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:8px;"><svg class="ic" width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="5.5"/><path d="M7 6.3v3.6"/><circle cx="7" cy="4.3" r=".45" fill="currentColor"/></svg> Filtres et tri (⇅) dans l'en-tête · cliquez sur une cellule pour la modifier · glissez la poignée ⠿ pour changer l'ordre des actions.</p>
 
                 <div id="orderHint">ℹ️ Le glisser-déposer est désactivé tant qu'un autre tri est actif. <button type="button" onclick="resetToManualOrder()">Revenir à l'ordre N° ↑</button></div>
 
@@ -1526,10 +1587,10 @@
                     <div class="task-list-head">
                         <div><button type="button" class="sort-btn sort-btn-ord" data-sort="order" onclick="toggleSort('order')">N°<span class="sort-ar">↑</span></button></div>
                         <div><input type="checkbox" id="selectAllTasks" class="row-check" onchange="toggleSelectAll(this.checked)" title="Tout sélectionner"></div>
-                        <div><input type="text" id="taskSearch" class="head-filter" placeholder="🔍 Action…" oninput="renderTasks()" autocomplete="off"><button type="button" class="sort-btn" data-sort="title" onclick="toggleSort('title')"><span class="sort-ar">⇅</span></button></div>
+                        <div><input type="text" id="taskSearch" class="head-filter" placeholder="Rechercher une action…" oninput="renderTasks()" autocomplete="off"><button type="button" class="sort-btn" data-sort="title" onclick="toggleSort('title')"><span class="sort-ar">⇅</span></button></div>
                         <div><select id="filterResponsible" class="head-filter" onchange="renderTasks()"><option value="">Resp.</option></select><button type="button" class="sort-btn" data-sort="responsible" onclick="toggleSort('responsible')"><span class="sort-ar">⇅</span></button></div>
                         <div><select id="filterPhase" class="head-filter" onchange="renderTasks()"><option value="">Phase</option></select><button type="button" class="sort-btn" data-sort="phase" onclick="toggleSort('phase')"><span class="sort-ar">⇅</span></button></div>
-                        <div><button type="button" id="dateFilterBtn" class="head-filter" style="cursor:pointer; text-align:left;" onclick="openDateFilter(event)">📅 Échéance</button><button type="button" class="sort-btn" data-sort="endDate" onclick="toggleSort('endDate')"><span class="sort-ar">⇅</span></button></div>
+                        <div><button type="button" id="dateFilterBtn" class="head-filter" style="cursor:pointer; text-align:left;" onclick="openDateFilter(event)">Échéance</button><button type="button" class="sort-btn" data-sort="endDate" onclick="toggleSort('endDate')"><span class="sort-ar">⇅</span></button></div>
                         <div><select id="filterPriority" class="head-filter" onchange="renderTasks()"><option value="">Priorité</option><option value="Haute">Haute</option><option value="Moyenne">Moyenne</option><option value="Basse">Basse</option></select><button type="button" class="sort-btn" data-sort="priority" onclick="toggleSort('priority')"><span class="sort-ar">⇅</span></button></div>
                         <div><select id="filterStatus" class="head-filter" onchange="renderTasks()"><option value="">Statut</option><option value="À faire">À faire</option><option value="En cours">En cours</option><option value="Terminé">Terminé</option><option value="Bloqué">Bloqué</option></select><button type="button" class="sort-btn" data-sort="status" onclick="toggleSort('status')"><span class="sort-ar">⇅</span></button></div>
                         <div>Gérer</div>
@@ -1542,11 +1603,17 @@
         <!-- Gantt Section -->
         <div id="gantt" class="content-section">
             <div class="gantt-container">
-                <h2 style="margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: 800;">📅 Diagramme de Gantt</h2>
-                
-                <div style="margin-bottom: 1.5rem; padding: 1rem; background: #FFF9E6; border-left: 4px solid #F59E0B; border-radius: 12px;">
-                    <strong>💡 Conseil :</strong> Ajoutez des dates de début et fin à vos tâches pour voir le planning visuel
+                <div class="gx-toolbar" id="ganttToolbar">
+                    <h2 class="gx-title"><svg class="ic" width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="2.5" width="12" height="10" rx="2"/><path d="M1 6H13M4.5 1V4M9.5 1V4"/><path d="M3.5 8.4h4M6 10.4h4"/></svg> Planning — diagramme de Gantt</h2>
+                    <div class="gx-views" role="group" aria-label="Échelle de temps">
+                        <button type="button" data-view="day" onclick="setGanttView('day')">Jours</button>
+                        <button type="button" data-view="week" onclick="setGanttView('week')">Semaines</button>
+                        <button type="button" data-view="month" onclick="setGanttView('month')">Mois</button>
+                        <button type="button" data-view="year" onclick="setGanttView('year')">Année</button>
+                    </div>
+                    <button type="button" class="btn btn-secondary gx-todaybtn" onclick="ganttScrollToday()"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="5.5"/><circle cx="7" cy="7" r="1.6" fill="currentColor"/></svg> Aujourd'hui</button>
                 </div>
+                <p class="gx-hint"><svg class="ic" width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="5.5"/><path d="M7 6.3v3.6"/><circle cx="7" cy="4.3" r=".45" fill="currentColor"/></svg> Glissez une barre pour décaler l'action, tirez son bord droit pour changer l'échéance : les dates se mettent à jour. Cliquez sur une barre ou un intitulé pour ouvrir l'action.</p>
 
                 <div id="ganttChart"></div>
             </div>
@@ -1583,12 +1650,12 @@
         <div id="resources" class="content-section">
             <div class="section-card">
                 <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap;">
-                    <div class="section-title" style="font-size:16px; font-weight:800; color:var(--navy);">📎 Ressources — liens OneDrive / SharePoint</div>
+                    <div class="section-title" style="font-size:16px; font-weight:800; color:var(--navy);"><svg class="ic" width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.6 4.6L5.3 8.9a1.2 1.2 0 001.7 1.7l4.5-4.5a2.4 2.4 0 00-3.4-3.4L3.6 7.2a3.6 3.6 0 005.1 5.1l3.3-3.3"/></svg> Ressources — liens OneDrive / SharePoint</div>
                 </div>
                 <div class="res-toolbar">
                     <input type="text" id="resTitle" class="task-search" style="flex:0 0 220px; min-width:170px;" placeholder="Titre du lien (optionnel)">
                     <input type="text" id="resUrl" class="task-search" placeholder="Coller un lien OneDrive ou SharePoint…" onkeydown="if(event.key==='Enter'){event.preventDefault();addResource();}">
-                    <button class="btn btn-primary" onclick="addResource()">➕ Ajouter</button>
+                    <button class="btn btn-primary" onclick="addResource()"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 2.5v9M2.5 7h9"/></svg> Ajouter</button>
                 </div>
                 <div class="res-grid" id="resGrid"></div>
             </div>
@@ -1662,10 +1729,10 @@
                     <textarea id="taskComments"></textarea>
                 </div>
                 <details class="form-group" id="taskExtraDetails" style="border:2px solid var(--gray-200); border-radius:10px; padding:0.6rem 0.75rem;">
-                    <summary style="cursor:pointer; font-weight:600;">📋 Suivi détaillé (réf., visibilité client, dépendances…)</summary>
+                    <summary style="cursor:pointer; font-weight:600;"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="1.5" width="10" height="11" rx="1.6"/><path d="M4.3 4.8h5.4M4.3 7h5.4M4.3 9.2h3.4"/></svg> Suivi détaillé (réf., visibilité client, dépendances…)</summary>
                     <div class="form-row-2" style="margin-top:0.6rem;">
                         <div class="form-group"><label>Réf.</label><input type="text" id="taskRef" placeholder="ex. DOU-D-01"></div>
-                        <div class="form-group"><label>Visibilité</label><select id="taskVisibility"><option value="">—</option><option value="Client">👁️ Client</option><option value="Interne Opus">🔒 Interne Opus</option></select></div>
+                        <div class="form-group"><label>Visibilité</label><select id="taskVisibility"><option value="">—</option><option value="Client">Client</option><option value="Interne Opus">Interne Opus</option></select></div>
                     </div>
                     <div class="form-row-2">
                         <div class="form-group"><label>Organisation</label><input type="text" id="taskOrganisation" placeholder="Opus ; Client ; Partenaire"></div>
@@ -1677,7 +1744,7 @@
                         <div class="form-group"><label>Dépend de</label><input type="text" id="taskDependsOn" placeholder="ex. FIN-01 ; GOV-12"></div>
                     </div>
                     <div class="form-group"><label>Source</label><input type="text" id="taskSource"></div>
-                    <div class="form-group"><label>🔒 Note interne Opus (jamais diffusée au client)</label><textarea id="taskInternalNote" style="min-height:60px;"></textarea></div>
+                    <div class="form-group"><label><svg class="ic" width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="9" height="6.5" rx="1.5"/><path d="M4.5 6V4.5a2.5 2.5 0 015 0V6"/></svg> Note interne Opus (jamais diffusée au client)</label><textarea id="taskInternalNote" style="min-height:60px;"></textarea></div>
                 </details>
                 <div class="form-group">
                     <label>Sous-actions</label>
@@ -1700,11 +1767,11 @@
     <!-- Phase Manager Modal -->
     <div class="modal" id="phaseModal">
         <div class="modal-content">
-            <div class="modal-header">🧭 Gérer les phases</div>
+            <div class="modal-header"><svg class="ic" width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 1.8l5.3 2.9L7 7.6 1.7 4.7z"/><path d="M1.7 7.3L7 10.2l5.3-2.9M1.7 9.8L7 12.7l5.3-2.9"/></svg> Gérer les phases</div>
             <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px;">Ajoutez, renommez, réordonnez ou supprimez les phases (lots) du projet. Renommer une phase met à jour les actions concernées.</p>
             <div id="phaseManagerList"></div>
             <div class="modal-actions" style="justify-content:space-between;">
-                <button type="button" class="btn btn-primary" onclick="addPhase()">➕ Nouvelle phase</button>
+                <button type="button" class="btn btn-primary" onclick="addPhase()"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 2.5v9M2.5 7h9"/></svg> Nouvelle phase</button>
                 <button type="button" class="btn btn-secondary" onclick="closePhaseManager()">Fermer</button>
             </div>
         </div>
@@ -1713,32 +1780,32 @@
     <!-- Template Manager Modal -->
     <div class="modal" id="templateModal">
         <div class="modal-content" style="max-width: 900px;">
-            <div class="modal-header">⚙️ Gestion des templates de tâches</div>
+            <div class="modal-header"><svg class="ic" width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="1.5" width="11" height="11" rx="2"/><path d="M4 5h6M4 7.5h4"/></svg> Gestion des templates de tâches</div>
             
             <div style="margin-bottom: 2rem; padding: 1rem; background: #F1F5F9; border-radius: 12px;">
-                <p style="margin-bottom: 0.5rem;"><strong>💡 À quoi ça sert ?</strong></p>
+                <p style="margin-bottom: 0.5rem;"><strong><svg class="ic" width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="5.5"/><path d="M7 6.3v3.6"/><circle cx="7" cy="4.3" r=".45" fill="currentColor"/></svg> À quoi ça sert ?</strong></p>
                 <p style="font-size: 0.9rem; color: var(--gray-700);">Les templates sont des listes de tâches réutilisables. Créez plusieurs templates pour différents types de projets et chargez-les rapidement !</p>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
                 <button class="btn btn-primary" onclick="saveCurrentAsNewTemplate()" style="width: 100%; justify-content: center; display: flex; align-items: center;">
-                    💾 Sauvegarder comme nouveau template
+                    <svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3a1 1 0 011-1h6l3 3v6a1 1 0 01-1 1H3a1 1 0 01-1-1z"/><path d="M4.5 2v3h4M4.5 12V8.5h5V12"/></svg> Sauvegarder comme nouveau template
                 </button>
                 
                 <button class="btn btn-secondary" onclick="exportTemplates()" style="width: 100%; justify-content: center; display: flex; align-items: center;">
-                    📤 Exporter tous les templates
+                    <svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 1.5v7M4 5.5l3 3 3-3M2 11.5h10"/></svg> Exporter tous les templates
                 </button>
                 
                 <div style="grid-column: 1 / -1;">
                     <label class="btn btn-secondary" for="templateImportInput" style="width: 100%; justify-content: center; display: flex; align-items: center; cursor: pointer; margin: 0;">
-                        📥 Importer des templates (fichier JSON)
+                        <svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 9V2M4 5l3-3 3 3M2 11.5h10"/></svg> Importer des templates (fichier JSON)
                     </label>
                     <input type="file" id="templateImportInput" accept=".json" style="display: none;" onchange="importTemplates(event)">
                 </div>
             </div>
 
             <div style="background: white; border: 2px solid var(--gray-200); border-radius: 16px; padding: 1.5rem;">
-                <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">📚 Mes templates enregistrés</h3>
+                <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;"><svg class="ic" width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="1.5" width="11" height="11" rx="2"/><path d="M4 5h6M4 7.5h4"/></svg> Mes templates enregistrés</h3>
                 <div id="templatesList"></div>
             </div>
 
@@ -1752,32 +1819,32 @@
     <div id="shareBackdrop" onclick="if(event.target===this)closeShareModal()">
         <div id="shareModal">
             <div class="share-head">
-                <div class="share-title">🔗 Partager le dashboard</div>
+                <div class="share-title"><svg class="ic" width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="2.8" r="1.4"/><circle cx="10.5" cy="11.2" r="1.4"/><circle cx="3" cy="7" r="1.4"/><path d="M4.3 6.3l4.9-2.8M4.3 7.7l4.9 2.8"/></svg> Partager le dashboard</div>
                 <button class="share-close" onclick="closeShareModal()">×</button>
             </div>
             <div class="share-sub">Diffusez une version consultable de « <span id="shareProjectName">votre projet</span> » ou générez un QR code.</div>
             <div class="share-tabs">
-                <button class="share-tab active" data-tab="export" onclick="switchShareTab('export')">📄 Export consultation</button>
-                <button class="share-tab" data-tab="qr" onclick="switchShareTab('qr')">📱 QR code</button>
+                <button class="share-tab active" data-tab="export" onclick="switchShareTab('export')"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 1.5h5l3 3v8a.8.8 0 01-.8.8H3a.8.8 0 01-.8-.8V2.3A.8.8 0 013 1.5z"/><path d="M8 1.5v3h3"/></svg> Export consultation</button>
+                <button class="share-tab" data-tab="qr" onclick="switchShareTab('qr')"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="1" width="7" height="12" rx="1.6"/><path d="M6.2 10.6h1.6"/></svg> QR code</button>
             </div>
 
             <div id="sharePanel-export" class="share-panel active">
                 <button type="button" class="share-option-card" onclick="closeShareModal(); generateReadOnlyLink();">
-                    <div class="share-option-icon">📥</div>
+                    <div class="share-option-icon"><svg class="ic" width="20" height="20" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 1.5v7M4 5.5l3 3 3-3M2 11.5h10"/></svg></div>
                     <div>
                         <div class="share-option-title">Exporter la version consultable (HTML)</div>
                         <div class="share-option-desc">Génère un fichier HTML autonome avec les données actuelles, en lecture seule. Envoyez-le par e-mail ou déposez-le sur OneDrive/SharePoint — les destinataires consultent sans modifier.</div>
                     </div>
                 </button>
                 <button type="button" class="share-option-card" onclick="closeShareModal(); generateReadOnlyLink(true);">
-                    <div class="share-option-icon">🤝</div>
+                    <div class="share-option-icon"><svg class="ic" width="20" height="20" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="4.3" width="11" height="7.7" rx="1.5"/><path d="M5 4.3V3a1 1 0 011-1h2a1 1 0 011 1v1.3M1.5 7.5h11"/></svg></div>
                     <div>
                         <div class="share-option-title">Exporter la vue client (HTML)</div>
                         <div class="share-option-desc">Même export consultable, mais sans les actions « Interne Opus » ni les notes internes. À envoyer au client.</div>
                     </div>
                 </button>
                 <button type="button" class="share-option-card" onclick="exportData();">
-                    <div class="share-option-icon">💾</div>
+                    <div class="share-option-icon"><svg class="ic" width="20" height="20" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3a1 1 0 011-1h6l3 3v6a1 1 0 01-1 1H3a1 1 0 01-1-1z"/><path d="M4.5 2v3h4M4.5 12V8.5h5V12"/></svg></div>
                     <div>
                         <div class="share-option-title">Exporter les données (JSON)</div>
                         <div class="share-option-desc">Sauvegarde complète des données brutes pour archivage ou transfert vers un autre dashboard.</div>
@@ -1790,7 +1857,7 @@
                 <div id="qrContainer"></div>
                 <div id="qrUrlDisplay"></div>
                 <div class="qr-instructions">
-                    📱 <strong>Comment l'utiliser :</strong><br>
+                    <svg class="ic" width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="1" width="7" height="12" rx="1.6"/><path d="M6.2 10.6h1.6"/></svg> <strong>Comment l'utiliser :</strong><br>
                     1. Exportez la version consultable (HTML) via l'onglet « Export consultation »<br>
                     2. Déposez le fichier sur OneDrive / SharePoint avec un lien de partage<br>
                     3. Revenez ici et collez l'URL du partage ci-dessous, puis « Générer »
@@ -1811,12 +1878,12 @@
     <div id="memberModalBackdrop" onclick="if(event.target===this)closeMemberModal()">
         <div id="memberModal">
             <div class="member-modal-head">
-                <div class="modal-title">👥 Responsables</div>
+                <div class="modal-title"><svg class="ic" width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="4.6" r="2.1"/><path d="M1.3 12.2c.3-2.2 1.8-3.6 3.7-3.6s3.4 1.4 3.7 3.6"/><path d="M9.4 2.7a2 2 0 010 3.8M10.6 8.7c1.2.4 2 1.6 2.2 3.4"/></svg> Responsables</div>
                 <button type="button" class="member-close" onclick="closeMemberModal()">×</button>
             </div>
             <div id="memberList"></div>
             <div class="member-form">
-                <div id="memberFormTitle" class="member-form-title">➕ Nouveau responsable</div>
+                <div id="memberFormTitle" class="member-form-title">Nouveau responsable</div>
                 <div class="form-group">
                     <label class="form-label">Prénom &amp; Nom *</label>
                     <input type="text" id="mName" class="form-control" placeholder="Ex : Marie Dupont" autocomplete="off">
@@ -1829,7 +1896,7 @@
             </div>
             <div class="modal-actions" style="margin-top:16px;">
                 <button type="button" class="btn btn-secondary" onclick="closeMemberModal()">Fermer</button>
-                <button type="button" id="memberSaveBtn" class="btn btn-primary" onclick="saveMember()">✅ Ajouter</button>
+                <button type="button" id="memberSaveBtn" class="btn btn-primary" onclick="saveMember()">Ajouter</button>
             </div>
         </div>
     </div>
@@ -1855,7 +1922,7 @@
             const url = prompt('URL de votre Apps Script (déploiement « application web » se terminant par /exec) :', APPS_SCRIPT_URL);
             if (url === null) return;
             saveSyncConfig(url || DEFAULT_SCRIPT_URL, '');
-            showSyncStatus('🔐 Connexion enregistrée', 'success');
+            showSyncStatus('Connexion enregistrée', 'success');
             loadFromSheets();
         }
 
@@ -1885,7 +1952,7 @@
             renderPhaseFilters();
             renderResponsibleFilter();
             setupEventListeners();
-            showSyncStatus('⏳ Connexion…', 'loading');
+            showSyncStatus('Connexion…', 'loading');
             ensureLogin();
         }
 
@@ -2003,11 +2070,11 @@
         function updateDateFilterBtn() {
             const btn = document.getElementById('dateFilterBtn');
             if (!btn) return;
-            let label = '📅 Échéance';
-            if (dateFilter.mode === 'from' && dateFilter.a) label = '📅 ≥ ' + fmtDateFr(dateFilter.a);
-            else if (dateFilter.mode === 'until' && dateFilter.a) label = '📅 ≤ ' + fmtDateFr(dateFilter.a);
-            else if (dateFilter.mode === 'on' && dateFilter.a) label = '📅 ' + fmtDateFr(dateFilter.a);
-            else if (dateFilter.mode === 'between' && (dateFilter.a || dateFilter.b)) label = '📅 ' + fmtDateFr(dateFilter.a) + '→' + fmtDateFr(dateFilter.b);
+            let label = 'Échéance';
+            if (dateFilter.mode === 'from' && dateFilter.a) label = '≥ ' + fmtDateFr(dateFilter.a);
+            else if (dateFilter.mode === 'until' && dateFilter.a) label = '≤ ' + fmtDateFr(dateFilter.a);
+            else if (dateFilter.mode === 'on' && dateFilter.a) label = fmtDateFr(dateFilter.a);
+            else if (dateFilter.mode === 'between' && (dateFilter.a || dateFilter.b)) label = fmtDateFr(dateFilter.a) + ' → ' + fmtDateFr(dateFilter.b);
             btn.textContent = label;
             btn.classList.toggle('df-active', !!(dateFilter.mode && (dateFilter.a || dateFilter.b)));
         }
@@ -2108,8 +2175,8 @@
                     <span style="flex:1; font-weight:600; color:var(--navy); font-size:13px;">${escapeHtml(p)}</span>
                     <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px;" onclick="movePhase(${i},-1)">↑</button>
                     <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px;" onclick="movePhase(${i},1)">↓</button>
-                    <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px;" onclick="renamePhase(${i})">✏️</button>
-                    <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px; background:#FEE2E2; color:var(--danger);" onclick="deletePhase(${i})">🗑️</button>
+                    <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px;" onclick="renamePhase(${i})">${ic('pencil')}</button>
+                    <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px; background:#FEE2E2; color:var(--danger);" onclick="deletePhase(${i})">${ic('trash')}</button>
                 </div>`).join('') : '<p style="color:var(--text-muted); font-size:13px;">Aucune phase définie.</p>';
         }
         function addPhase() {
@@ -2191,7 +2258,7 @@
             const me = getChatMe();
             const msgs = chats[currentProject] || [];
             if (msgs.length === 0) {
-                box.innerHTML = '<div class="chat-empty">Aucun message pour ce projet.<br>Démarrez la discussion ✍️</div>';
+                box.innerHTML = '<div class="chat-empty">Aucun message pour ce projet.<br>Démarrez la discussion.</div>';
                 return;
             }
             box.innerHTML = msgs.map((m, i) => {
@@ -2199,7 +2266,7 @@
                 const t = new Date(m.ts);
                 const time = isNaN(t.getTime()) ? '' : t.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) + ' ' + t.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
                 const to = m.to ? ` <span style="opacity:.75; font-weight:600;">→ ${escapeHtml(m.to)}</span>` : '';
-                return `<div class="chat-msg ${mine ? 'mine' : 'theirs'}"><button class="cm-del" title="Supprimer ce message" onclick="deleteChatMessage(${i})">🗑️</button><div class="cm-author">${escapeHtml(m.author || 'Anonyme')}${to}</div><div>${escapeHtml(m.text)}</div><div class="cm-time">${time}</div></div>`;
+                return `<div class="chat-msg ${mine ? 'mine' : 'theirs'}"><button class="cm-del" title="Supprimer ce message" onclick="deleteChatMessage(${i})">${ic('trash', 12)}</button><div class="cm-author">${escapeHtml(m.author || 'Anonyme')}${to}</div><div>${escapeHtml(m.text)}</div><div class="cm-time">${time}</div></div>`;
             }).join('');
             box.scrollTop = box.scrollHeight;
         }
@@ -2258,7 +2325,7 @@
             const emails = chatNotifyEmails(author, to, text);
             if (emails.length === 0) return;
             if (!APPS_SCRIPT_URL) {
-                showSyncStatus('✉️ Notification non envoyée (connexion Sheets/Apps Script requise)', 'warning');
+                showSyncStatus('Notification non envoyée (connexion Sheets/Apps Script requise)', 'warning');
                 return;
             }
             const subject = 'Nouveau message dans le chat OPUS';
@@ -2275,19 +2342,19 @@
                 let result = null;
                 try { result = await resp.json(); } catch (e) { /* réponse non lisible */ }
                 if (result && result.success) {
-                    showSyncStatus('✉️ Notification envoyée à ' + (result.sent || emails.length) + ' personne(s)', 'success');
+                    showSyncStatus('Notification envoyée à ' + (result.sent || emails.length) + ' personne(s)', 'success');
                 } else if (result && result.error) {
                     // Erreur renvoyée par l'Apps Script (ex : "unauthorized" = jeton, "Action inconnue: notify" = redéploiement)
-                    showSyncStatus('⚠️ Notification refusée par le serveur : ' + result.error, 'warning');
+                    showSyncStatus('Notification refusée par le serveur : ' + result.error, 'warning');
                     alert('❌ La notification e-mail a été refusée par l\'Apps Script :\n\n« ' + result.error + ' »\n\n'
                         + '• "unauthorized" → le jeton de « Connexion Sheets » ne correspond pas au TOKEN de Code.gs.\n'
                         + '• "Action inconnue: notify" → il faut redéployer le script en NOUVELLE version (l\'URL /exec utilise encore l\'ancien code).');
                 } else {
-                    showSyncStatus('⚠️ Réponse serveur illisible (notification incertaine)', 'warning');
+                    showSyncStatus('Réponse serveur illisible (notification incertaine)', 'warning');
                 }
             } catch (err) {
                 console.warn('Notify error:', err);
-                showSyncStatus('⚠️ Notification e-mail non envoyée : ' + err.message, 'warning');
+                showSyncStatus('Notification e-mail non envoyée : ' + err.message, 'warning');
             }
         }
 
@@ -2418,13 +2485,13 @@
             }
             box.innerHTML = list.map((r, i) => `
                 <div class="res-card">
-                    <div class="res-ico ${r.kind}">${r.kind === 'sharepoint' ? '🌐' : '☁️'}</div>
+                    <div class="res-ico ${r.kind}">${r.kind === 'sharepoint' ? ic('globe', 20) : ic('cloud', 20)}</div>
                     <div class="res-body">
                         <div class="res-title">${escapeHtml(r.title)}</div>
                         <a class="res-url" href="${escapeHtml(r.url)}" target="_blank" rel="noopener">${escapeHtml(r.url)}</a>
                         <span class="res-badge ${r.kind}">${r.kind === 'sharepoint' ? 'SharePoint' : 'OneDrive'}</span>
                     </div>
-                    <button class="btn-delete" onclick="deleteResource(${i})">🗑️</button>
+                    <button class="btn-delete" onclick="deleteResource(${i})">${ic('trash')}</button>
                 </div>`).join('');
             renderDashResources();
         }
@@ -2440,13 +2507,13 @@
                 return;
             }
             box.innerHTML = recent.map(r => {
-                const icon = r.kind === 'sharepoint' ? '🌐' : '☁️';
+                const icon = r.kind === 'sharepoint' ? ic('globe', 16) : ic('cloud', 16);
                 const cat = r.kind === 'sharepoint' ? 'SharePoint' : 'OneDrive';
                 return `<div class="dash-res-item">
                     <span class="dash-res-icon">${icon}</span>
                     <span class="dash-res-title" title="${escapeHtml(r.title)}">${escapeHtml(r.title)}</span>
                     <span class="dash-res-cat">${cat}</span>
-                    <a class="btn-dash-res" href="${escapeHtml(r.url)}" target="_blank" rel="noopener" title="Ouvrir">🔗</a>
+                    <a class="btn-dash-res" href="${escapeHtml(r.url)}" target="_blank" rel="noopener" title="Ouvrir">${ic('link')}</a>
                 </div>`;
             }).join('');
         }
@@ -2515,7 +2582,7 @@
             const box = document.getElementById('respEmails');
             if (!box) return;
             if (selectedResponsibles.length === 0) { box.innerHTML = ''; return; }
-            box.innerHTML = '<div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px; margin:4px 0 6px;">✉️ Emails des responsables</div>' +
+            box.innerHTML = '<div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px; margin:4px 0 6px;">Emails des responsables</div>' +
                 selectedResponsibles.map(n => `
                     <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
                         <span style="flex:0 0 130px; font-size:12.5px; font-weight:600; color:var(--navy); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(n)}</span>
@@ -2590,8 +2657,8 @@
         function resetMemberForm() {
             const n = document.getElementById('mName'), e = document.getElementById('mEmail'), o = document.getElementById('mEditingOriginal');
             if (n) n.value = ''; if (e) e.value = ''; if (o) o.value = '';
-            const t = document.getElementById('memberFormTitle'); if (t) t.textContent = '➕ Nouveau responsable';
-            const b = document.getElementById('memberSaveBtn'); if (b) b.textContent = '✅ Ajouter';
+            const t = document.getElementById('memberFormTitle'); if (t) t.textContent = 'Nouveau responsable';
+            const b = document.getElementById('memberSaveBtn'); if (b) b.textContent = 'Ajouter';
         }
         function memberAvatarHtml(name) {
             const p = (typeof getMemberProfile === 'function') ? getMemberProfile(name) : {};
@@ -2613,8 +2680,8 @@
                         <div class="member-item-name">${escapeHtml(n)}</div>
                         <div class="member-item-email">${mail ? escapeHtml(mail) : '—'}</div>
                     </div>
-                    <button type="button" class="member-item-btn" title="Modifier" onclick="editMember('${encodeURIComponent(n)}')">✏️</button>
-                    <button type="button" class="member-item-btn" title="Retirer" onclick="deleteMember('${encodeURIComponent(n)}')">🗑️</button>
+                    <button type="button" class="member-item-btn" title="Modifier" onclick="editMember('${encodeURIComponent(n)}')">${ic('pencil')}</button>
+                    <button type="button" class="member-item-btn" title="Retirer" onclick="deleteMember('${encodeURIComponent(n)}')">${ic('trash')}</button>
                 </div>`;
             }).join('');
         }
@@ -2622,8 +2689,8 @@
             const name = decodeURIComponent(enc);
             const n = document.getElementById('mName'), e = document.getElementById('mEmail'), o = document.getElementById('mEditingOriginal');
             if (n) n.value = name; if (e) e.value = getEmail(name); if (o) o.value = name;
-            const t = document.getElementById('memberFormTitle'); if (t) t.textContent = '✏️ Modifier ' + name;
-            const b = document.getElementById('memberSaveBtn'); if (b) b.textContent = '💾 Enregistrer';
+            const t = document.getElementById('memberFormTitle'); if (t) t.textContent = 'Modifier ' + name;
+            const b = document.getElementById('memberSaveBtn'); if (b) b.textContent = 'Enregistrer';
             renderMemberList();
             if (n) n.focus();
         }
@@ -2711,10 +2778,10 @@
         async function loadFromSheets() {
             if (!APPS_SCRIPT_URL) {
                 loadProjectsFromLocal();
-                showSyncStatus('ℹ️ Mode local — cliquez sur « Connexion Sheets » pour synchroniser', 'warning');
+                showSyncStatus('Mode local — cliquez sur « Connexion Sheets » pour synchroniser', 'warning');
                 return;
             }
-            showSyncStatus('⏳ Chargement des données...', 'loading');
+            showSyncStatus('Chargement des données...', 'loading');
             try {
                 const resp = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
@@ -2753,10 +2820,10 @@
                 updateTemplateSelector();
                 updateDashboard();
                 renderTasks();
-                showSyncStatus('✅ Données synchronisées', 'success');
+                showSyncStatus('Données synchronisées', 'success');
             } catch (err) {
                 loadProjectsFromLocal();
-                showSyncStatus('⚠️ Mode hors-ligne (données locales)', 'warning');
+                showSyncStatus('Mode hors-ligne (données locales)', 'warning');
             }
         }
 
@@ -2768,7 +2835,7 @@
             if (window.READ_ONLY || !SESSION) return; // profil client : consultation uniquement
             if (isSyncing) { pendingSave = true; return; }
             isSyncing = true;
-            showSyncStatus('💾 Sauvegarde en cours...', 'loading');
+            showSyncStatus('Sauvegarde en cours...', 'loading');
 
             // Toujours sauvegarder en local d'abord
             localStorage.setItem('poei_all_projects', JSON.stringify(allProjects));
@@ -2776,7 +2843,7 @@
 
             if (!APPS_SCRIPT_URL) {
                 isSyncing = false;
-                showSyncStatus('💾 Enregistré en local', 'success');
+                showSyncStatus('Enregistré en local', 'success');
                 if (pendingSave) { pendingSave = false; saveToSheets(); }
                 return;
             }
@@ -2806,13 +2873,13 @@
                 const result = await resp.json();
                 if (result && result.error === 'unauthorized') { onUnauthorized(); return; }
                 if (result.success) {
-                    showSyncStatus('✅ Sauvegardé dans Google Sheets', 'success');
+                    showSyncStatus('Sauvegardé dans Google Sheets', 'success');
                 } else {
                     throw new Error(result.error || 'Erreur inconnue');
                 }
             } catch (err) {
                 console.warn('Sheets save error:', err);
-                showSyncStatus('⚠️ Sauvegardé en local uniquement', 'warning');
+                showSyncStatus('Sauvegardé en local uniquement', 'warning');
             } finally {
                 isSyncing = false;
                 // Une sauvegarde a été demandée pendant celle-ci : on la rejoue
@@ -2918,6 +2985,7 @@
         }
 
         function saveTasks() {
+            setTimeout(() => { const g = document.getElementById('gantt'); if (g && g.classList.contains('active')) renderPlanning(); }, 0);
             saveProjects();
             updateDashboard();
             renderTasks();
@@ -2993,17 +3061,17 @@
             overlay.id = 'projectStarterOverlay';
             overlay.onclick = (e) => { if (e.target === overlay) closeProjectStarter(); };
             overlay.innerHTML = `<div class="team-modal" style="max-width:480px;">
-                <div class="team-modal-head"><h3>🚀 Démarrer « ${escapeHtml(_pendingProjectName)} »</h3><button class="team-modal-close" onclick="closeProjectStarter()">×</button></div>
+                <div class="team-modal-head"><h3>${ic('play', 16)} Démarrer « ${escapeHtml(_pendingProjectName)} »</h3><button class="team-modal-close" onclick="closeProjectStarter()">×</button></div>
                 <div class="team-modal-body" id="projectStarterBody">
                     <p class="tm-hint">Comment souhaitez-vous démarrer ce projet ?</p>
                     <div class="ps-choices">
                         <button type="button" class="ps-card" onclick="finalizeNewProject(null)">
-                            <span class="ps-ico">📄</span>
+                            <span class="ps-ico">${ic('file', 20)}</span>
                             <span class="ps-title">Démarrer votre projet de zéro</span>
                             <span class="ps-desc">Projet vierge, sans aucune action.</span>
                         </button>
                         <button type="button" class="ps-card" onclick="showProjectTemplatePicker()">
-                            <span class="ps-ico">📋</span>
+                            <span class="ps-ico">${ic('template', 20)}</span>
                             <span class="ps-title">Charger un template</span>
                             <span class="ps-desc">Partir d'un modèle existant (POEI ou vos templates).</span>
                         </button>
@@ -3019,12 +3087,12 @@
             const names = Object.keys(saved);
             const defaultCount = getOriginalTemplate().length;
             let items = `<button type="button" class="ps-tpl" onclick="finalizeNewProject('default')">
-                    <span class="ps-tpl-name">🏠 Template POEI par défaut</span>
+                    <span class="ps-tpl-name">${ic('home')} Template POEI par défaut</span>
                     <span class="ps-tpl-count">${defaultCount} actions</span>
                 </button>`;
             names.forEach((name, i) => {
                 items += `<button type="button" class="ps-tpl" onclick="finalizeNewProject('saved', ${i})">
-                    <span class="ps-tpl-name">📋 ${escapeHtml(name)}</span>
+                    <span class="ps-tpl-name">${ic('template')} ${escapeHtml(name)}</span>
                     <span class="ps-tpl-count">${saved[name].length} actions</span>
                 </button>`;
             });
@@ -3117,12 +3185,12 @@
             const selector = document.getElementById('templateSelector');
             const savedTemplates = getSavedTemplates();
             
-            selector.innerHTML = '<option value="">📋 Sélectionner un template...</option>';
+            selector.innerHTML = '<option value="">Sélectionner un template…</option>';
             
             // Template par défaut
             const defaultOption = document.createElement('option');
             defaultOption.value = 'default';
-            defaultOption.textContent = '🏠 Template POEI par défaut (43 tâches)';
+            defaultOption.textContent = 'Template POEI par défaut (43 tâches)';
             selector.appendChild(defaultOption);
             
             // Templates personnalisés
@@ -3130,7 +3198,7 @@
                 const option = document.createElement('option');
                 option.value = templateName;
                 const count = savedTemplates[templateName].length;
-                option.textContent = `📋 ${templateName} (${count} tâches)`;
+                option.textContent = `${templateName} (${count} tâches)`;
                 selector.appendChild(option);
             });
         }
@@ -3268,7 +3336,7 @@
             const container = document.getElementById('templatesList');
             
             if (Object.keys(templates).length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: var(--gray-700); padding: 2rem;">Aucun template enregistré. Créez-en un en cliquant sur "💾 Sauvegarder comme nouveau template"</p>';
+                container.innerHTML = '<p style="text-align: center; color: var(--gray-700); padding: 2rem;">Aucun template enregistré. Créez-en un en cliquant sur "<svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3a1 1 0 011-1h6l3 3v6a1 1 0 01-1 1H3a1 1 0 01-1-1z"/><path d="M4.5 2v3h4M4.5 12V8.5h5V12"/></svg> Sauvegarder comme nouveau template"</p>';
                 return;
             }
             
@@ -3277,13 +3345,13 @@
                 return `
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border: 2px solid var(--gray-200); border-radius: 12px; margin-bottom: 0.8rem;">
                         <div>
-                            <div style="font-weight: 700; font-size: 1.05rem; margin-bottom: 0.3rem;">📋 ${templateName}</div>
+                            <div style="font-weight: 700; font-size: 1.05rem; margin-bottom: 0.3rem;">${ic('template')} ${templateName}</div>
                             <div style="font-size: 0.9rem; color: var(--gray-700);">${template.length} tâches</div>
                         </div>
                         <div style="display: flex; gap: 0.5rem;">
-                            <button class="btn btn-secondary" onclick="exportSingleTemplate('${templateName}')" style="padding: 0.6rem 1rem;">📤 Exporter</button>
-                            <button class="btn btn-secondary" onclick="renameTemplate('${templateName}')" style="padding: 0.6rem 1rem;">✏️ Renommer</button>
-                            <button class="btn btn-secondary" onclick="deleteTemplateConfirm('${templateName}')" style="padding: 0.6rem 1rem; background: #FEE2E2; color: var(--danger);">🗑️ Supprimer</button>
+                            <button class="btn btn-secondary" onclick="exportSingleTemplate('${templateName}')" style="padding: 0.6rem 1rem;">${ic('download')} Exporter</button>
+                            <button class="btn btn-secondary" onclick="renameTemplate('${templateName}')" style="padding: 0.6rem 1rem;">${ic('pencil')} Renommer</button>
+                            <button class="btn btn-secondary" onclick="deleteTemplateConfirm('${templateName}')" style="padding: 0.6rem 1rem; background: #FEE2E2; color: var(--danger);">${ic('trash')} Supprimer</button>
                         </div>
                     </div>
                 `;
@@ -3490,11 +3558,11 @@
                 
                 let statusBadge = '';
                 if (percentage === 100) {
-                    statusBadge = '<span class="status-badge completed">✅ Terminée</span>';
+                    statusBadge = '<span class="status-badge completed">' + ic('check', 12) + ' Terminée</span>';
                 } else if (percentage > 0) {
-                    statusBadge = '<span class="status-badge in-progress">🔄 En cours</span>';
+                    statusBadge = '<span class="status-badge in-progress">' + ic('clock', 12) + ' En cours</span>';
                 } else {
-                    statusBadge = '<span class="status-badge pending">⏳ À démarrer</span>';
+                    statusBadge = '<span class="status-badge pending">' + ic('clock', 12) + ' À démarrer</span>';
                 }
                 
                 tbody.innerHTML += `
@@ -3738,7 +3806,7 @@
                         <div class="tl-title" contenteditable="true" spellcheck="false" onblur="inlineUpdate(${task.id},'title',this.textContent)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">${escapeHtml(task.title)}</div>
                         <div class="tl-comment" contenteditable="true" spellcheck="false" data-ph="Ajouter une note…" onblur="inlineUpdate(${task.id},'comments',this.textContent)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">${escapeHtml(task.comments || '')}</div>
                         ${renderTaskMetaHtml(task)}
-                        ${prog !== null ? `<div class="tl-sub">☑️ ${done}/${subs.length} <span class="tl-sub-bar"><i style="width:${prog}%"></i></span> ${prog}%</div>` : ''}
+                        ${prog !== null ? `<div class="tl-sub">${ic('checkbox', 12)} ${done}/${subs.length} <span class="tl-sub-bar"><i style="width:${prog}%"></i></span> ${prog}%</div>` : ''}
                     </div>
                     <div id="respcell-${task.id}" class="resp-cell" title="Cliquer pour modifier" onclick="openRespPopover(${task.id}, event)">${renderAvatarsHtml(task.responsible)}</div>
                     <div><select class="cell-edit" onchange="inlineUpdate(${task.id},'phase',this.value)">${phaseOptions(task.phase)}</select></div>
@@ -3750,8 +3818,8 @@
                         ${['À faire', 'En cours', 'Terminé', 'Bloqué'].map(s => `<option value="${s}" ${task.status === s ? 'selected' : ''}>${s}</option>`).join('')}
                     </select></div>
                     <div class="tl-actions">
-                        <button class="btn-edit" onclick="editTask(${task.id})" title="Édition complète">✏️</button>
-                        <button class="btn-delete" onclick="deleteTask(${task.id})">🗑️</button>
+                        <button class="btn-edit" onclick="editTask(${task.id})" title="Édition complète">${ic('pencil')}</button>
+                        <button class="btn-delete" onclick="deleteTask(${task.id})" title="Supprimer">${ic('trash')}</button>
                     </div>
                 </div>`;
             }).join('');
@@ -3864,14 +3932,14 @@
                         <input type="url" placeholder="Lien LinkedIn (linkedin.com/in/…)" value="${escapeHtml(p.linkedin || '')}" onchange="setMemberLinkedin(this.closest('.tm-row').getAttribute('data-member'), this.value);">
                         <input type="email" placeholder="email@exemple.fr" value="${escapeHtml(mail)}" onchange="setEmail(this.closest('.tm-row').getAttribute('data-member'), this.value);">
                         <div class="tm-actions">
-                            <button type="button" class="tm-btn" onclick="uploadMemberPhoto(this.closest('.tm-row').getAttribute('data-member'), '${nid}')">📁 Importer une photo</button>
-                            ${p.photo ? `<button type="button" class="tm-btn" onclick="setMemberPhoto(this.closest('.tm-row').getAttribute('data-member'), ''); openTeamManager();">🗑️ Retirer la photo</button>` : ''}
+                            <button type="button" class="tm-btn" onclick="uploadMemberPhoto(this.closest('.tm-row').getAttribute('data-member'), '${nid}')">${ic('folder')} Importer une photo</button>
+                            ${p.photo ? `<button type="button" class="tm-btn" onclick="setMemberPhoto(this.closest('.tm-row').getAttribute('data-member'), ''); openTeamManager();">${ic('trash')} Retirer la photo</button>` : ''}
                         </div>
                     </div>
                 </div>`;
             }).join('') : '<div class="tm-hint">Aucun membre pour l\'instant. Ajoutez des responsables sur vos actions, ils apparaîtront ici.</div>';
             overlay.innerHTML = `<div class="team-modal">
-                <div class="team-modal-head"><h3>👥 Équipe OPUS — photos &amp; LinkedIn</h3><button class="team-modal-close" onclick="closeTeamManager()">×</button></div>
+                <div class="team-modal-head"><h3>${ic('users', 16)} Équipe OPUS — photos &amp; LinkedIn</h3><button class="team-modal-close" onclick="closeTeamManager()">×</button></div>
                 <div class="team-modal-body">
                     <div class="tm-hint">Collez l'URL d'une photo ou importez un fichier, ajoutez le lien LinkedIn et l'email de chaque membre. Sans photo, les initiales s'affichent.</div>
                     ${rows}
@@ -4039,6 +4107,13 @@
         // SOUS-ACTIONS (checklist par tâche)
         // =============================================
         // Séparateur invisible pour encoder les sous-actions dans la colonne commentaires du Sheet
+                const OPUS_ICONS = {"plus": "<path d=\"M7 2.5v9M2.5 7h9\"/>", "calendar": "<rect x=\"1.5\" y=\"2.5\" width=\"11\" height=\"10\" rx=\"2\"/><path d=\"M1.5 5.5h11M4.5 1v3M9.5 1v3\"/>", "clock": "<circle cx=\"7\" cy=\"7.5\" r=\"5.3\"/><path d=\"M7 4.7V7.6l2 1.3\"/>", "alert": "<path d=\"M4.6 1.5h4.8l3.1 3.1v4.8l-3.1 3.1H4.6l-3.1-3.1V4.6z\"/><path d=\"M7 4.3v3.2\"/><circle cx=\"7\" cy=\"9.8\" r=\".45\" fill=\"currentColor\"/>", "chat": "<path d=\"M1.5 3.5A1.5 1.5 0 013 2h8a1.5 1.5 0 011.5 1.5v4A1.5 1.5 0 0111 9H5.5L3 11.2V9H3a1.5 1.5 0 01-1.5-1.5z\"/><path d=\"M4.5 4.7h5M4.5 6.6h3\"/>", "clip": "<path d=\"M9.6 4.6L5.3 8.9a1.2 1.2 0 001.7 1.7l4.5-4.5a2.4 2.4 0 00-3.4-3.4L3.6 7.2a3.6 3.6 0 005.1 5.1l3.3-3.3\"/>", "chart": "<path d=\"M1.5 12V8M4.5 12V5M7.5 12V7M10.5 12V3\"/><path d=\"M1 12H13\"/>", "list": "<rect x=\"2\" y=\"1.5\" width=\"10\" height=\"11\" rx=\"1.6\"/><path d=\"M4.3 4.8h5.4M4.3 7h5.4M4.3 9.2h3.4\"/>", "template": "<rect x=\"1.5\" y=\"1.5\" width=\"11\" height=\"11\" rx=\"2\"/><path d=\"M4 5h6M4 7.5h4\"/>", "refresh": "<path d=\"M12 7a5 5 0 11-1.5-3.5\"/><path d=\"M12.5 1.5V4H10\"/>", "gear": "<circle cx=\"7\" cy=\"7\" r=\"2\"/><path d=\"M7 1.5v1.6M7 10.9v1.6M1.5 7h1.6M10.9 7h1.6M3.1 3.1l1.1 1.1M9.8 9.8l1.1 1.1M3.1 10.9l1.1-1.1M9.8 4.2l1.1-1.1\"/>", "download": "<path d=\"M7 1.5v7M4 5.5l3 3 3-3M2 11.5h10\"/>", "upload": "<path d=\"M7 9V2M4 5l3-3 3 3M2 11.5h10\"/>", "eye": "<path d=\"M1 7s2.2-4 6-4 6 4 6 4-2.2 4-6 4-6-4-6-4z\"/><circle cx=\"7\" cy=\"7\" r=\"1.7\"/>", "trash": "<path d=\"M2 3.5h10M5 3.5V2.4a.7.7 0 01.7-.7h2.6a.7.7 0 01.7.7v1.1M5.3 6.2v4M8.7 6.2v4M3 3.5l.6 8h6.8l.6-8\"/>", "pencil": "<path d=\"M9.6 2.2l2.2 2.2-6.9 6.9-2.8.6.6-2.8z\"/>", "search": "<circle cx=\"6.2\" cy=\"6.2\" r=\"4.2\"/><path d=\"M9.3 9.3l3.2 3.2\"/>", "info": "<circle cx=\"7\" cy=\"7\" r=\"5.5\"/><path d=\"M7 6.3v3.6\"/><circle cx=\"7\" cy=\"4.3\" r=\".45\" fill=\"currentColor\"/>", "users": "<circle cx=\"5\" cy=\"4.6\" r=\"2.1\"/><path d=\"M1.3 12.2c.3-2.2 1.8-3.6 3.7-3.6s3.4 1.4 3.7 3.6\"/><path d=\"M9.4 2.7a2 2 0 010 3.8M10.6 8.7c1.2.4 2 1.6 2.2 3.4\"/>", "user": "<circle cx=\"7\" cy=\"4.7\" r=\"2.3\"/><path d=\"M2.5 12.5c.4-2.6 2.2-4 4.5-4s4.1 1.4 4.5 4\"/>", "lock": "<rect x=\"2.5\" y=\"6\" width=\"9\" height=\"6.5\" rx=\"1.5\"/><path d=\"M4.5 6V4.5a2.5 2.5 0 015 0V6\"/>", "link": "<path d=\"M5.8 8.2a2.2 2.2 0 003.3.2l1.8-1.8a2.2 2.2 0 00-3.1-3.1l-1 1\"/><path d=\"M8.2 5.8a2.2 2.2 0 00-3.3-.2L3.1 7.4a2.2 2.2 0 003.1 3.1l1-1\"/>", "key": "<circle cx=\"4.5\" cy=\"9.5\" r=\"2.5\"/><path d=\"M6.3 7.7L12 2M10 4l1.6 1.6\"/>", "mail": "<rect x=\"1\" y=\"2.5\" width=\"12\" height=\"9\" rx=\"1.5\"/><path d=\"M1.5 3.5L7 7.5l5.5-4\"/>", "check": "<path d=\"M2.8 7.3l2.7 2.7 5.7-5.9\"/>", "checkbox": "<rect x=\"1.5\" y=\"1.5\" width=\"11\" height=\"11\" rx=\"2\"/><path d=\"M4.5 7l1.7 1.8 3.3-3.6\"/>", "target": "<circle cx=\"7\" cy=\"7\" r=\"5.5\"/><circle cx=\"7\" cy=\"7\" r=\"2.4\"/>", "cloud": "<path d=\"M4 11.2h6.3a2.7 2.7 0 00.3-5.4 3.6 3.6 0 00-6.9.9A2.3 2.3 0 004 11.2z\"/>", "globe": "<circle cx=\"7\" cy=\"7\" r=\"5.5\"/><path d=\"M1.5 7h11M7 1.5c1.6 1.6 2.4 3.5 2.4 5.5S8.6 10.9 7 12.5C5.4 10.9 4.6 9 4.6 7S5.4 3.1 7 1.5z\"/>", "folder": "<path d=\"M1.5 3.6a1 1 0 011-1h2.7l1.2 1.3h4.9a1 1 0 011 1v5.6a1 1 0 01-1 1h-9.8a1 1 0 01-1-1z\"/>", "share": "<circle cx=\"10.5\" cy=\"2.8\" r=\"1.4\"/><circle cx=\"10.5\" cy=\"11.2\" r=\"1.4\"/><circle cx=\"3\" cy=\"7\" r=\"1.4\"/><path d=\"M4.3 6.3l4.9-2.8M4.3 7.7l4.9 2.8\"/>", "phone": "<rect x=\"3.5\" y=\"1\" width=\"7\" height=\"12\" rx=\"1.6\"/><path d=\"M6.2 10.6h1.6\"/>", "play": "<path d=\"M4.5 2.5l7 4.5-7 4.5z\"/>", "home": "<path d=\"M2 6.3L7 2.3l5 4V12H2z\"/><path d=\"M5.6 12V8.6h2.8V12\"/>", "briefcase": "<rect x=\"1.5\" y=\"4.3\" width=\"11\" height=\"7.7\" rx=\"1.5\"/><path d=\"M5 4.3V3a1 1 0 011-1h2a1 1 0 011 1v1.3M1.5 7.5h11\"/>", "layers": "<path d=\"M7 1.8l5.3 2.9L7 7.6 1.7 4.7z\"/><path d=\"M1.7 7.3L7 10.2l5.3-2.9M1.7 9.8L7 12.7l5.3-2.9\"/>", "ban": "<circle cx=\"7\" cy=\"7\" r=\"5.5\"/><path d=\"M3.1 3.1l7.8 7.8\"/>", "warning": "<path d=\"M7 1.8l5.7 9.9H1.3z\"/><path d=\"M7 5.6v2.7\"/><circle cx=\"7\" cy=\"10\" r=\".45\" fill=\"currentColor\"/>", "x": "<circle cx=\"7\" cy=\"7\" r=\"5.5\"/><path d=\"M5 5l4 4M9 5l-4 4\"/>", "menu": "<path d=\"M2 3.5h10M2 7h10M2 10.5h10\"/>", "save": "<path d=\"M2 3a1 1 0 011-1h6l3 3v6a1 1 0 01-1 1H3a1 1 0 01-1-1z\"/><path d=\"M4.5 2v3h4M4.5 12V8.5h5V12\"/>", "file": "<path d=\"M3 1.5h5l3 3v8a.8.8 0 01-.8.8H3a.8.8 0 01-.8-.8V2.3A.8.8 0 013 1.5z\"/><path d=\"M8 1.5v3h3\"/>", "chain": "<path d=\"M5.8 8.2a2.2 2.2 0 003.3.2l1.8-1.8a2.2 2.2 0 00-3.1-3.1l-1 1\"/><path d=\"M8.2 5.8a2.2 2.2 0 00-3.3-.2L3.1 7.4a2.2 2.2 0 003.1 3.1l1-1\"/>", "gantt": "<rect x=\"1\" y=\"2.5\" width=\"12\" height=\"10\" rx=\"2\"/><path d=\"M1 6H13M4.5 1V4M9.5 1V4\"/><path d=\"M3.5 8.4h4M6 10.4h4\"/>", "today": "<circle cx=\"7\" cy=\"7\" r=\"5.5\"/><circle cx=\"7\" cy=\"7\" r=\"1.6\" fill=\"currentColor\"/>"};
+
+        function ic(name, size, extra) {
+            size = size || 14;
+            const p = OPUS_ICONS[name] || '';
+            return '<svg class="ic' + (extra ? ' ' + extra : '') + '" width="' + size + '" height="' + size + '" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="' + (name === 'plus' ? '2' : '1.6') + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>';
+        }
         const SUBTASK_DELIM = '␞';
         // Champs de suivi détaillé (réf., visibilité client…) : encodés dans la colonne "comments" du Sheet
         const META_DELIM = '␟';
@@ -4058,15 +4133,15 @@
         function renderTaskMetaHtml(t) {
             const chips = [];
             if (t.ref) chips.push(`<span class="tm-chip tm-ref">${escapeHtml(t.ref)}</span>`);
-            if (t.visibility === 'Interne Opus') chips.push('<span class="tm-chip tm-int" title="Action interne : jamais diffusée au client">🔒 Interne</span>');
-            else if (t.visibility === 'Client') chips.push('<span class="tm-chip tm-cli" title="Action visible par le client">👁️ Client</span>');
+            if (t.visibility === 'Interne Opus') chips.push('<span class="tm-chip tm-int" title="Action interne : jamais diffusée au client">' + ic('lock', 11) + ' Interne</span>');
+            else if (t.visibility === 'Client') chips.push('<span class="tm-chip tm-cli" title="Action visible par le client">' + ic('eye', 11) + ' Client</span>');
             if (t.subStatus) chips.push(`<span class="tm-chip tm-sub">${escapeHtml(t.subStatus)}</span>`);
             if (t.organisation) chips.push(`<span class="tm-chip tm-org">${escapeHtml(t.organisation)}</span>`);
-            if (t.dueLabel && !t.endDate) chips.push(`<span class="tm-chip tm-due" title="Échéance (libellé)">📅 ${escapeHtml(t.dueLabel)}</span>`);
-            if (t.dependsOn) chips.push(`<span class="tm-chip tm-dep" title="Dépend de">⛓ ${escapeHtml(t.dependsOn)}</span>`);
+            if (t.dueLabel && !t.endDate) chips.push(`<span class="tm-chip tm-due" title="Échéance (libellé)">${ic('calendar', 11)} ${escapeHtml(t.dueLabel)}</span>`);
+            if (t.dependsOn) chips.push(`<span class="tm-chip tm-dep" title="Dépend de">${ic('chain', 11)} ${escapeHtml(t.dependsOn)}</span>`);
             let h = chips.length ? `<div class="tm-chips">${chips.join('')}</div>` : '';
-            if (t.deliverable) h += `<div class="tm-deliv" title="Livrable / critère de réussite">🎯 ${escapeHtml(t.deliverable)}</div>`;
-            if (t.internalNote) h += `<div class="tm-note" title="Note interne Opus — jamais diffusée">🔒 ${escapeHtml(t.internalNote)}</div>`;
+            if (t.deliverable) h += `<div class="tm-deliv" title="Livrable / critère de réussite">${ic('target', 11)} ${escapeHtml(t.deliverable)}</div>`;
+            if (t.internalNote) h += `<div class="tm-note" title="Note interne Opus — jamais diffusée">${ic('lock', 11)} ${escapeHtml(t.internalNote)}</div>`;
             return h;
         }
         let editingSubtasks = []; // buffer d'édition dans le modal
@@ -4139,7 +4214,7 @@
             return `
                 <div style="margin-top:0.75rem; background:var(--gray-100); border-radius:10px; padding:0.6rem 0.75rem;">
                     <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; font-weight:700; color:var(--gray-700); margin-bottom:0.4rem;">
-                        <span>☑️ Sous-actions ${prog.done}/${prog.total}</span>
+                        <span>${ic('checkbox', 12)} Sous-actions ${prog.done}/${prog.total}</span>
                         <span>${prog.pct}%</span>
                     </div>
                     <div style="height:6px; background:var(--gray-300); border-radius:3px; overflow:hidden; margin-bottom:0.5rem;">
@@ -4161,7 +4236,7 @@
                 <div style="display:flex; align-items:center; gap:0.5rem; background:#fff; border:1px solid var(--gray-200); border-radius:8px; padding:0.35rem 0.5rem;">
                     <input type="checkbox" ${s.done ? 'checked' : ''} onchange="toggleEditingSubtask(${i})" style="width:1.1rem; height:1.1rem; cursor:pointer;">
                     <span style="flex:1; font-size:0.9rem; ${s.done ? 'text-decoration:line-through; color:var(--gray-700);' : ''}">${escapeHtml(s.title)}</span>
-                    <button type="button" onclick="removeEditingSubtask(${i})" title="Supprimer" style="border:none; background:none; cursor:pointer; font-size:1rem;">🗑️</button>
+                    <button type="button" onclick="removeEditingSubtask(${i})" title="Supprimer" style="border:none; background:none; cursor:pointer; font-size:1rem;">${ic('trash')}</button>
                 </div>
             `).join('');
         }
@@ -4263,6 +4338,7 @@
                 comments: document.getElementById('taskComments').value,
                 subtasks: normalizeSubtasks(editingSubtasks)
             };
+            if (!task.startDate) task.startDate = projectStartDate(tasks.filter(t => t.id !== task.id).concat([task]));
             const xv = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
             task.ref = xv('taskRef'); task.visibility = xv('taskVisibility'); task.organisation = xv('taskOrganisation');
             task.subStatus = xv('taskSubStatus'); task.deliverable = xv('taskDeliverable'); task.dueLabel = xv('taskDueLabel');
@@ -4454,7 +4530,7 @@
             overlay.id = 'importOverlay';
             overlay.onclick = (e) => { if (e.target === overlay) closeImportModal(); };
             overlay.innerHTML = `<div class="team-modal" style="max-width:560px;">
-                <div class="team-modal-head"><h3>📥 Importer des actions (CSV / Excel)</h3><button class="team-modal-close" onclick="closeImportModal()">×</button></div>
+                <div class="team-modal-head"><h3>${ic('upload', 16)} Importer des actions (CSV / Excel)</h3><button class="team-modal-close" onclick="closeImportModal()">×</button></div>
                 <div class="team-modal-body">
                     <p class="tm-hint">Colonnes reconnues : ID / Réf., Lot (ou Phase), Action, Responsable, Statut, Priorité, Échéance, Visibilité, Organisation, Dépend de, Source, Commentaire, Note interne… Pour un fichier Excel, l'onglet « Actions (import) » est lu en priorité.</p>
                     <input type="file" id="importFile" accept=".csv,.xlsx,.xls" onchange="onImportFile(this)" style="margin:8px 0;">
@@ -4485,7 +4561,7 @@
             try {
                 let rows;
                 if (/\.xlsx?$/i.test(f.name)) {
-                    prev.textContent = '⏳ Lecture du fichier Excel…';
+                    prev.textContent = 'Lecture du fichier Excel…';
                     const XLSX = await loadSheetJs();
                     const wb = XLSX.read(await f.arrayBuffer(), { type: 'array', cellDates: true });
                     const name = wb.SheetNames.includes('Actions (import)') ? 'Actions (import)' : wb.SheetNames[0];
@@ -4498,10 +4574,10 @@
                 _importTasks = res.tasks;
                 const lots = [...new Set(res.tasks.map(t => t.phase).filter(Boolean))].length;
                 const internal = res.tasks.filter(t => t.visibility === 'Interne Opus').length;
-                prev.innerHTML = `✅ <strong>${res.tasks.length}</strong> actions détectées · ${lots} lots · ${internal} internes Opus · ${res.cols.length} colonnes reconnues`;
+                prev.innerHTML = `${ic('check')} <strong>${res.tasks.length}</strong> actions détectées · ${lots} lots · ${internal} internes Opus · ${res.cols.length} colonnes reconnues`;
                 if (btn) btn.disabled = false;
             } catch (e) {
-                prev.textContent = '❌ Fichier non lisible : ' + e.message;
+                prev.textContent = 'Fichier non lisible : ' + e.message;
             }
         }
         function runImport() {
@@ -4512,8 +4588,8 @@
             let projectName = currentProject;
             if (target === 'new') {
                 projectName = (document.getElementById('importNewName').value || '').trim();
-                if (!projectName) { res.textContent = '❌ Indiquez le nom du nouveau projet.'; return; }
-                if (allProjects[projectName]) { res.textContent = '❌ Un projet porte déjà ce nom : choisissez « Projet actuel » après l\'avoir sélectionné.'; return; }
+                if (!projectName) { res.textContent = 'Indiquez le nom du nouveau projet.'; return; }
+                if (allProjects[projectName]) { res.textContent = 'Un projet porte déjà ce nom : choisissez « Projet actuel » après l\'avoir sélectionné.'; return; }
             }
             const list = target === 'new' ? [] : (allProjects[projectName] || []).slice();
             let added = 0, updated = 0;
@@ -4526,7 +4602,7 @@
             allProjects[projectName] = list;
             _importTasks = null;
             const btn = document.getElementById('btnRunImport'); if (btn) btn.disabled = true;
-            res.innerHTML = `✅ Import terminé dans « <strong>${escapeHtml(projectName)}</strong> » : ${added} ajoutée(s), ${updated} mise(s) à jour.`;
+            res.innerHTML = `${ic('check')} Import terminé dans « <strong>${escapeHtml(projectName)}</strong> » : ${added} ajoutée(s), ${updated} mise(s) à jour.`;
             try {
                 if (projectName !== currentProject) {
                     switchProject(projectName);
@@ -5196,110 +5272,226 @@
             URL.revokeObjectURL(url);
         }
 
-        function renderGantt() {
+        function renderGantt() { renderPlanning(); }
+
+        // ===================== PLANNING (GANTT INTERACTIF) =====================
+        const GANTT_SCALES = { day: 34, week: 13, month: 4.2, year: 1.25 };
+        const MONTHS_FR = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+        const MONTHS_FR_LONG = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+        let ganttView = localStorage.getItem('opus_gantt_view') || 'week';
+        let _ganttDrag = null;
+
+        function dayNum(iso) {
+            const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+            return m ? Math.round(Date.UTC(+m[1], +m[2] - 1, +m[3]) / 86400000) : null;
+        }
+        function isoFromDay(n) { return new Date(n * 86400000).toISOString().slice(0, 10); }
+        function dayDate(n) { return new Date(n * 86400000); }
+        function todayNum() { const d = new Date(); return Math.round(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000); }
+        function isoWeek(n) {
+            const d = dayDate(n); const day = (d.getUTCDay() + 6) % 7;
+            d.setUTCDate(d.getUTCDate() - day + 3);
+            const firstThu = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
+            return 1 + Math.round(((d - firstThu) / 86400000 - 3 + ((firstThu.getUTCDay() + 6) % 7)) / 7);
+        }
+        // Premier jour du projet = la plus ancienne date connue de ses actions
+        function projectStartDate(list) {
+            let min = null;
+            (list || []).forEach(t => ['startDate', 'endDate', 'createdAt'].forEach(k => {
+                const n = dayNum(t[k]); if (n !== null && (min === null || n < min)) min = n;
+            }));
+            return isoFromDay(min === null ? todayNum() : min);
+        }
+        // Les actions sans date de début démarrent au 1er jour du projet (date enregistrée dans l'action)
+        function fillMissingStartDates() {
+            const real = tasks.filter(t => t.title !== PROJECT_MARKER);
+            const missing = real.filter(t => !t.startDate);
+            if (!missing.length) return false;
+            const start = projectStartDate(real);
+            missing.forEach(t => { t.startDate = start; });
+            return true;
+        }
+        function setGanttView(v) {
+            ganttView = v; localStorage.setItem('opus_gantt_view', v);
+            renderPlanning(true);
+        }
+        function ganttScrollToday() {
+            const sc = document.getElementById('gxScroll'); const line = document.getElementById('gxToday');
+            if (sc && line) sc.scrollLeft = Math.max(0, line.offsetLeft - sc.clientWidth / 2);
+        }
+        function renderPlanning(keepCenter) {
             const container = document.getElementById('ganttChart');
-            // Une action avec seulement une échéance s'affiche comme un jalon (début = fin)
-            const tasksWithDates = tasks.filter(t => t.endDate).map(t => t.startDate ? t : { ...t, startDate: t.endDate });
-            
-            if (tasksWithDates.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 3rem; color: var(--gray-700);">
-                        <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">📅 Aucune tâche avec dates</h3>
-                        <p>Ajoutez des dates de début et fin à vos tâches pour voir le diagramme de Gantt.</p>
-                    </div>
-                `;
+            if (!container) return;
+            if (!window.READ_ONLY && fillMissingStartDates()) { saveTasks(); return; } // saveTasks() relance l'affichage
+            const list = tasks.filter(t => t.title !== PROJECT_MARKER && (t.startDate || t.endDate));
+            const toolbar = document.getElementById('ganttToolbar');
+            if (toolbar) toolbar.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === ganttView));
+            if (!list.length) {
+                container.innerHTML = `<div class="gx-empty">${ic('calendar', 28)}<p>Aucune action dans ce projet pour l'instant.</p></div>`;
                 return;
             }
-            
-            const dates = tasksWithDates.flatMap(t => [new Date(t.startDate), new Date(t.endDate)]);
-            const minDate = new Date(Math.min(...dates));
-            const maxDate = new Date(Math.max(...dates));
-            
-            minDate.setDate(minDate.getDate() - 7);
-            maxDate.setDate(maxDate.getDate() + 7);
-            
-            const totalDays = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24));
-            
-            const phases = projectPhaseList(tasks);
-            
-            let html = `
-                <div class="gantt-header">
-                    <div>Tâche</div>
-                    <div class="gantt-dates">
-                        <span class="gantt-date">${formatDate(minDate.toISOString().split('T')[0])}</span>
-                        <span class="gantt-date">${formatDate(maxDate.toISOString().split('T')[0])}</span>
-                    </div>
-                </div>
-            `;
-            
-            phases.forEach(phase => {
-                const phaseTasks = tasksWithDates.filter(t => t.phase === phase);
-                
-                if (phaseTasks.length > 0) {
-                    html += `
-                        <div class="gantt-phase-group">${phase}</div>
-                    `;
-                    
-                    phaseTasks.forEach(task => {
-                        const startDate = new Date(task.startDate);
-                        const endDate = new Date(task.endDate);
-                        
-                        const startOffset = Math.ceil((startDate - minDate) / (1000 * 60 * 60 * 24));
-                        const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
-                        
-                        const leftPercent = (startOffset / totalDays) * 100;
-                        const widthPercent = (duration / totalDays) * 100;
-                        
-                        const statusClass = {
-                            'À faire': 'status-todo',
-                            'En cours': 'status-progress',
-                            'Terminé': 'status-done',
-                            'Bloqué': 'status-blocked'
-                        }[task.status] || 'status-todo';
-                        
-                        html += `
-                            <div class="gantt-row">
-                                <div>
-                                    <div class="gantt-task-name">${task.title}</div>
-                                    <div style="font-size: 0.75rem; color: var(--gray-700); margin-top: 0.2rem;">
-                                        ${task.responsible ? '👤 ' + task.responsible : ''}
-                                    </div>
-                                </div>
-                                <div class="gantt-bar-container">
-                                    <div class="gantt-bar ${statusClass}" 
-                                         style="left: ${leftPercent}%; width: ${widthPercent}%;"
-                                         title="${task.title}\n${formatDate(task.startDate)} → ${formatDate(task.endDate)}\nStatut: ${task.status}">
-                                        ${duration > 3 ? task.status : ''}
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    });
-                }
+            const px = GANTT_SCALES[ganttView] || GANTT_SCALES.week;
+            const items = list.map(t => {
+                const s0 = dayNum(t.startDate), e0 = dayNum(t.endDate);
+                const start = s0 !== null ? s0 : e0;
+                const end = Math.max(start, e0 !== null ? e0 : start);
+                return { t, start, end, milestone: e0 === null || e0 === start };
             });
-            
-            html += `
-                <div class="gantt-legend">
-                    <div class="gantt-legend-item">
-                        <div class="gantt-legend-color" style="background: linear-gradient(135deg, #3B82F6, #2563EB);"></div>
-                        <span>À faire</span>
-                    </div>
-                    <div class="gantt-legend-item">
-                        <div class="gantt-legend-color" style="background: linear-gradient(135deg, #F59E0B, #D97706);"></div>
-                        <span>En cours</span>
-                    </div>
-                    <div class="gantt-legend-item">
-                        <div class="gantt-legend-color" style="background: linear-gradient(135deg, #10B981, #059669);"></div>
-                        <span>Terminé</span>
-                    </div>
-                    <div class="gantt-legend-item">
-                        <div class="gantt-legend-color" style="background: linear-gradient(135deg, #EF4444, #DC2626);"></div>
-                        <span>Bloqué</span>
+            let min = Math.min(...items.map(i => i.start), todayNum());
+            let max = Math.max(...items.map(i => i.end), todayNum());
+            // marges et alignement sur l'unité affichée
+            const pad = { day: 3, week: 14, month: 45, year: 120 }[ganttView];
+            min -= pad; max += pad;
+            const dMin = dayDate(min);
+            if (ganttView === 'week') min -= (dMin.getUTCDay() + 6) % 7;
+            if (ganttView === 'month') min = dayNum(isoFromDay(min).slice(0, 8) + '01');
+            if (ganttView === 'year') min = dayNum(isoFromDay(min).slice(0, 5) + '01-01');
+            const total = max - min + 1;
+            const W = Math.ceil(total * px);
+            const xOf = n => (n - min) * px;
+
+            // ---- en-têtes : ligne haute (mois / années) et ligne basse (jours / semaines / mois / trimestres)
+            let top = '', bottom = '', grid = '';
+            const pushSeg = (arr, from, to, label, cls) => arr.push(`<div class="gx-seg ${cls || ''}" style="left:${xOf(from)}px;width:${(to - from + 1) * px}px" title="${label}">${label}</div>`);
+            const tops = [], bots = [];
+            let d = min;
+            while (d <= max) {
+                const dt = dayDate(d), y = dt.getUTCFullYear(), m = dt.getUTCMonth();
+                if (ganttView === 'month' || ganttView === 'year') {
+                    const yEnd = Math.min(max, dayNum(`${y}-12-31`));
+                    pushSeg(tops, d, yEnd, String(y)); d = yEnd + 1;
+                } else {
+                    const mEnd = Math.min(max, dayNum(isoFromDay(dayNum(`${m === 11 ? y + 1 : y}-${String(m === 11 ? 1 : m + 2).padStart(2, '0')}-01`) - 1)));
+                    pushSeg(tops, d, mEnd, `${MONTHS_FR_LONG[m]} ${y}`); d = mEnd + 1;
+                }
+            }
+            d = min;
+            while (d <= max) {
+                const dt = dayDate(d), y = dt.getUTCFullYear(), m = dt.getUTCMonth();
+                if (ganttView === 'day') {
+                    const wd = dt.getUTCDay();
+                    pushSeg(bots, d, d, `<b>${dt.getUTCDate()}</b><i>${'DLMMJVS'[wd]}</i>`, (wd === 0 || wd === 6) ? 'gx-we' : '');
+                    if (wd === 0 || wd === 6) grid += `<div class="gx-wecol" style="left:${xOf(d)}px;width:${px}px"></div>`;
+                    d += 1;
+                } else if (ganttView === 'week') {
+                    const wEnd = Math.min(max, d + 6 - ((dt.getUTCDay() + 6) % 7));
+                    pushSeg(bots, d, wEnd, `S${isoWeek(d)}`); grid += `<div class="gx-line" style="left:${xOf(d)}px"></div>`; d = wEnd + 1;
+                } else if (ganttView === 'month') {
+                    const mEnd = Math.min(max, dayNum(isoFromDay(dayNum(`${m === 11 ? y + 1 : y}-${String(m === 11 ? 1 : m + 2).padStart(2, '0')}-01`) - 1)));
+                    pushSeg(bots, d, mEnd, MONTHS_FR[m]); grid += `<div class="gx-line" style="left:${xOf(d)}px"></div>`; d = mEnd + 1;
+                } else {
+                    const q = Math.floor(m / 3);
+                    const qEndMonth = q * 3 + 3;
+                    const qEnd = Math.min(max, dayNum(qEndMonth === 12 ? `${y}-12-31` : isoFromDay(dayNum(`${y}-${String(qEndMonth + 1).padStart(2, '0')}-01`) - 1)));
+                    pushSeg(bots, d, qEnd, `T${q + 1}`); grid += `<div class="gx-line" style="left:${xOf(d)}px"></div>`; d = qEnd + 1;
+                }
+            }
+            const tday = todayNum();
+            const todayLine = (tday >= min && tday <= max) ? `<div class="gx-today" id="gxToday" style="left:${xOf(tday) + px / 2}px"><span>Aujourd'hui</span></div>` : '';
+
+            // ---- lignes regroupées par phase
+            const statusClass = { 'À faire': 'gx-todo', 'En cours': 'gx-progress', 'Terminé': 'gx-done', 'Bloqué': 'gx-blocked' };
+            let rows = '';
+            projectPhaseList(tasks).concat(['']).forEach(phase => {
+                const its = items.filter(i => (i.t.phase || '') === phase);
+                if (!its.length) return;
+                rows += `<div class="gx-row gx-phase"><div class="gx-left">${ic('layers', 12)} ${escapeHtml(phase || 'Sans phase')} <em>${its.length}</em></div><div class="gx-track" style="width:${W}px"></div></div>`;
+                its.sort((a, b) => a.start - b.start || a.end - b.end).forEach(i => {
+                    const t = i.t;
+                    const left = xOf(i.start), width = Math.max((i.end - i.start + 1) * px, i.milestone ? 10 : 6);
+                    const label = `${t.ref ? t.ref + ' · ' : ''}${t.title}`;
+                    const tip = `${label}\n${formatDate(t.startDate)}${t.endDate ? ' → ' + formatDate(t.endDate) : ' (sans échéance)'}\nStatut : ${t.status}${t.responsible ? '\nResponsable : ' + t.responsible : ''}`;
+                    rows += `<div class="gx-row">
+                        <div class="gx-left" onclick="editTask(${t.id})" title="Ouvrir l'action">
+                            <span class="gx-dot ${statusClass[t.status] || 'gx-todo'}"></span>
+                            <span class="gx-name">${t.ref ? `<b>${escapeHtml(t.ref)}</b> ` : ''}${escapeHtml(t.title)}</span>
+                        </div>
+                        <div class="gx-track" style="width:${W}px">
+                            <div class="gx-bar ${statusClass[t.status] || 'gx-todo'} ${i.milestone ? 'gx-milestone' : ''}" data-id="${t.id}"
+                                 style="left:${left}px;width:${width}px" title="${escapeHtml(tip)}">
+                                <span class="gx-bar-label">${width > 70 ? escapeHtml(label) : ''}</span>
+                                ${window.READ_ONLY ? '' : '<span class="gx-handle" data-handle="1"></span>'}
+                            </div>
+                        </div>
+                    </div>`;
+                });
+            });
+
+            const sc0 = document.getElementById('gxScroll');
+            const prevLeft = sc0 ? sc0.scrollLeft : null;
+            container.innerHTML = `
+                <div class="gx-scroll" id="gxScroll">
+                    <div class="gx-inner" style="width:${W + 300}px">
+                        <div class="gx-row gx-head gx-head-top"><div class="gx-left">Action</div><div class="gx-track" style="width:${W}px">${tops.join('')}</div></div>
+                        <div class="gx-row gx-head gx-head-bot"><div class="gx-left"></div><div class="gx-track" style="width:${W}px">${bots.join('')}</div></div>
+                        <div class="gx-body">
+                            <div class="gx-grid" style="width:${W}px">${grid}${todayLine}</div>
+                            ${rows}
+                        </div>
                     </div>
                 </div>
-            `;
-            
-            container.innerHTML = html;
+                <div class="gantt-legend">
+                    <div class="gantt-legend-item"><span class="gx-dot gx-todo"></span><span>À faire</span></div>
+                    <div class="gantt-legend-item"><span class="gx-dot gx-progress"></span><span>En cours</span></div>
+                    <div class="gantt-legend-item"><span class="gx-dot gx-done"></span><span>Terminé</span></div>
+                    <div class="gantt-legend-item"><span class="gx-dot gx-blocked"></span><span>Bloqué</span></div>
+                    <div class="gantt-legend-item"><span class="gx-ms-sample"></span><span>Jalon (sans échéance ou d'un jour)</span></div>
+                </div>`;
+            const sc = document.getElementById('gxScroll');
+            if (keepCenter !== true && prevLeft !== null) sc.scrollLeft = prevLeft; else ganttScrollToday();
+            if (!window.READ_ONLY) sc.querySelectorAll('.gx-bar').forEach(bar => bar.addEventListener('pointerdown', ganttPointerDown));
+            else sc.querySelectorAll('.gx-bar').forEach(bar => bar.addEventListener('click', () => editTask(Number(bar.dataset.id))));
+        }
+        function ganttPointerDown(e) {
+            if (e.button !== 0) return;
+            const bar = e.currentTarget;
+            const id = Number(bar.dataset.id);
+            const t = tasks.find(x => x.id === id); if (!t) return;
+            const px = GANTT_SCALES[ganttView] || GANTT_SCALES.week;
+            _ganttDrag = { bar, id, px, x0: e.clientX, left0: bar.offsetLeft, width0: bar.offsetWidth,
+                mode: e.target.dataset.handle ? 'resize' : 'move', moved: false, days: 0 };
+            bar.setPointerCapture(e.pointerId);
+            bar.classList.add('gx-dragging');
+            bar.addEventListener('pointermove', ganttPointerMove);
+            bar.addEventListener('pointerup', ganttPointerUp, { once: true });
+            e.preventDefault();
+        }
+        function ganttPointerMove(e) {
+            const g = _ganttDrag; if (!g) return;
+            const dx = e.clientX - g.x0;
+            if (Math.abs(dx) > 3) g.moved = true;
+            g.days = Math.round(dx / g.px);
+            if (g.mode === 'move') g.bar.style.left = (g.left0 + g.days * g.px) + 'px';
+            else g.bar.style.width = Math.max(g.px, g.width0 + g.days * g.px) + 'px';
+            const t = tasks.find(x => x.id === g.id);
+            if (t && g.moved) {
+                const s0 = dayNum(t.startDate), e0 = dayNum(t.endDate);
+                const ns = g.mode === 'move' ? s0 + g.days : s0;
+                const ne = g.mode === 'move' ? (e0 !== null ? e0 + g.days : null) : Math.max(s0, (e0 !== null ? e0 : s0) + g.days);
+                g.bar.title = `${formatDate(isoFromDay(ns))}${ne !== null ? ' → ' + formatDate(isoFromDay(ne)) : ''}`;
+                const lab = g.bar.querySelector('.gx-bar-label');
+                if (lab) lab.textContent = g.bar.title;
+            }
+        }
+        function ganttPointerUp(e) {
+            const g = _ganttDrag; _ganttDrag = null; if (!g) return;
+            g.bar.removeEventListener('pointermove', ganttPointerMove);
+            g.bar.classList.remove('gx-dragging');
+            if (!g.moved) { editTask(g.id); return; }
+            const t = tasks.find(x => x.id === g.id);
+            if (t && g.days !== 0) {
+                const s0 = dayNum(t.startDate), e0 = dayNum(t.endDate);
+                if (g.mode === 'move') {
+                    t.startDate = isoFromDay(s0 + g.days);
+                    if (e0 !== null) t.endDate = isoFromDay(e0 + g.days);
+                } else {
+                    t.endDate = isoFromDay(Math.max(s0, (e0 !== null ? e0 : s0) + g.days));
+                }
+                saveTasks();
+                showSyncStatus(`« ${t.ref || t.title.slice(0, 30)} » : ${formatDate(t.startDate)}${t.endDate ? ' → ' + formatDate(t.endDate) : ''}`, 'success');
+            } else {
+                renderPlanning();
+            }
         }
 
         function updateCharts() {
@@ -5512,7 +5704,7 @@
             if (!foot || !CURRENT_USER) return;
             let el = document.getElementById('userBadge');
             if (!el) { el = document.createElement('div'); el.id = 'userBadge'; foot.insertBefore(el, foot.firstChild); }
-            el.innerHTML = `<div class="ub-name" title="${escapeHtml(CURRENT_USER.email)}">👤 ${escapeHtml(CURRENT_USER.name || CURRENT_USER.email)}</div>
+            el.innerHTML = `<div class="ub-name" title="${escapeHtml(CURRENT_USER.email)}">${ic('user', 12)} ${escapeHtml(CURRENT_USER.name || CURRENT_USER.email)}</div>
                 <div class="ub-role">${escapeHtml(ROLE_LABELS[CURRENT_USER.role] || CURRENT_USER.role)}${window.READ_ONLY ? ' · consultation' : ''}</div>
                 <button type="button" class="ub-out" onclick="logout()">Se déconnecter</button>`;
         }
@@ -5540,7 +5732,7 @@
             setTimeout(() => (last ? (document.getElementById(act ? 'lgCode' : 'lgPwd')) : em).focus(), 50);
             document.getElementById('lgBtn').onclick = () => (act ? doActivate() : doLogin());
             ov.querySelectorAll('input').forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('lgBtn').click(); }));
-            showSyncStatus('🔐 Connexion requise', 'warning');
+            showSyncStatus('Connexion requise', 'warning');
         }
         const LOGIN_ERRORS = {
             invalid: 'E-mail ou mot de passe incorrect.',
@@ -5552,7 +5744,7 @@
         async function loginRequest(action, payload) {
             const err = document.getElementById('lgErr');
             const btn = document.getElementById('lgBtn');
-            btn.disabled = true; err.textContent = '⏳ Vérification…';
+            btn.disabled = true; err.textContent = 'Vérification…';
             try {
                 const res = await apiCall(action, payload);
                 if (res && res.success) {
@@ -5618,8 +5810,8 @@
             ov.className = 'team-modal-overlay'; ov.id = 'accessOverlay';
             ov.onclick = (e) => { if (e.target === ov) closeAccessManager(); };
             ov.innerHTML = `<div class="team-modal" style="max-width:980px; width:96vw;">
-                <div class="team-modal-head"><h3>🔐 Gérer les accès</h3><button class="team-modal-close" onclick="closeAccessManager()">×</button></div>
-                <div class="team-modal-body" id="accessBody"><p class="tm-hint">⏳ Chargement des comptes…</p></div></div>`;
+                <div class="team-modal-head"><h3>${ic('key', 16)} Gérer les accès</h3><button class="team-modal-close" onclick="closeAccessManager()">×</button></div>
+                <div class="team-modal-body" id="accessBody"><p class="tm-hint">Chargement des comptes…</p></div></div>`;
             document.body.appendChild(ov);
             await refreshAccessManager();
         }
@@ -5631,22 +5823,22 @@
                 const res = await apiCall('users_list');
                 if (!res || !res.success) throw new Error((res && res.error) || 'erreur');
                 _accessData = res;
-            } catch (e) { body.innerHTML = `<p class="tm-hint">❌ Impossible de charger les comptes (${escapeHtml(e.message)}).</p>`; return; }
+            } catch (e) { body.innerHTML = `<p class="tm-hint">Impossible de charger les comptes (${escapeHtml(e.message)}).</p>`; return; }
             const projects = [...new Set([...(_accessData.projects || []), ...Object.keys(allProjects)])].sort((a, b) => a.localeCompare(b, 'fr'));
             const roleSel = (cur, id) => `<select id="${id}">${Object.keys(ROLE_LABELS).map(r => `<option value="${r}" ${r === cur ? 'selected' : ''}>${ROLE_LABELS[r]}</option>`).join('')}</select>`;
             const projBoxes = (list, key) => `<label class="ac-proj ac-all"><input type="checkbox" data-k="${key}" value="*" ${list.includes('*') ? 'checked' : ''}> Tous les projets</label>` +
                 projects.map(p => `<label class="ac-proj"><input type="checkbox" data-k="${key}" value="${escapeHtml(p)}" ${list.includes(p) ? 'checked' : ''}> ${escapeHtml(p)}</label>`).join('');
             const rows = _accessData.users.map((u, i) => {
-                const state = !u.active ? '⛔ Désactivé' : u.hasPassword ? ('✅ Actif' + (u.lastLogin ? ' · dernière connexion ' + escapeHtml(u.lastLogin) : '')) : (u.pendingInvite ? '✉️ Invitation en attente' : '⏳ Jamais invité');
+                const state = !u.active ? (ic('ban', 11) + ' Désactivé') : u.hasPassword ? (ic('check', 11) + ' Actif' + (u.lastLogin ? ' · dernière connexion ' + escapeHtml(u.lastLogin) : '')) : (u.pendingInvite ? ic('mail', 11) + ' Invitation en attente' : ic('clock', 11) + ' Jamais invité');
                 return `<div class="ac-row">
                     <div class="ac-id"><strong>${escapeHtml(u.email)}</strong><input id="acName${i}" value="${escapeHtml(u.name || '')}" placeholder="Nom affiché"><div class="ac-state">${state}</div></div>
                     <div class="ac-role">${roleSel(u.role, 'acRole' + i)}<label class="ac-active"><input type="checkbox" id="acActive${i}" ${u.active ? 'checked' : ''}> Compte actif</label></div>
                     <div class="ac-projs">${projBoxes(u.projects || [], 'p' + i)}</div>
                     <div class="ac-btns">
                         <button class="btn btn-primary" type="button" onclick="saveAccessRow(${i})">Enregistrer</button>
-                        <button class="btn btn-secondary" type="button" onclick="inviteAccess(${i}, true)">✉️ Envoyer une invitation</button>
-                        <button class="btn btn-secondary" type="button" onclick="inviteAccess(${i}, false)">🔑 Afficher un code</button>
-                        ${CURRENT_USER && u.email === CURRENT_USER.email ? '' : `<button class="btn ac-del" type="button" id="acDel${i}" onclick="deleteAccess(${i})">🗑️ Supprimer le compte</button>`}
+                        <button class="btn btn-secondary" type="button" onclick="inviteAccess(${i}, true)">${ic('mail')} Envoyer une invitation</button>
+                        <button class="btn btn-secondary" type="button" onclick="inviteAccess(${i}, false)">${ic('key')} Afficher un code</button>
+                        ${CURRENT_USER && u.email === CURRENT_USER.email ? '' : `<button class="btn ac-del" type="button" id="acDel${i}" onclick="deleteAccess(${i})">${ic('trash')} Supprimer le compte</button>`}
                         <div class="ac-msg" id="acMsg${i}"></div>
                     </div>
                 </div>`;
@@ -5655,7 +5847,7 @@
                 <p class="tm-hint">Chaque personne ne voit que les projets cochés. <strong>Partenaire</strong> : modifie ses projets, sans les actions ni notes « Interne Opus ». <strong>Client</strong> : consultation seule, sans interne. <strong>Équipe Opus</strong> : voit tout sur ses projets. Un projet créé par un partenaire ou un membre de l'équipe lui est attribué automatiquement.</p>
                 ${flash ? `<div class="ac-flash">${flash}</div>` : ''}
                 <div class="ac-row ac-new">
-                    <div class="ac-id"><strong>➕ Nouvelle personne</strong><input id="acNewEmail" type="email" placeholder="E-mail"><input id="acNewName" placeholder="Nom affiché"></div>
+                    <div class="ac-id"><strong>${ic('plus')} Nouvelle personne</strong><input id="acNewEmail" type="email" placeholder="E-mail"><input id="acNewName" placeholder="Nom affiché"></div>
                     <div class="ac-role">${roleSel('client', 'acNewRole')}</div>
                     <div class="ac-projs">${projBoxes([], 'new')}</div>
                     <div class="ac-btns"><button class="btn btn-primary" type="button" onclick="addAccess()">Créer le compte</button><div class="ac-msg" id="acNewMsg"></div></div>
@@ -5668,23 +5860,23 @@
         async function saveAccessRow(i) {
             const u = _accessData.users[i];
             const msg = document.getElementById('acMsg' + i);
-            msg.textContent = '⏳';
+            msg.textContent = 'En cours…';
             try {
                 const res = await apiCall('user_save', { email: u.email, name: document.getElementById('acName' + i).value, role: document.getElementById('acRole' + i).value, projects: checkedProjects('p' + i), active: document.getElementById('acActive' + i).checked });
                 if (!res.success) throw new Error(res.error);
-                await refreshAccessManager('✅ Accès de ' + escapeHtml(u.email) + ' enregistrés.');
-            } catch (e) { msg.textContent = '❌ ' + e.message; }
+                await refreshAccessManager(ic('check') + ' Accès de ' + escapeHtml(u.email) + ' enregistrés.');
+            } catch (e) { msg.textContent = 'Erreur : ' + e.message; }
         }
         async function addAccess() {
             const email = document.getElementById('acNewEmail').value.trim().toLowerCase();
             const msg = document.getElementById('acNewMsg');
-            if (!email) { msg.textContent = '❌ Indiquez un e-mail.'; return; }
-            msg.textContent = '⏳';
+            if (!email) { msg.textContent = 'Indiquez un e-mail.'; return; }
+            msg.textContent = 'En cours…';
             try {
                 const res = await apiCall('user_save', { email, name: document.getElementById('acNewName').value, role: document.getElementById('acNewRole').value, projects: checkedProjects('new'), active: true });
                 if (!res.success) throw new Error(res.error);
-                await refreshAccessManager('✅ Compte créé pour ' + escapeHtml(email) + '. Envoyez-lui maintenant une invitation (bouton ✉️ sur sa ligne).');
-            } catch (e) { msg.textContent = '❌ ' + e.message; }
+                await refreshAccessManager(ic('check') + ' Compte créé pour ' + escapeHtml(email) + '. Envoyez-lui maintenant une invitation (bouton « Envoyer une invitation » sur sa ligne).');
+            } catch (e) { msg.textContent = 'Erreur : ' + e.message; }
         }
         async function deleteAccess(i) {
             const u = _accessData.users[i];
@@ -5692,29 +5884,29 @@
             const msg = document.getElementById('acMsg' + i);
             if (!btn.dataset.armed) {
                 btn.dataset.armed = '1';
-                btn.textContent = '⚠️ Confirmer la suppression';
+                btn.textContent = 'Confirmer la suppression';
                 msg.textContent = 'Cliquez à nouveau pour supprimer définitivement ce compte (ses projets et actions ne sont pas touchés).';
-                setTimeout(() => { if (btn.isConnected && btn.dataset.armed) { delete btn.dataset.armed; btn.textContent = '🗑️ Supprimer le compte'; msg.textContent = ''; } }, 6000);
+                setTimeout(() => { if (btn.isConnected && btn.dataset.armed) { delete btn.dataset.armed; btn.innerHTML = ic('trash') + ' Supprimer le compte'; msg.textContent = ''; } }, 6000);
                 return;
             }
-            msg.textContent = '⏳';
+            msg.textContent = 'En cours…';
             try {
                 const res = await apiCall('user_delete', { email: u.email });
                 if (!res.success) throw new Error(res.error);
-                await refreshAccessManager('🗑️ Compte ' + escapeHtml(u.email) + ' supprimé.');
-            } catch (e) { msg.textContent = '❌ ' + e.message; }
+                await refreshAccessManager(ic('trash') + ' Compte ' + escapeHtml(u.email) + ' supprimé.');
+            } catch (e) { msg.textContent = 'Erreur : ' + e.message; }
         }
         async function inviteAccess(i, sendEmail) {
             const u = _accessData.users[i];
             const msg = document.getElementById('acMsg' + i);
-            msg.textContent = '⏳';
+            msg.textContent = 'En cours…';
             try {
                 const res = await apiCall('user_invite', { email: u.email, sendEmail });
                 if (!res.success) throw new Error(res.error);
                 msg.innerHTML = sendEmail
-                    ? '✅ Invitation envoyée par e-mail (valable 7 jours).'
+                    ? ic('check') + ' Invitation envoyée par e-mail (valable 7 jours).'
                     : `Code à transmettre (valable 7 jours, usage unique) : <strong class="ac-code">${escapeHtml(res.code)}</strong>`;
-            } catch (e) { msg.textContent = '❌ ' + e.message; }
+            } catch (e) { msg.textContent = 'Erreur : ' + e.message; }
         }
 
     </script>
