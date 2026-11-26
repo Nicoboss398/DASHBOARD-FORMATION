@@ -319,10 +319,42 @@
   .resp-cell:hover { background: #EEF4FF; }
   .status-select { border-color: transparent !important; background: transparent; transition: all .15s; }
   .status-select:hover { background: #EEF4FF; border-color: var(--border) !important; }
-  .status-select.s-done { color: var(--success); }
-  .status-select.s-progress { color: var(--warning); }
-  .status-select.s-blocked { color: var(--danger); }
-  .status-select.s-todo { color: #2952B3; }
+  /* Statuts colorés façon ANDRH : gris / bleu / vert / rouge */
+  .status-select.s-todo, .task-row select.status-select.s-todo { color: #666; font-weight: 600; }
+  .status-select.s-progress, .task-row select.status-select.s-progress { color: var(--blue); font-weight: 700; }
+  .status-select.s-done, .task-row select.status-select.s-done { color: var(--success); font-weight: 700; }
+  .status-select.s-blocked, .task-row select.status-select.s-blocked { color: var(--danger); font-weight: 700; }
+  .status-select option { color: var(--navy); font-weight: 500; }
+
+  /* Ligne d'action cliquable (ouvre la fiche) */
+  #tasksGrid .task-row { cursor: pointer; }
+  #tasksGrid .task-row:hover { background: linear-gradient(90deg, #EEF4FF 0%, #F7FAFF 100%); }
+  #tasksGrid .tl-title { cursor: pointer; }
+  #tasksGrid .task-row:hover .tl-title { text-decoration: underline; text-decoration-color: var(--blue); text-underline-offset: 2px; }
+  #tasksGrid .tl-comment .ic { vertical-align: -1px; opacity: .7; }
+  body.read-only #tasksGrid .task-row { cursor: default; }
+  body.read-only #tasksGrid .task-row:hover .tl-title { text-decoration: none; }
+
+  /* Gestion des phases (façon ANDRH) */
+  .ph-list { max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; padding: 4px 10px; background: #fafcff; margin-bottom: 14px; min-height: 40px; }
+  .ph-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--bg); }
+  .ph-row:last-child { border-bottom: none; }
+  .ph-arrows { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+  .ph-arrows button { background: #fff; border: 1px solid var(--border); border-radius: 5px; width: 22px; height: 18px; line-height: 1; cursor: pointer; font-size: 9px; padding: 0; color: var(--navy); }
+  .ph-arrows button:hover:not(:disabled) { border-color: var(--blue); color: var(--blue); }
+  .ph-arrows button:disabled { opacity: .3; cursor: not-allowed; }
+  .ph-name { flex: 1; min-width: 0; border: 1px solid var(--border); border-radius: 8px; padding: 7px 9px; font-family: inherit; font-size: 12.5px; font-weight: 600; color: var(--navy); background: #fff; outline: none; }
+  .ph-name:focus { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(0,68,195,0.12); }
+  .ph-count { font-size: 10.5px; color: var(--text-muted); white-space: nowrap; min-width: 54px; text-align: right; }
+  .ph-del { background: #FEE8E8; border: 1px solid #F5B5B5; color: var(--danger); border-radius: 7px; padding: 5px 8px; cursor: pointer; flex-shrink: 0; display: inline-flex; align-items: center; }
+  .ph-del:hover { background: #FDD5D5; }
+  .ph-empty { color: var(--text-muted); font-size: 12px; padding: 10px 0; text-align: center; }
+  .ph-new { border-top: 1px solid var(--border); padding-top: 12px; }
+  .ph-new-title { font-size: 10.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 8px; }
+  .ph-new input { flex: 1; min-width: 0; border: 1.5px solid var(--border); border-radius: 10px; padding: 9px 11px; font-family: inherit; font-size: 13px; outline: none; }
+  .ph-new input:focus { border-color: var(--blue); }
+  .ph-hint { font-size: 10.5px; color: var(--text-muted); margin-top: 6px; min-height: 12px; }
+  #phaseModal { z-index: 1100; }
 
   /* Popover responsables */
   .resp-popover { position: absolute; z-index: 500; background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 16px 40px rgba(0,25,92,0.22); padding: 8px; width: 234px; max-height: 280px; overflow-y: auto; }
@@ -1671,7 +1703,8 @@
             <form id="taskForm">
                 <div class="form-group">
                     <label>Phase *</label>
-                    <select id="taskPhase" required>
+                    <div class="owner-row">
+                    <select id="taskPhase" required style="flex:1; min-width:0;">
                         <option value="">Sélectionner une phase</option>
                         <option value="1. Cadrage & validation dispositif">1. Cadrage & validation dispositif</option>
                         <option value="2. Ingénierie pédagogique">2. Ingénierie pédagogique</option>
@@ -1682,6 +1715,8 @@
                         <option value="7. Clôture & obligations de sortie">7. Clôture & obligations de sortie</option>
                         <option value="8. Actions périphériques">8. Actions périphériques</option>
                     </select>
+                    <button type="button" id="btnManagePhases" class="btn-add-member" title="Créer, modifier ou supprimer des phases" onclick="openPhaseManager(true)">+</button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Titre de la tâche *</label>
@@ -1719,9 +1754,9 @@
                         <label>Priorité</label>
                         <select id="taskPriority">
                             <option value="">Aucune</option>
-                            <option value="Haute">Haute</option>
-                            <option value="Moyenne">Moyenne</option>
-                            <option value="Basse">Basse</option>
+                            <option value="Haute">🔴 Haute</option>
+                            <option value="Moyenne">🟠 Moyenne</option>
+                            <option value="Basse">🟢 Basse</option>
                         </select>
                     </div>
                 </div>
@@ -1769,10 +1804,18 @@
     <div class="modal" id="phaseModal">
         <div class="modal-content">
             <div class="modal-header"><svg class="ic" width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 1.8l5.3 2.9L7 7.6 1.7 4.7z"/><path d="M1.7 7.3L7 10.2l5.3-2.9M1.7 9.8L7 12.7l5.3-2.9"/></svg> Gérer les phases</div>
-            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px;">Ajoutez, renommez, réordonnez ou supprimez les phases (lots) du projet. Renommer une phase met à jour les actions concernées.</p>
-            <div id="phaseManagerList"></div>
-            <div class="modal-actions" style="justify-content:space-between;">
-                <button type="button" class="btn btn-primary" onclick="addPhase()"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 2.5v9M2.5 7h9"/></svg> Nouvelle phase</button>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:4px;">Phases du projet <strong id="phaseManagerProject" style="color:var(--navy);"></strong></p>
+            <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:12px;">Ajoutez, renommez, réordonnez ou supprimez les phases (lots). Les changements se répercutent sur toutes les actions du projet.</p>
+            <div id="phaseManagerList" class="ph-list"></div>
+            <div class="ph-new">
+                <div class="ph-new-title">Nouvelle phase</div>
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="newPhaseName" placeholder="Ex : Suivi post-formation" onkeydown="if(event.key==='Enter'){event.preventDefault();addPhase();}">
+                    <button type="button" class="btn btn-primary" onclick="addPhase()" style="white-space:nowrap;"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 2.5v9M2.5 7h9"/></svg> Ajouter</button>
+                </div>
+                <div id="phaseNumHint" class="ph-hint"></div>
+            </div>
+            <div class="modal-actions" style="justify-content:flex-end;">
                 <button type="button" class="btn btn-secondary" onclick="closePhaseManager()">Fermer</button>
             </div>
         </div>
@@ -2161,59 +2204,131 @@
             }
             return true;
         }
-        function openPhaseManager() {
+        // ----- Phases par projet (façon ANDRH) -----
+        // Chaque projet peut avoir sa propre liste de phases (localStorage opus_project_phases).
+        // Tant qu'un projet n'a pas été personnalisé, il utilise la liste commune (opus_phases).
+        var projectPhases = {};
+        try { projectPhases = JSON.parse(localStorage.getItem('opus_project_phases')) || {}; } catch (e) { projectPhases = {}; }
+        if (!projectPhases || typeof projectPhases !== 'object' || Array.isArray(projectPhases)) projectPhases = {};
+        function saveProjectPhases() { localStorage.setItem('opus_project_phases', JSON.stringify(projectPhases)); }
+        // Liste éditable du projet courant (créée au 1er changement à partir de ce qui est affiché)
+        function editablePhases() {
+            if (!Array.isArray(projectPhases[currentProject])) projectPhases[currentProject] = projectPhaseList(tasks).slice();
+            return projectPhases[currentProject];
+        }
+        const PHASE_NUM_RE = /^(\d+)\s*[.)-]\s*/;
+        function phasesAreNumbered(list) { return list.length > 0 && list.every(p => PHASE_NUM_RE.test(p)); }
+        function stripPhaseNum(p) { return String(p).replace(PHASE_NUM_RE, ''); }
+        // Renomme une phase dans les actions du projet courant
+        function remapTaskPhase(oldName, newName) {
+            let n = 0;
+            tasks.forEach(t => { if (t.phase === oldName) { t.phase = newName; n++; } });
+            return n;
+        }
+        let phaseManagerFromTask = false;
+        function openPhaseManager(fromTask) {
+            phaseManagerFromTask = fromTask === true;
+            const pn = document.getElementById('phaseManagerProject');
+            if (pn) pn.textContent = '« ' + currentProject + ' »';
+            const inp = document.getElementById('newPhaseName');
+            if (inp) inp.value = '';
             renderPhaseManagerList();
             document.getElementById('phaseModal').classList.add('active');
+            setTimeout(() => { if (inp) inp.focus(); }, 60);
         }
         function closePhaseManager() {
             document.getElementById('phaseModal').classList.remove('active');
+            phaseManagerFromTask = false;
         }
         function renderPhaseManagerList() {
             const c = document.getElementById('phaseManagerList');
             if (!c) return;
-            c.innerHTML = phases.length ? phases.map((p, i) => `
-                <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px; background:var(--bg); border-radius:9px; padding:8px 10px;">
-                    <span style="flex:1; font-weight:600; color:var(--navy); font-size:13px;">${escapeHtml(p)}</span>
-                    <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px;" onclick="movePhase(${i},-1)">↑</button>
-                    <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px;" onclick="movePhase(${i},1)">↓</button>
-                    <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px;" onclick="renamePhase(${i})">${ic('pencil')}</button>
-                    <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px; background:#FEE2E2; color:var(--danger);" onclick="deletePhase(${i})">${ic('trash')}</button>
-                </div>`).join('') : '<p style="color:var(--text-muted); font-size:13px;">Aucune phase définie.</p>';
+            const list = projectPhaseList(tasks);
+            const hint = document.getElementById('phaseNumHint');
+            if (hint) hint.textContent = phasesAreNumbered(list)
+                ? 'Numérotation automatique : la nouvelle phase prendra le n° ' + (list.reduce((m, p) => Math.max(m, parseInt(p, 10) || 0), 0) + 1) + '. Monter / descendre échange les numéros.'
+                : '';
+            c.innerHTML = list.length ? list.map((p, i) => {
+                const used = tasks.filter(t => t.phase === p).length;
+                return `
+                <div class="ph-row">
+                    <div class="ph-arrows">
+                        <button type="button" onclick="movePhase(${i},-1)" ${i === 0 ? 'disabled' : ''} title="Monter">▲</button>
+                        <button type="button" onclick="movePhase(${i},1)" ${i === list.length - 1 ? 'disabled' : ''} title="Descendre">▼</button>
+                    </div>
+                    <input type="text" class="ph-name" value="${escapeHtml(p)}" title="Renommer cette phase" onchange="renamePhase(${i}, this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">
+                    <span class="ph-count">${used ? used + ' action' + (used > 1 ? 's' : '') : ''}</span>
+                    <button type="button" class="ph-del" onclick="deletePhase(${i})" title="Supprimer cette phase">${ic('trash')}</button>
+                </div>`;
+            }).join('') : '<div class="ph-empty">Aucune phase — ajoutez-en une ci-dessous.</div>';
         }
         function addPhase() {
-            const n = prompt('Nom de la nouvelle phase :');
-            if (!n || !n.trim()) return;
-            phases.push(n.trim());
-            savePhases();
+            const inp = document.getElementById('newPhaseName');
+            let n = ((inp && inp.value) || '').trim();
+            if (!n) { alert('Donnez un nom à la phase.'); if (inp) inp.focus(); return; }
+            const list = editablePhases();
+            if (phasesAreNumbered(list) && !PHASE_NUM_RE.test(n)) {
+                const max = list.reduce((m, p) => Math.max(m, parseInt(p, 10) || 0), 0);
+                n = (max + 1) + '. ' + n;
+            }
+            if (list.includes(n)) { alert('La phase « ' + n + ' » existe déjà.'); return; }
+            list.push(n);
+            saveProjectPhases();
+            if (inp) inp.value = '';
             afterPhaseChange();
+            // Ouvert depuis la fiche action : on présélectionne la phase créée
+            if (phaseManagerFromTask) { const sel = document.getElementById('taskPhase'); if (sel) sel.value = n; }
         }
-        function renamePhase(i) {
-            const old = phases[i];
-            const n = prompt('Nouveau nom de la phase :', old);
-            if (!n || !n.trim() || n.trim() === old) return;
-            phases[i] = n.trim();
-            savePhases();
-            // Répercuter sur les actions existantes (tous projets)
-            Object.keys(allProjects).forEach(pr => (allProjects[pr] || []).forEach(t => { if (t.phase === old) t.phase = phases[i]; }));
-            tasks = allProjects[currentProject] || tasks;
-            saveProjects();
+        function renamePhase(i, val) {
+            const list = editablePhases();
+            const old = list[i];
+            const n = (val || '').trim();
+            if (!n || n === old) { renderPhaseManagerList(); return; }
+            if (list.includes(n)) { alert('La phase « ' + n + ' » existe déjà.'); renderPhaseManagerList(); return; }
+            list[i] = n;
+            saveProjectPhases();
+            const sel = document.getElementById('taskPhase');
+            const wasSel = sel && sel.value === old;
+            const changed = remapTaskPhase(old, n);
+            if (changed) saveProjects();
             afterPhaseChange();
+            if (wasSel) sel.value = n;
         }
         function deletePhase(i) {
-            const p = phases[i];
-            let used = 0;
-            Object.keys(allProjects).forEach(pr => (allProjects[pr] || []).forEach(t => { if (t.phase === p) used++; }));
-            if (used > 0 && !confirm('« ' + p + ' » est utilisée par ' + used + ' action(s).\nSupprimer la phase de la liste ? (les actions conservent leur libellé)')) return;
-            phases.splice(i, 1);
-            savePhases();
+            const list = editablePhases();
+            const p = list[i];
+            const used = tasks.filter(t => t.phase === p).length;
+            let msg = 'Supprimer la phase « ' + p + ' » ?';
+            if (used) msg += '\n' + used + ' action(s) rattachée(s) à cette phase seront laissées sans phase.';
+            if (!confirm(msg)) return;
+            list.splice(i, 1);
+            saveProjectPhases();
+            if (used) { remapTaskPhase(p, ''); saveProjects(); }
             afterPhaseChange();
         }
         function movePhase(i, d) {
+            const list = editablePhases();
             const j = i + d;
-            if (j < 0 || j >= phases.length) return;
-            const tmp = phases[i]; phases[i] = phases[j]; phases[j] = tmp;
-            savePhases();
+            if (j < 0 || j >= list.length) return;
+            const a = list[i], b = list[j];
+            if (phasesAreNumbered(list)) {
+                // Comme sur ANDRH : on échange les numéros, les actions suivent
+                const na = a.match(PHASE_NUM_RE)[1], nb = b.match(PHASE_NUM_RE)[1];
+                const a2 = nb + '. ' + stripPhaseNum(a), b2 = na + '. ' + stripPhaseNum(b);
+                const TMP = '__opus_tmp_phase__';
+                const sel = document.getElementById('taskPhase');
+                const cur = sel ? sel.value : '';
+                remapTaskPhase(a, TMP); remapTaskPhase(b, b2); remapTaskPhase(TMP, a2);
+                list[i] = b2; list[j] = a2;
+                if (sel) sel.dataset.pending = cur === a ? a2 : (cur === b ? b2 : cur);
+                saveProjects();
+            } else {
+                list[i] = b; list[j] = a;
+            }
+            saveProjectPhases();
             afterPhaseChange();
+            const sel = document.getElementById('taskPhase');
+            if (sel && sel.dataset.pending !== undefined) { sel.value = sel.dataset.pending; delete sel.dataset.pending; }
         }
         function afterPhaseChange() {
             renderPhaseManagerList();
@@ -3147,6 +3262,7 @@
             allProjects[newName] = allProjects[currentProject];
             delete allProjects[currentProject];
             if (chats[currentProject]) { chats[newName] = chats[currentProject]; delete chats[currentProject]; saveChats(); }
+            if (projectPhases[currentProject]) { projectPhases[newName] = projectPhases[currentProject]; delete projectPhases[currentProject]; saveProjectPhases(); }
             currentProject = newName;
             
             // Sauvegarder et mettre à jour
@@ -3168,6 +3284,7 @@
             
             // Supprimer le projet
             delete allProjects[currentProject];
+            if (projectPhases[currentProject]) { delete projectPhases[currentProject]; saveProjectPhases(); }
             
             // Basculer sur le premier projet disponible
             currentProject = Object.keys(allProjects)[0];
@@ -3804,16 +3921,16 @@
                     <div class="tl-ord"><span class="drag-handle" title="Glisser pour réordonner">⠿</span><span class="ord-num">${ordNum}</span></div>
                     <div><input type="checkbox" class="row-check task-check" data-id="${task.id}" onchange="updateBulkBar()"></div>
                     <div>
-                        <div class="tl-title" contenteditable="true" spellcheck="false" onblur="inlineUpdate(${task.id},'title',this.textContent)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">${escapeHtml(task.title)}</div>
-                        <div class="tl-comment" contenteditable="true" spellcheck="false" data-ph="Ajouter une note…" onblur="inlineUpdate(${task.id},'comments',this.textContent)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">${escapeHtml(task.comments || '')}</div>
+                        <div class="tl-title" title="Ouvrir l'action">${escapeHtml(task.title || '(Sans titre)')}</div>
+                        ${task.comments ? `<div class="tl-comment">${ic('chat', 11)} ${escapeHtml(task.comments.length > 90 ? task.comments.substring(0, 90) + '…' : task.comments)}</div>` : ''}
                         ${renderTaskMetaHtml(task)}
                         ${prog !== null ? `<div class="tl-sub">${ic('checkbox', 12)} ${done}/${subs.length} <span class="tl-sub-bar"><i style="width:${prog}%"></i></span> ${prog}%</div>` : ''}
                     </div>
                     <div id="respcell-${task.id}" class="resp-cell" title="Cliquer pour modifier" onclick="openRespPopover(${task.id}, event)">${renderAvatarsHtml(task.responsible)}</div>
                     <div><select class="cell-edit" onchange="inlineUpdate(${task.id},'phase',this.value)">${phaseOptions(task.phase)}</select></div>
                     <div><input type="date" class="cell-edit${overdue ? ' overdue' : ''}" value="${task.endDate || ''}" onchange="inlineUpdate(${task.id},'endDate',this.value)"></div>
-                    <div><select class="cell-edit" onchange="inlineUpdate(${task.id},'priority',this.value)">
-                        ${['', 'Haute', 'Moyenne', 'Basse'].map(p => `<option value="${p}" ${task.priority === p ? 'selected' : ''}>${p || '—'}</option>`).join('')}
+                    <div><select class="cell-edit prio-select" onchange="inlineUpdate(${task.id},'priority',this.value)">
+                        ${['', 'Haute', 'Moyenne', 'Basse'].map(p => `<option value="${p}" ${task.priority === p ? 'selected' : ''}>${PRIO_LABELS[p]}</option>`).join('')}
                     </select></div>
                     <div><select class="status-select s-${{ 'À faire': 'todo', 'En cours': 'progress', 'Terminé': 'done', 'Bloqué': 'blocked' }[task.status] || 'todo'}" onchange="updateTaskStatus(${task.id}, this.value)">
                         ${['À faire', 'En cours', 'Terminé', 'Bloqué'].map(s => `<option value="${s}" ${task.status === s ? 'selected' : ''}>${s}</option>`).join('')}
@@ -3826,7 +3943,27 @@
             }).join('');
             updateBulkBar();
             setupRowDrag();
+            setupRowOpen(grid);
             updateSortIndicators();
+        }
+
+        const PRIO_LABELS = { '': '—', 'Haute': '🔴 Haute', 'Moyenne': '🟠 Moyenne', 'Basse': '🟢 Basse' };
+
+        // Clic sur une ligne d'action = ouverture de la fiche (comme sur ANDRH).
+        // Les cellules modifiables (responsables, phase, date, priorité, statut, cases, boutons) gardent leur propre comportement.
+        function setupRowOpen(grid) {
+            if (!grid || grid.dataset.rowOpen) return;
+            grid.dataset.rowOpen = '1';
+            grid.addEventListener('click', e => {
+                if (window.READ_ONLY) return;
+                const row = e.target.closest('.task-row');
+                if (!row || !grid.contains(row)) return;
+                if (e.target.closest('select, input, button, a, textarea, label, .resp-cell, .drag-handle, [contenteditable="true"]')) return;
+                const sel = window.getSelection ? String(window.getSelection()) : '';
+                if (sel && sel.trim()) return;   // l'utilisateur sélectionne du texte
+                const task = tasks.find(t => String(t.id) === row.getAttribute('data-id'));
+                if (task) editTask(task.id);
+            });
         }
 
         function updateBulkBar() {
@@ -4126,6 +4263,11 @@
         }
         // Phases d'un projet : si le projet utilise ses propres lots, on n'affiche que ceux-ci
         function projectPhaseList(list) {
+            const own = (typeof projectPhases !== 'undefined' && projectPhases && Array.isArray(projectPhases[currentProject])) ? projectPhases[currentProject] : null;
+            if (own) {
+                const extra = [...new Set((list || []).map(t => t.phase).filter(p => p && !own.includes(p)))];
+                return own.concat(extra);
+            }
             const glob = window.__opusPhases || [];
             const used = [...new Set((list || []).map(t => t.phase).filter(Boolean))];
             if (used.length && used.some(p => !glob.includes(p))) return used;
