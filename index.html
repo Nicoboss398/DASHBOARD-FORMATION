@@ -319,42 +319,10 @@
   .resp-cell:hover { background: #EEF4FF; }
   .status-select { border-color: transparent !important; background: transparent; transition: all .15s; }
   .status-select:hover { background: #EEF4FF; border-color: var(--border) !important; }
-  /* Statuts colorés façon ANDRH : gris / bleu / vert / rouge */
-  .status-select.s-todo, .task-row select.status-select.s-todo { color: #666; font-weight: 600; }
-  .status-select.s-progress, .task-row select.status-select.s-progress { color: var(--blue); font-weight: 700; }
-  .status-select.s-done, .task-row select.status-select.s-done { color: var(--success); font-weight: 700; }
-  .status-select.s-blocked, .task-row select.status-select.s-blocked { color: var(--danger); font-weight: 700; }
-  .status-select option { color: var(--navy); font-weight: 500; }
-
-  /* Ligne d'action cliquable (ouvre la fiche) */
-  #tasksGrid .task-row { cursor: pointer; }
-  #tasksGrid .task-row:hover { background: linear-gradient(90deg, #EEF4FF 0%, #F7FAFF 100%); }
-  #tasksGrid .tl-title { cursor: pointer; }
-  #tasksGrid .task-row:hover .tl-title { text-decoration: underline; text-decoration-color: var(--blue); text-underline-offset: 2px; }
-  #tasksGrid .tl-comment .ic { vertical-align: -1px; opacity: .7; }
-  body.read-only #tasksGrid .task-row { cursor: default; }
-  body.read-only #tasksGrid .task-row:hover .tl-title { text-decoration: none; }
-
-  /* Gestion des phases (façon ANDRH) */
-  .ph-list { max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; padding: 4px 10px; background: #fafcff; margin-bottom: 14px; min-height: 40px; }
-  .ph-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--bg); }
-  .ph-row:last-child { border-bottom: none; }
-  .ph-arrows { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
-  .ph-arrows button { background: #fff; border: 1px solid var(--border); border-radius: 5px; width: 22px; height: 18px; line-height: 1; cursor: pointer; font-size: 9px; padding: 0; color: var(--navy); }
-  .ph-arrows button:hover:not(:disabled) { border-color: var(--blue); color: var(--blue); }
-  .ph-arrows button:disabled { opacity: .3; cursor: not-allowed; }
-  .ph-name { flex: 1; min-width: 0; border: 1px solid var(--border); border-radius: 8px; padding: 7px 9px; font-family: inherit; font-size: 12.5px; font-weight: 600; color: var(--navy); background: #fff; outline: none; }
-  .ph-name:focus { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(0,68,195,0.12); }
-  .ph-count { font-size: 10.5px; color: var(--text-muted); white-space: nowrap; min-width: 54px; text-align: right; }
-  .ph-del { background: #FEE8E8; border: 1px solid #F5B5B5; color: var(--danger); border-radius: 7px; padding: 5px 8px; cursor: pointer; flex-shrink: 0; display: inline-flex; align-items: center; }
-  .ph-del:hover { background: #FDD5D5; }
-  .ph-empty { color: var(--text-muted); font-size: 12px; padding: 10px 0; text-align: center; }
-  .ph-new { border-top: 1px solid var(--border); padding-top: 12px; }
-  .ph-new-title { font-size: 10.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 8px; }
-  .ph-new input { flex: 1; min-width: 0; border: 1.5px solid var(--border); border-radius: 10px; padding: 9px 11px; font-family: inherit; font-size: 13px; outline: none; }
-  .ph-new input:focus { border-color: var(--blue); }
-  .ph-hint { font-size: 10.5px; color: var(--text-muted); margin-top: 6px; min-height: 12px; }
-  #phaseModal { z-index: 1100; }
+  .status-select.s-done { color: var(--success); }
+  .status-select.s-progress { color: var(--warning); }
+  .status-select.s-blocked { color: var(--danger); }
+  .status-select.s-todo { color: #2952B3; }
 
   /* Popover responsables */
   .resp-popover { position: absolute; z-index: 500; background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 16px 40px rgba(0,25,92,0.22); padding: 8px; width: 234px; max-height: 280px; overflow-y: auto; }
@@ -644,6 +612,28 @@
         .gx-ms-sample { width:18px; height:10px; border-radius:3px; background:#3B6FE0; background-image:repeating-linear-gradient(135deg, rgba(255,255,255,.3) 0 3px, transparent 3px 6px); display:inline-block; }
         body.read-only .gx-bar { cursor:pointer; }
         body.read-only .gx-hint { display:none; }
+
+        /* ===== Filtres multi-sélection (cases à cocher) ===== */
+        .task-list-head .colf-btn { display:flex; align-items:center; gap:4px; cursor:pointer; text-align:left; height:28px; }
+        .colf-btn .colf-label { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; min-width:0; }
+        .colf-btn .colf-caret { font-size:8px; opacity:.7; flex-shrink:0; }
+        .colf-badge { display:none; flex-shrink:0; min-width:16px; height:16px; padding:0 4px; border-radius:8px; background:var(--blue, #0044C3); color:#fff; font-size:9.5px; line-height:16px; text-align:center; font-weight:800; }
+        .colf-btn.df-active { background:var(--gradient); color:#fff; border-color:transparent; }
+        .colf-btn.df-active .colf-badge { background:#fff; color:var(--blue, #0044C3); }
+        .colf-pop { width:250px; }
+        .colf-head { display:flex; gap:6px; padding-bottom:6px; margin-bottom:4px; border-bottom:1px solid var(--bg, #F0F4FF); }
+        .colf-head button { flex:1; border:1.5px solid var(--border); background:var(--bg); color:var(--navy); border-radius:7px; padding:5px 6px; font-family:inherit; font-size:11.5px; font-weight:700; cursor:pointer; }
+        .colf-head button:hover { border-color:var(--blue); color:var(--blue); }
+        .colf-list { max-height:280px; overflow-y:auto; }
+        #dateFilterPop .colf-list { max-height:min(400px, 50vh); }
+        .colf-opt { display:flex !important; align-items:center; gap:8px; padding:6px 6px; border-radius:7px; cursor:pointer; font-size:12.5px !important; font-weight:600 !important; color:var(--text, #1A2B5C) !important; margin:0 !important; }
+        .colf-opt:hover { background:var(--bg); }
+        .colf-opt input { accent-color:var(--blue, #0044C3); width:15px; height:15px; cursor:pointer; flex-shrink:0; margin:0; }
+        .colf-opt span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .colf-empty { font-size:12px; color:var(--text-muted); padding:6px; }
+        .df-sep { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px; margin:10px 0 6px; padding-top:8px; border-top:1px solid var(--bg, #F0F4FF); }
+        #btnResetFilters .colf-badge { margin-left:2px; }
+        #btnResetFilters.has-filters { border-color:var(--blue, #0044C3); color:var(--blue, #0044C3); }
 </style>
     <style media="not all">
         * {
@@ -1609,6 +1599,7 @@
                     <button class="btn btn-success" id="btnReadOnly"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 7s2.2-4 6-4 6 4 6 4-2.2 4-6 4-6-4-6-4z"/><circle cx="7" cy="7" r="1.7"/></svg> Lecture seule</button>
                     <button class="btn btn-secondary" type="button" onclick="openImportModal()"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 9V2M4 5l3-3 3 3M2 11.5h10"/></svg> Importer CSV / Excel</button>
                     <select id="filterVisibility" class="btn btn-secondary" onchange="renderTasks()" title="Filtrer par visibilité"><option value="">Toutes visibilités</option><option value="Client">Vue client</option><option value="Interne Opus">Interne Opus</option></select>
+                    <button type="button" class="btn btn-secondary" id="btnResetFilters" onclick="resetAllFilters()" title="Effacer tous les filtres et la recherche"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7a5 5 0 11-1.5-3.5"/><path d="M12.5 1.5V4H10"/></svg> Réinitialiser les filtres<span class="colf-badge" id="resetFiltersCount"></span></button>
                     <button class="btn-delete-selected" id="btnDeleteSelected" onclick="deleteSelectedTasks()" disabled style="margin-left:auto;"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3.5h10M5 3.5V2.4a.7.7 0 01.7-.7h2.6a.7.7 0 01.7.7v1.1M5.3 6.2v4M8.7 6.2v4M3 3.5l.6 8h6.8l.6-8"/></svg> Supprimer <span id="selCount"></span></button>
                 </div>
 
@@ -1621,11 +1612,11 @@
                         <div><button type="button" class="sort-btn sort-btn-ord" data-sort="order" onclick="toggleSort('order')">N°<span class="sort-ar">↑</span></button></div>
                         <div><input type="checkbox" id="selectAllTasks" class="row-check" onchange="toggleSelectAll(this.checked)" title="Tout sélectionner"></div>
                         <div><input type="text" id="taskSearch" class="head-filter" placeholder="Rechercher une action…" oninput="renderTasks()" autocomplete="off"><button type="button" class="sort-btn" data-sort="title" onclick="toggleSort('title')"><span class="sort-ar">⇅</span></button></div>
-                        <div><select id="filterResponsible" class="head-filter" onchange="renderTasks()"><option value="">Resp.</option></select><button type="button" class="sort-btn" data-sort="responsible" onclick="toggleSort('responsible')"><span class="sort-ar">⇅</span></button></div>
-                        <div><select id="filterPhase" class="head-filter" onchange="renderTasks()"><option value="">Phase</option></select><button type="button" class="sort-btn" data-sort="phase" onclick="toggleSort('phase')"><span class="sort-ar">⇅</span></button></div>
-                        <div><button type="button" id="dateFilterBtn" class="head-filter" style="cursor:pointer; text-align:left;" onclick="openDateFilter(event)">Échéance</button><button type="button" class="sort-btn" data-sort="endDate" onclick="toggleSort('endDate')"><span class="sort-ar">⇅</span></button></div>
-                        <div><select id="filterPriority" class="head-filter" onchange="renderTasks()"><option value="">Priorité</option><option value="Haute">Haute</option><option value="Moyenne">Moyenne</option><option value="Basse">Basse</option></select><button type="button" class="sort-btn" data-sort="priority" onclick="toggleSort('priority')"><span class="sort-ar">⇅</span></button></div>
-                        <div><select id="filterStatus" class="head-filter" onchange="renderTasks()"><option value="">Statut</option><option value="À faire">À faire</option><option value="En cours">En cours</option><option value="Terminé">Terminé</option><option value="Bloqué">Bloqué</option></select><button type="button" class="sort-btn" data-sort="status" onclick="toggleSort('status')"><span class="sort-ar">⇅</span></button></div>
+                        <div><button type="button" id="colfBtn-responsible" class="head-filter colf-btn" onclick="openColFilter(event,'responsible')"><span class="colf-label">Resp.</span><span class="colf-badge"></span><span class="colf-caret">▾</span></button><button type="button" class="sort-btn" data-sort="responsible" onclick="toggleSort('responsible')"><span class="sort-ar">⇅</span></button></div>
+                        <div><button type="button" id="colfBtn-phase" class="head-filter colf-btn" onclick="openColFilter(event,'phase')"><span class="colf-label">Phase</span><span class="colf-badge"></span><span class="colf-caret">▾</span></button><button type="button" class="sort-btn" data-sort="phase" onclick="toggleSort('phase')"><span class="sort-ar">⇅</span></button></div>
+                        <div><button type="button" id="dateFilterBtn" class="head-filter colf-btn" onclick="openDateFilter(event)"><span class="colf-label">Échéance</span><span class="colf-badge"></span><span class="colf-caret">▾</span></button><button type="button" class="sort-btn" data-sort="endDate" onclick="toggleSort('endDate')"><span class="sort-ar">⇅</span></button></div>
+                        <div><button type="button" id="colfBtn-priority" class="head-filter colf-btn" onclick="openColFilter(event,'priority')"><span class="colf-label">Priorité</span><span class="colf-badge"></span><span class="colf-caret">▾</span></button><button type="button" class="sort-btn" data-sort="priority" onclick="toggleSort('priority')"><span class="sort-ar">⇅</span></button></div>
+                        <div><button type="button" id="colfBtn-status" class="head-filter colf-btn" onclick="openColFilter(event,'status')"><span class="colf-label">Statut</span><span class="colf-badge"></span><span class="colf-caret">▾</span></button><button type="button" class="sort-btn" data-sort="status" onclick="toggleSort('status')"><span class="sort-ar">⇅</span></button></div>
                         <div>Gérer</div>
                     </div>
                     <div id="tasksGrid"></div>
@@ -1703,8 +1694,7 @@
             <form id="taskForm">
                 <div class="form-group">
                     <label>Phase *</label>
-                    <div class="owner-row">
-                    <select id="taskPhase" required style="flex:1; min-width:0;">
+                    <select id="taskPhase" required>
                         <option value="">Sélectionner une phase</option>
                         <option value="1. Cadrage & validation dispositif">1. Cadrage & validation dispositif</option>
                         <option value="2. Ingénierie pédagogique">2. Ingénierie pédagogique</option>
@@ -1715,8 +1705,6 @@
                         <option value="7. Clôture & obligations de sortie">7. Clôture & obligations de sortie</option>
                         <option value="8. Actions périphériques">8. Actions périphériques</option>
                     </select>
-                    <button type="button" id="btnManagePhases" class="btn-add-member" title="Créer, modifier ou supprimer des phases" onclick="openPhaseManager(true)">+</button>
-                    </div>
                 </div>
                 <div class="form-group">
                     <label>Titre de la tâche *</label>
@@ -1754,9 +1742,9 @@
                         <label>Priorité</label>
                         <select id="taskPriority">
                             <option value="">Aucune</option>
-                            <option value="Haute">🔴 Haute</option>
-                            <option value="Moyenne">🟠 Moyenne</option>
-                            <option value="Basse">🟢 Basse</option>
+                            <option value="Haute">Haute</option>
+                            <option value="Moyenne">Moyenne</option>
+                            <option value="Basse">Basse</option>
                         </select>
                     </div>
                 </div>
@@ -1804,18 +1792,10 @@
     <div class="modal" id="phaseModal">
         <div class="modal-content">
             <div class="modal-header"><svg class="ic" width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 1.8l5.3 2.9L7 7.6 1.7 4.7z"/><path d="M1.7 7.3L7 10.2l5.3-2.9M1.7 9.8L7 12.7l5.3-2.9"/></svg> Gérer les phases</div>
-            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:4px;">Phases du projet <strong id="phaseManagerProject" style="color:var(--navy);"></strong></p>
-            <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:12px;">Ajoutez, renommez, réordonnez ou supprimez les phases (lots). Les changements se répercutent sur toutes les actions du projet.</p>
-            <div id="phaseManagerList" class="ph-list"></div>
-            <div class="ph-new">
-                <div class="ph-new-title">Nouvelle phase</div>
-                <div style="display:flex; gap:8px;">
-                    <input type="text" id="newPhaseName" placeholder="Ex : Suivi post-formation" onkeydown="if(event.key==='Enter'){event.preventDefault();addPhase();}">
-                    <button type="button" class="btn btn-primary" onclick="addPhase()" style="white-space:nowrap;"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 2.5v9M2.5 7h9"/></svg> Ajouter</button>
-                </div>
-                <div id="phaseNumHint" class="ph-hint"></div>
-            </div>
-            <div class="modal-actions" style="justify-content:flex-end;">
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px;">Ajoutez, renommez, réordonnez ou supprimez les phases (lots) du projet. Renommer une phase met à jour les actions concernées.</p>
+            <div id="phaseManagerList"></div>
+            <div class="modal-actions" style="justify-content:space-between;">
+                <button type="button" class="btn btn-primary" onclick="addPhase()"><svg class="ic" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 2.5v9M2.5 7h9"/></svg> Nouvelle phase</button>
                 <button type="button" class="btn btn-secondary" onclick="closePhaseManager()">Fermer</button>
             </div>
         </div>
@@ -2086,41 +2066,149 @@
                 projectPhaseList(tasks).map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
             sel.value = cur;
         }
-        function renderPhaseFilters() {
-            const sel = document.getElementById('filterPhase');
-            if (!sel) return;
-            const cur = sel.value;
-            sel.innerHTML = '<option value="">Phase</option>' +
-                projectPhaseList(tasks).map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
-            sel.value = cur;
+        // ===== FILTRES MULTI-SÉLECTION DANS LES EN-TÊTES (cases à cocher, logique « OU ») =====
+        const colFilters = { responsible: new Set(), phase: new Set(), priority: new Set(), status: new Set() };
+        const COLF_LABELS = { responsible: 'Resp.', phase: 'Phase', priority: 'Priorité', status: 'Statut' };
+        const NONE_KEY = '__none';
+        function colFilterOptions(col) {
+            if (col === 'status') return [['À faire', 'À faire'], ['En cours', 'En cours'], ['Terminé', 'Terminé'], ['Bloqué', 'Bloqué']];
+            if (col === 'priority') return [['Haute', 'Haute'], ['Moyenne', 'Moyenne'], ['Basse', 'Basse'], [NONE_KEY, '— Sans priorité']];
+            if (col === 'phase') return projectPhaseList(tasks).map(p => [p, p]).concat([[NONE_KEY, '— Sans phase']]);
+            if (col === 'responsible') return allResponsibleNames().map(n => [n, n]).concat([[NONE_KEY, '— Sans responsable']]);
+            return [];
         }
-        function renderResponsibleFilter() {
-            const sel = document.getElementById('filterResponsible');
-            if (!sel) return;
-            const cur = sel.value;
-            const names = allResponsibleNames();
-            sel.innerHTML = '<option value="">Resp.</option>' +
-                names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
-            sel.value = names.includes(cur) ? cur : '';
+        // Retire des filtres les valeurs qui n'existent plus (changement de projet, phase renommée…)
+        function pruneColFilters() {
+            ['phase', 'responsible'].forEach(col => {
+                const valid = new Set(colFilterOptions(col).map(o => o[0]));
+                [...colFilters[col]].forEach(v => { if (!valid.has(v)) colFilters[col].delete(v); });
+            });
         }
+        function setBadge(btn, n) {
+            if (!btn) return;
+            const b = btn.querySelector('.colf-badge');
+            if (b) { b.textContent = n || ''; b.style.display = n ? 'inline-block' : 'none'; }
+            btn.classList.toggle('df-active', !!n);
+        }
+        function updateColFilterButtons() {
+            Object.keys(colFilters).forEach(col => setBadge(document.getElementById('colfBtn-' + col), colFilters[col].size));
+            const n = activeFilterCount();
+            const rb = document.getElementById('btnResetFilters');
+            if (rb) { setBadge(rb, n); rb.classList.remove('df-active'); rb.classList.toggle('has-filters', !!n); }
+        }
+        function activeFilterCount() {
+            let n = Object.values(colFilters).reduce((a, set) => a + (set.size ? 1 : 0), 0);
+            if (typeof dateFilterActive === 'function' && dateFilterActive()) n++;
+            const q = document.getElementById('taskSearch'); if (q && q.value.trim()) n++;
+            const v = document.getElementById('filterVisibility'); if (v && v.value) n++;
+            return n;
+        }
+        function closeColFilter() {
+            const p = document.getElementById('colFilterPop'); if (p) p.remove();
+            document.removeEventListener('click', closeColFilterOnOutside, true);
+        }
+        function closeColFilterOnOutside(e) {
+            const p = document.getElementById('colFilterPop');
+            if (p && !p.contains(e.target) && !(e.target.closest && e.target.closest('.colf-btn'))) closeColFilter();
+        }
+        function placePop(pop, btn) {
+            document.body.appendChild(pop);
+            const r = btn.getBoundingClientRect();
+            const w = pop.offsetWidth || 250;
+            pop.style.left = Math.max(8, Math.min(r.left, window.innerWidth - w - 12)) + 'px';
+            pop.style.top = (r.bottom + window.scrollY + 4) + 'px';
+        }
+        function openColFilter(ev, col) {
+            ev.stopPropagation();
+            const already = document.getElementById('colFilterPop');
+            const same = already && already.dataset.col === col;
+            closeColFilter(); if (typeof closeDateFilter === 'function') closeDateFilter();
+            if (same) return;
+            const pop = document.createElement('div');
+            pop.className = 'date-filter-pop colf-pop'; pop.id = 'colFilterPop'; pop.dataset.col = col;
+            pop.onclick = e => e.stopPropagation();
+            const items = colFilterOptions(col).map(o => `<label class="colf-opt"><input type="checkbox" value="${escapeHtml(o[0])}" ${colFilters[col].has(o[0]) ? 'checked' : ''} onchange="toggleColFilter('${col}', this.value, this.checked)"><span>${escapeHtml(o[1])}</span></label>`).join('');
+            pop.innerHTML = `<label>Filtrer : ${COLF_LABELS[col]}</label>
+                <div class="colf-head"><button type="button" onclick="colFilterAll('${col}', true)">Tout cocher</button><button type="button" onclick="colFilterAll('${col}', false)">Effacer</button></div>
+                <div class="colf-list">${items || '<p class="colf-empty">Aucune valeur</p>'}</div>`;
+            placePop(pop, document.getElementById('colfBtn-' + col));
+            setTimeout(() => document.addEventListener('click', closeColFilterOnOutside, true), 0);
+        }
+        function toggleColFilter(col, val, on) {
+            if (on) colFilters[col].add(val); else colFilters[col].delete(val);
+            renderTasks();
+        }
+        function colFilterAll(col, on) {
+            colFilters[col].clear();
+            if (on) colFilterOptions(col).forEach(o => colFilters[col].add(o[0]));
+            const pop = document.getElementById('colFilterPop');
+            if (pop) pop.querySelectorAll('input[type=checkbox]').forEach(cb => { cb.checked = colFilters[col].has(cb.value); });
+            renderTasks();
+        }
+        function taskPassesColFilters(t) {
+            const f = colFilters;
+            if (f.status.size && !f.status.has(t.status)) return false;
+            if (f.priority.size && !f.priority.has(t.priority || NONE_KEY)) return false;
+            if (f.phase.size && !f.phase.has(t.phase || NONE_KEY)) return false;
+            if (f.responsible.size) {
+                const names = splitResponsibles(t.responsible);
+                if (!(names.length ? names.some(n => f.responsible.has(n)) : f.responsible.has(NONE_KEY))) return false;
+            }
+            return true;
+        }
+        function clearColFilters() { Object.values(colFilters).forEach(set => set.clear()); }
+        function resetAllFilters() {
+            clearColFilters();
+            dateFilter = { mode: '', a: '', b: '', buckets: [] };
+            ['taskSearch', 'filterVisibility'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+            closeColFilter(); if (typeof closeDateFilter === 'function') closeDateFilter();
+            updateDateFilterBtn();
+            renderTasks();
+        }
+        // Compatibilité : anciens appels
+        function renderPhaseFilters() { pruneColFilters(); updateColFilterButtons(); }
+        function renderResponsibleFilter() { pruneColFilters(); updateColFilterButtons(); }
 
         // ===== FILTRE ÉCHÉANCE (à partir de / jusqu'au / le / entre) =====
-        let dateFilter = { mode: '', a: '', b: '' };
+        let dateFilter = { mode: '', a: '', b: '', buckets: [] };
         const DATE_MODE_LABELS = { from: 'À partir de', until: "Jusqu'au", on: 'Le', between: 'Entre' };
+        const ECH_BUCKETS = [
+            ['overdue', 'En retard (non terminées)'],
+            ['past', 'Échéance passée (toutes)'],
+            ['today', "Aujourd'hui"],
+            ['tomorrow', 'Demain'],
+            ['week', 'Cette semaine'],
+            ['nextweek', 'Semaine prochaine'],
+            ['next7', '7 prochains jours'],
+            ['next30', '30 prochains jours'],
+            ['month', 'Ce mois-ci'],
+            ['nextmonth', 'Mois prochain'],
+            ['quarter', 'Ce trimestre'],
+            ['year', 'Cette année'],
+            ['later', "Plus tard (après ce trimestre)"],
+            ['none', 'Sans échéance'],
+        ];
         function fmtDateFr(iso) {
             if (!iso) return '';
             const p = iso.split('-'); return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : iso;
         }
+        function dateRangeActive() { return !!(dateFilter.mode && (dateFilter.a || dateFilter.b)); }
+        function dateFilterActive() { return dateRangeActive() || (dateFilter.buckets || []).length > 0; }
         function updateDateFilterBtn() {
             const btn = document.getElementById('dateFilterBtn');
             if (!btn) return;
             let label = 'Échéance';
-            if (dateFilter.mode === 'from' && dateFilter.a) label = '≥ ' + fmtDateFr(dateFilter.a);
-            else if (dateFilter.mode === 'until' && dateFilter.a) label = '≤ ' + fmtDateFr(dateFilter.a);
-            else if (dateFilter.mode === 'on' && dateFilter.a) label = fmtDateFr(dateFilter.a);
-            else if (dateFilter.mode === 'between' && (dateFilter.a || dateFilter.b)) label = fmtDateFr(dateFilter.a) + ' → ' + fmtDateFr(dateFilter.b);
-            btn.textContent = label;
-            btn.classList.toggle('df-active', !!(dateFilter.mode && (dateFilter.a || dateFilter.b)));
+            if (dateRangeActive()) {
+                if (dateFilter.mode === 'from') label = '≥ ' + fmtDateFr(dateFilter.a);
+                else if (dateFilter.mode === 'until') label = '≤ ' + fmtDateFr(dateFilter.a);
+                else if (dateFilter.mode === 'on') label = fmtDateFr(dateFilter.a);
+                else label = fmtDateFr(dateFilter.a) + ' → ' + fmtDateFr(dateFilter.b);
+            }
+            const lab = btn.querySelector('.colf-label');
+            if (lab) lab.textContent = label; else btn.textContent = label;
+            btn.title = label;
+            setBadge(btn, (dateFilter.buckets || []).length + (dateRangeActive() ? 1 : 0));
+            if (typeof updateColFilterButtons === 'function') updateColFilterButtons();
         }
         function closeDateFilter() {
             const p = document.getElementById('dateFilterPop');
@@ -2129,7 +2217,7 @@
         }
         function closeDateFilterOnOutside(e) {
             const p = document.getElementById('dateFilterPop');
-            if (p && !p.contains(e.target) && e.target.id !== 'dateFilterBtn') closeDateFilter();
+            if (p && !p.contains(e.target) && !(e.target.closest && e.target.closest('#dateFilterBtn'))) closeDateFilter();
         }
         function renderDateFilterFields() {
             const wrap = document.getElementById('dfFields');
@@ -2144,16 +2232,22 @@
         }
         function openDateFilter(ev) {
             ev.stopPropagation();
+            if (typeof closeColFilter === 'function') closeColFilter();
             if (document.getElementById('dateFilterPop')) { closeDateFilter(); return; }
             const pop = document.createElement('div');
-            pop.className = 'date-filter-pop';
+            pop.className = 'date-filter-pop colf-pop';
             pop.id = 'dateFilterPop';
             pop.onclick = (e) => e.stopPropagation();
             const opt = (v, l) => `<option value="${v}" ${dateFilter.mode === v ? 'selected' : ''}>${l}</option>`;
+            const sel = new Set(dateFilter.buckets || []);
+            const items = ECH_BUCKETS.map(o => `<label class="colf-opt"><input type="checkbox" value="${o[0]}" ${sel.has(o[0]) ? 'checked' : ''} onchange="toggleDateBucket(this.value, this.checked)"><span>${o[1]}</span></label>`).join('');
             pop.innerHTML = `
                 <label>Filtrer par échéance</label>
+                <div class="colf-head"><button type="button" onclick="dateBucketsAll(true)">Tout cocher</button><button type="button" onclick="dateBucketsAll(false)">Effacer</button></div>
+                <div class="colf-list">${items}</div>
+                <div class="df-sep">Ou une période précise</div>
                 <select id="dfMode" onchange="renderDateFilterFields()">
-                    <option value="">Toutes les échéances</option>
+                    <option value="">Aucune période</option>
                     ${opt('from', 'À partir de…')}
                     ${opt('until', "Jusqu'au…")}
                     ${opt('on', 'Le…')}
@@ -2161,37 +2255,80 @@
                 </select>
                 <div id="dfFields"></div>
                 <div class="date-filter-actions">
-                    <button type="button" onclick="resetDateFilter()">Effacer</button>
-                    <button type="button" class="df-apply" onclick="applyDateFilter()">Appliquer</button>
+                    <button type="button" onclick="resetDateFilter()">Tout effacer</button>
+                    <button type="button" class="df-apply" onclick="applyDateFilter()">Appliquer la période</button>
                 </div>`;
-            document.body.appendChild(pop);
-            const btn = document.getElementById('dateFilterBtn');
-            const r = btn.getBoundingClientRect();
-            pop.style.left = Math.max(8, Math.min(r.left, window.innerWidth - 262)) + 'px';
-            pop.style.top = (r.bottom + window.scrollY + 4) + 'px';
+            placePop(pop, document.getElementById('dateFilterBtn'));
             renderDateFilterFields();
             setTimeout(() => document.addEventListener('click', closeDateFilterOnOutside, true), 0);
+        }
+        function toggleDateBucket(v, on) {
+            const set = new Set(dateFilter.buckets || []);
+            if (on) set.add(v); else set.delete(v);
+            dateFilter.buckets = ECH_BUCKETS.map(o => o[0]).filter(k => set.has(k));
+            updateDateFilterBtn(); renderTasks();
+        }
+        function dateBucketsAll(on) {
+            dateFilter.buckets = on ? ECH_BUCKETS.map(o => o[0]) : [];
+            const pop = document.getElementById('dateFilterPop');
+            if (pop) pop.querySelectorAll('.colf-list input[type=checkbox]').forEach(cb => { cb.checked = on; });
+            updateDateFilterBtn(); renderTasks();
         }
         function applyDateFilter() {
             const mode = document.getElementById('dfMode').value;
             const a = document.getElementById('dfA') ? document.getElementById('dfA').value : '';
             const b = document.getElementById('dfB') ? document.getElementById('dfB').value : '';
-            dateFilter = { mode, a, b };
+            dateFilter = { ...dateFilter, mode, a, b };
             updateDateFilterBtn();
             closeDateFilter();
             renderTasks();
         }
         function resetDateFilter() {
-            dateFilter = { mode: '', a: '', b: '' };
+            dateFilter = { mode: '', a: '', b: '', buckets: [] };
             updateDateFilterBtn();
             closeDateFilter();
             renderTasks();
         }
+        function _isoLocal(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+        function taskInBucket(task, k) {
+            const d = task.endDate || '';
+            if (k === 'none') return !d;
+            if (!d) return false;
+            const t0 = new Date(); t0.setHours(0, 0, 0, 0);
+            const add = n => { const x = new Date(t0); x.setDate(x.getDate() + n); return _isoLocal(x); };
+            const today = _isoLocal(t0);
+            const dow = (t0.getDay() + 6) % 7;                        // lundi = 0
+            const weekEnd = add(6 - dow);
+            const monthEnd = _isoLocal(new Date(t0.getFullYear(), t0.getMonth() + 1, 0));
+            const q = Math.floor(t0.getMonth() / 3);
+            const quarterEnd = _isoLocal(new Date(t0.getFullYear(), q * 3 + 3, 0));
+            switch (k) {
+                case 'overdue': return d < today && task.status !== 'Terminé';
+                case 'past': return d < today;
+                case 'today': return d === today;
+                case 'tomorrow': return d === add(1);
+                case 'week': return d >= add(-dow) && d <= weekEnd;
+                case 'nextweek': return d > weekEnd && d <= add(13 - dow);
+                case 'next7': return d >= today && d <= add(7);
+                case 'next30': return d >= today && d <= add(30);
+                case 'month': return d.slice(0, 7) === today.slice(0, 7);
+                case 'nextmonth': return d.slice(0, 7) === _isoLocal(new Date(t0.getFullYear(), t0.getMonth() + 1, 1)).slice(0, 7);
+                case 'quarter': return d >= _isoLocal(new Date(t0.getFullYear(), q * 3, 1)) && d <= quarterEnd;
+                case 'year': return d.slice(0, 4) === today.slice(0, 4);
+                case 'later': return d > quarterEnd;
+            }
+            return false;
+        }
         function taskPassesDateFilter(task) {
+            const buckets = dateFilter.buckets || [];
+            const rangeOn = dateRangeActive();
+            if (!buckets.length && !rangeOn) return true;
+            // Logique « OU » : l'action passe si elle correspond à une case cochée OU à la période choisie
+            if (buckets.some(k => taskInBucket(task, k))) return true;
+            if (!rangeOn) return false;
             const { mode, a, b } = dateFilter;
-            if (!mode) return true;
-            const d = task.endDate || '';           // format ISO yyyy-mm-dd (comparaison lexicale OK)
-            if (!d) return false;                    // pas d'échéance → exclue si un filtre date est actif
+            const d = task.endDate || '';
+            if (!d) return false;
             if (mode === 'from') return !a || d >= a;
             if (mode === 'until') return !a || d <= a;
             if (mode === 'on') return !a || d === a;
@@ -2204,131 +2341,59 @@
             }
             return true;
         }
-        // ----- Phases par projet (façon ANDRH) -----
-        // Chaque projet peut avoir sa propre liste de phases (localStorage opus_project_phases).
-        // Tant qu'un projet n'a pas été personnalisé, il utilise la liste commune (opus_phases).
-        var projectPhases = {};
-        try { projectPhases = JSON.parse(localStorage.getItem('opus_project_phases')) || {}; } catch (e) { projectPhases = {}; }
-        if (!projectPhases || typeof projectPhases !== 'object' || Array.isArray(projectPhases)) projectPhases = {};
-        function saveProjectPhases() { localStorage.setItem('opus_project_phases', JSON.stringify(projectPhases)); }
-        // Liste éditable du projet courant (créée au 1er changement à partir de ce qui est affiché)
-        function editablePhases() {
-            if (!Array.isArray(projectPhases[currentProject])) projectPhases[currentProject] = projectPhaseList(tasks).slice();
-            return projectPhases[currentProject];
-        }
-        const PHASE_NUM_RE = /^(\d+)\s*[.)-]\s*/;
-        function phasesAreNumbered(list) { return list.length > 0 && list.every(p => PHASE_NUM_RE.test(p)); }
-        function stripPhaseNum(p) { return String(p).replace(PHASE_NUM_RE, ''); }
-        // Renomme une phase dans les actions du projet courant
-        function remapTaskPhase(oldName, newName) {
-            let n = 0;
-            tasks.forEach(t => { if (t.phase === oldName) { t.phase = newName; n++; } });
-            return n;
-        }
-        let phaseManagerFromTask = false;
-        function openPhaseManager(fromTask) {
-            phaseManagerFromTask = fromTask === true;
-            const pn = document.getElementById('phaseManagerProject');
-            if (pn) pn.textContent = '« ' + currentProject + ' »';
-            const inp = document.getElementById('newPhaseName');
-            if (inp) inp.value = '';
+        function openPhaseManager() {
             renderPhaseManagerList();
             document.getElementById('phaseModal').classList.add('active');
-            setTimeout(() => { if (inp) inp.focus(); }, 60);
         }
         function closePhaseManager() {
             document.getElementById('phaseModal').classList.remove('active');
-            phaseManagerFromTask = false;
         }
         function renderPhaseManagerList() {
             const c = document.getElementById('phaseManagerList');
             if (!c) return;
-            const list = projectPhaseList(tasks);
-            const hint = document.getElementById('phaseNumHint');
-            if (hint) hint.textContent = phasesAreNumbered(list)
-                ? 'Numérotation automatique : la nouvelle phase prendra le n° ' + (list.reduce((m, p) => Math.max(m, parseInt(p, 10) || 0), 0) + 1) + '. Monter / descendre échange les numéros.'
-                : '';
-            c.innerHTML = list.length ? list.map((p, i) => {
-                const used = tasks.filter(t => t.phase === p).length;
-                return `
-                <div class="ph-row">
-                    <div class="ph-arrows">
-                        <button type="button" onclick="movePhase(${i},-1)" ${i === 0 ? 'disabled' : ''} title="Monter">▲</button>
-                        <button type="button" onclick="movePhase(${i},1)" ${i === list.length - 1 ? 'disabled' : ''} title="Descendre">▼</button>
-                    </div>
-                    <input type="text" class="ph-name" value="${escapeHtml(p)}" title="Renommer cette phase" onchange="renamePhase(${i}, this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">
-                    <span class="ph-count">${used ? used + ' action' + (used > 1 ? 's' : '') : ''}</span>
-                    <button type="button" class="ph-del" onclick="deletePhase(${i})" title="Supprimer cette phase">${ic('trash')}</button>
-                </div>`;
-            }).join('') : '<div class="ph-empty">Aucune phase — ajoutez-en une ci-dessous.</div>';
+            c.innerHTML = phases.length ? phases.map((p, i) => `
+                <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px; background:var(--bg); border-radius:9px; padding:8px 10px;">
+                    <span style="flex:1; font-weight:600; color:var(--navy); font-size:13px;">${escapeHtml(p)}</span>
+                    <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px;" onclick="movePhase(${i},-1)">↑</button>
+                    <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px;" onclick="movePhase(${i},1)">↓</button>
+                    <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px;" onclick="renamePhase(${i})">${ic('pencil')}</button>
+                    <button class="btn btn-secondary" style="padding:5px 9px; font-size:12px; background:#FEE2E2; color:var(--danger);" onclick="deletePhase(${i})">${ic('trash')}</button>
+                </div>`).join('') : '<p style="color:var(--text-muted); font-size:13px;">Aucune phase définie.</p>';
         }
         function addPhase() {
-            const inp = document.getElementById('newPhaseName');
-            let n = ((inp && inp.value) || '').trim();
-            if (!n) { alert('Donnez un nom à la phase.'); if (inp) inp.focus(); return; }
-            const list = editablePhases();
-            if (phasesAreNumbered(list) && !PHASE_NUM_RE.test(n)) {
-                const max = list.reduce((m, p) => Math.max(m, parseInt(p, 10) || 0), 0);
-                n = (max + 1) + '. ' + n;
-            }
-            if (list.includes(n)) { alert('La phase « ' + n + ' » existe déjà.'); return; }
-            list.push(n);
-            saveProjectPhases();
-            if (inp) inp.value = '';
+            const n = prompt('Nom de la nouvelle phase :');
+            if (!n || !n.trim()) return;
+            phases.push(n.trim());
+            savePhases();
             afterPhaseChange();
-            // Ouvert depuis la fiche action : on présélectionne la phase créée
-            if (phaseManagerFromTask) { const sel = document.getElementById('taskPhase'); if (sel) sel.value = n; }
         }
-        function renamePhase(i, val) {
-            const list = editablePhases();
-            const old = list[i];
-            const n = (val || '').trim();
-            if (!n || n === old) { renderPhaseManagerList(); return; }
-            if (list.includes(n)) { alert('La phase « ' + n + ' » existe déjà.'); renderPhaseManagerList(); return; }
-            list[i] = n;
-            saveProjectPhases();
-            const sel = document.getElementById('taskPhase');
-            const wasSel = sel && sel.value === old;
-            const changed = remapTaskPhase(old, n);
-            if (changed) saveProjects();
+        function renamePhase(i) {
+            const old = phases[i];
+            const n = prompt('Nouveau nom de la phase :', old);
+            if (!n || !n.trim() || n.trim() === old) return;
+            phases[i] = n.trim();
+            savePhases();
+            // Répercuter sur les actions existantes (tous projets)
+            Object.keys(allProjects).forEach(pr => (allProjects[pr] || []).forEach(t => { if (t.phase === old) t.phase = phases[i]; }));
+            tasks = allProjects[currentProject] || tasks;
+            saveProjects();
             afterPhaseChange();
-            if (wasSel) sel.value = n;
         }
         function deletePhase(i) {
-            const list = editablePhases();
-            const p = list[i];
-            const used = tasks.filter(t => t.phase === p).length;
-            let msg = 'Supprimer la phase « ' + p + ' » ?';
-            if (used) msg += '\n' + used + ' action(s) rattachée(s) à cette phase seront laissées sans phase.';
-            if (!confirm(msg)) return;
-            list.splice(i, 1);
-            saveProjectPhases();
-            if (used) { remapTaskPhase(p, ''); saveProjects(); }
+            const p = phases[i];
+            let used = 0;
+            Object.keys(allProjects).forEach(pr => (allProjects[pr] || []).forEach(t => { if (t.phase === p) used++; }));
+            if (used > 0 && !confirm('« ' + p + ' » est utilisée par ' + used + ' action(s).\nSupprimer la phase de la liste ? (les actions conservent leur libellé)')) return;
+            phases.splice(i, 1);
+            savePhases();
             afterPhaseChange();
         }
         function movePhase(i, d) {
-            const list = editablePhases();
             const j = i + d;
-            if (j < 0 || j >= list.length) return;
-            const a = list[i], b = list[j];
-            if (phasesAreNumbered(list)) {
-                // Comme sur ANDRH : on échange les numéros, les actions suivent
-                const na = a.match(PHASE_NUM_RE)[1], nb = b.match(PHASE_NUM_RE)[1];
-                const a2 = nb + '. ' + stripPhaseNum(a), b2 = na + '. ' + stripPhaseNum(b);
-                const TMP = '__opus_tmp_phase__';
-                const sel = document.getElementById('taskPhase');
-                const cur = sel ? sel.value : '';
-                remapTaskPhase(a, TMP); remapTaskPhase(b, b2); remapTaskPhase(TMP, a2);
-                list[i] = b2; list[j] = a2;
-                if (sel) sel.dataset.pending = cur === a ? a2 : (cur === b ? b2 : cur);
-                saveProjects();
-            } else {
-                list[i] = b; list[j] = a;
-            }
-            saveProjectPhases();
+            if (j < 0 || j >= phases.length) return;
+            const tmp = phases[i]; phases[i] = phases[j]; phases[j] = tmp;
+            savePhases();
             afterPhaseChange();
-            const sel = document.getElementById('taskPhase');
-            if (sel && sel.dataset.pending !== undefined) { sel.value = sel.dataset.pending; delete sel.dataset.pending; }
         }
         function afterPhaseChange() {
             renderPhaseManagerList();
@@ -3143,11 +3208,12 @@
             updateProjectSelector();
             
             // Réinitialiser les filtres (selects + recherche)
-            ['filterStatus', 'filterPhase', 'filterPriority', 'filterResponsible', 'filterVisibility', 'taskSearch'].forEach(id => {
+            ['filterVisibility', 'taskSearch'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.value = '';
             });
-            dateFilter = { mode: '', a: '', b: '' };
+            clearColFilters();
+            dateFilter = { mode: '', a: '', b: '', buckets: [] };
             updateDateFilterBtn();
             renderResponsibleFilter();
             const selAll = document.getElementById('selectAllTasks');
@@ -3262,7 +3328,6 @@
             allProjects[newName] = allProjects[currentProject];
             delete allProjects[currentProject];
             if (chats[currentProject]) { chats[newName] = chats[currentProject]; delete chats[currentProject]; saveChats(); }
-            if (projectPhases[currentProject]) { projectPhases[newName] = projectPhases[currentProject]; delete projectPhases[currentProject]; saveProjectPhases(); }
             currentProject = newName;
             
             // Sauvegarder et mettre à jour
@@ -3284,7 +3349,6 @@
             
             // Supprimer le projet
             delete allProjects[currentProject];
-            if (projectPhases[currentProject]) { delete projectPhases[currentProject]; saveProjectPhases(); }
             
             // Basculer sur le premier projet disponible
             currentProject = Object.keys(allProjects)[0];
@@ -3877,18 +3941,11 @@
             renderResponsibleFilter();
             renderPhaseFilters(); // phases du filtre = phases du projet affiché
             const search = (document.getElementById('taskSearch') ? document.getElementById('taskSearch').value : '').toLowerCase().trim();
-            const fStatus = document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : '';
-            const fPhase = document.getElementById('filterPhase') ? document.getElementById('filterPhase').value : '';
-            const fPrio = document.getElementById('filterPriority') ? document.getElementById('filterPriority').value : '';
-            const fResp = document.getElementById('filterResponsible') ? document.getElementById('filterResponsible').value : '';
             const fVis = document.getElementById('filterVisibility') ? document.getElementById('filterVisibility').value : '';
 
             const list = tasks.filter(t => {
                 if (fVis && (t.visibility || '') !== fVis) return false;
-                if (fStatus && t.status !== fStatus) return false;
-                if (fPhase && t.phase !== fPhase) return false;
-                if (fPrio && t.priority !== fPrio) return false;
-                if (fResp && !splitResponsibles(t.responsible).includes(fResp)) return false;
+                if (!taskPassesColFilters(t)) return false;
                 if (!taskPassesDateFilter(t)) return false;
                 if (search) {
                     const hay = (t.title + ' ' + (t.responsible || '') + ' ' + (t.phase || '') + ' ' + (t.comments || '') + ' ' + (t.ref || '') + ' ' + (t.internalNote || '') + ' ' + (t.source || '') + ' ' + (t.deliverable || '') + ' ' + (t.subStatus || '')).toLowerCase();
@@ -3900,8 +3957,9 @@
             // Position absolue de chaque action dans le projet = son N° - 1
             const orderIndex = new Map(tasks.map((t, i) => [String(t.id), i]));
 
+            updateColFilterButtons();
             if (list.length === 0) {
-                grid.innerHTML = '<div class="tl-empty" style="padding:28px; text-align:center;">Aucune action à afficher</div>';
+                grid.innerHTML = '<div class="tl-empty" style="padding:28px; text-align:center;">Aucune action à afficher' + (activeFilterCount() ? ' avec ces filtres. <button type="button" class="btn btn-secondary" style="margin-left:8px; padding:5px 10px;" onclick="resetAllFilters()">Réinitialiser les filtres</button>' : '') + '</div>';
                 updateBulkBar();
                 updateSortIndicators();
                 return;
@@ -3921,16 +3979,16 @@
                     <div class="tl-ord"><span class="drag-handle" title="Glisser pour réordonner">⠿</span><span class="ord-num">${ordNum}</span></div>
                     <div><input type="checkbox" class="row-check task-check" data-id="${task.id}" onchange="updateBulkBar()"></div>
                     <div>
-                        <div class="tl-title" title="Ouvrir l'action">${escapeHtml(task.title || '(Sans titre)')}</div>
-                        ${task.comments ? `<div class="tl-comment">${ic('chat', 11)} ${escapeHtml(task.comments.length > 90 ? task.comments.substring(0, 90) + '…' : task.comments)}</div>` : ''}
+                        <div class="tl-title" contenteditable="true" spellcheck="false" onblur="inlineUpdate(${task.id},'title',this.textContent)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">${escapeHtml(task.title)}</div>
+                        <div class="tl-comment" contenteditable="true" spellcheck="false" data-ph="Ajouter une note…" onblur="inlineUpdate(${task.id},'comments',this.textContent)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">${escapeHtml(task.comments || '')}</div>
                         ${renderTaskMetaHtml(task)}
                         ${prog !== null ? `<div class="tl-sub">${ic('checkbox', 12)} ${done}/${subs.length} <span class="tl-sub-bar"><i style="width:${prog}%"></i></span> ${prog}%</div>` : ''}
                     </div>
                     <div id="respcell-${task.id}" class="resp-cell" title="Cliquer pour modifier" onclick="openRespPopover(${task.id}, event)">${renderAvatarsHtml(task.responsible)}</div>
                     <div><select class="cell-edit" onchange="inlineUpdate(${task.id},'phase',this.value)">${phaseOptions(task.phase)}</select></div>
                     <div><input type="date" class="cell-edit${overdue ? ' overdue' : ''}" value="${task.endDate || ''}" onchange="inlineUpdate(${task.id},'endDate',this.value)"></div>
-                    <div><select class="cell-edit prio-select" onchange="inlineUpdate(${task.id},'priority',this.value)">
-                        ${['', 'Haute', 'Moyenne', 'Basse'].map(p => `<option value="${p}" ${task.priority === p ? 'selected' : ''}>${PRIO_LABELS[p]}</option>`).join('')}
+                    <div><select class="cell-edit" onchange="inlineUpdate(${task.id},'priority',this.value)">
+                        ${['', 'Haute', 'Moyenne', 'Basse'].map(p => `<option value="${p}" ${task.priority === p ? 'selected' : ''}>${p || '—'}</option>`).join('')}
                     </select></div>
                     <div><select class="status-select s-${{ 'À faire': 'todo', 'En cours': 'progress', 'Terminé': 'done', 'Bloqué': 'blocked' }[task.status] || 'todo'}" onchange="updateTaskStatus(${task.id}, this.value)">
                         ${['À faire', 'En cours', 'Terminé', 'Bloqué'].map(s => `<option value="${s}" ${task.status === s ? 'selected' : ''}>${s}</option>`).join('')}
@@ -3943,27 +4001,7 @@
             }).join('');
             updateBulkBar();
             setupRowDrag();
-            setupRowOpen(grid);
             updateSortIndicators();
-        }
-
-        const PRIO_LABELS = { '': '—', 'Haute': '🔴 Haute', 'Moyenne': '🟠 Moyenne', 'Basse': '🟢 Basse' };
-
-        // Clic sur une ligne d'action = ouverture de la fiche (comme sur ANDRH).
-        // Les cellules modifiables (responsables, phase, date, priorité, statut, cases, boutons) gardent leur propre comportement.
-        function setupRowOpen(grid) {
-            if (!grid || grid.dataset.rowOpen) return;
-            grid.dataset.rowOpen = '1';
-            grid.addEventListener('click', e => {
-                if (window.READ_ONLY) return;
-                const row = e.target.closest('.task-row');
-                if (!row || !grid.contains(row)) return;
-                if (e.target.closest('select, input, button, a, textarea, label, .resp-cell, .drag-handle, [contenteditable="true"]')) return;
-                const sel = window.getSelection ? String(window.getSelection()) : '';
-                if (sel && sel.trim()) return;   // l'utilisateur sélectionne du texte
-                const task = tasks.find(t => String(t.id) === row.getAttribute('data-id'));
-                if (task) editTask(task.id);
-            });
         }
 
         function updateBulkBar() {
@@ -4205,12 +4243,13 @@
         // Clic sur un widget du tableau de bord → onglet Actions filtré
         function dashboardDrill(kind) {
             // Réinitialiser tous les filtres
-            ['filterStatus', 'filterPhase', 'filterPriority', 'filterResponsible', 'filterVisibility', 'taskSearch'].forEach(id => {
+            ['filterVisibility', 'taskSearch'].forEach(id => {
                 const el = document.getElementById(id); if (el) el.value = '';
             });
-            if (typeof dateFilter !== 'undefined') dateFilter = { mode: '', a: '', b: '' };
-            const setStatus = v => { const el = document.getElementById('filterStatus'); if (el) el.value = v; };
-            const setPrio = v => { const el = document.getElementById('filterPriority'); if (el) el.value = v; };
+            clearColFilters();
+            if (typeof dateFilter !== 'undefined') dateFilter = { mode: '', a: '', b: '', buckets: [] };
+            const setStatus = v => colFilters.status.add(v);
+            const setPrio = v => colFilters.priority.add(v);
             if (kind === 'todo') setStatus('À faire');
             else if (kind === 'done') setStatus('Terminé');
             else if (kind === 'inprogress') setStatus('En cours');
@@ -4221,7 +4260,7 @@
                 const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
                 const today = new Date(); today.setHours(0, 0, 0, 0);
                 const in7 = new Date(today); in7.setDate(in7.getDate() + 7);
-                if (typeof dateFilter !== 'undefined') dateFilter = { mode: 'between', a: iso(today), b: iso(in7) };
+                if (typeof dateFilter !== 'undefined') dateFilter = { mode: 'between', a: iso(today), b: iso(in7), buckets: [] };
             }
             if (typeof updateDateFilterBtn === 'function') updateDateFilterBtn();
             switchTab('tasks');   // affiche l'onglet Actions et applique les filtres (renderTasks)
@@ -4263,11 +4302,6 @@
         }
         // Phases d'un projet : si le projet utilise ses propres lots, on n'affiche que ceux-ci
         function projectPhaseList(list) {
-            const own = (typeof projectPhases !== 'undefined' && projectPhases && Array.isArray(projectPhases[currentProject])) ? projectPhases[currentProject] : null;
-            if (own) {
-                const extra = [...new Set((list || []).map(t => t.phase).filter(p => p && !own.includes(p)))];
-                return own.concat(extra);
-            }
             const glob = window.__opusPhases || [];
             const used = [...new Set((list || []).map(t => t.phase).filter(Boolean))];
             if (used.length && used.some(p => !glob.includes(p))) return used;
